@@ -1,0 +1,1 @@
+enum AlertType { budget, payment, stock, dueDate }

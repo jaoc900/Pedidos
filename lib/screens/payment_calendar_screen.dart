@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:pedidos/enums/payment_status_enum.dart';
+import 'package:pedidos/models/payment_event_model.dart';
 
 class PaymentCalendarScreen extends StatefulWidget {
   const PaymentCalendarScreen({super.key});
@@ -626,28 +628,4 @@ class _PaymentCalendarScreenState extends State<PaymentCalendarScreen> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-}
-
-enum PaymentStatus {
-  overdue,
-  pending,
-  paid,
-}
-
-class PaymentEvent {
-  final String id;
-  final String title;
-  final double amount;
-  final DateTime dueDate;
-  final PaymentStatus status;
-  final String client;
-
-  PaymentEvent({
-    required this.id,
-    required this.title,
-    required this.amount,
-    required this.dueDate,
-    required this.status,
-    required this.client,
-  });
 }

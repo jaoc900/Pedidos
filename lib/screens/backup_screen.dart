@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/models/backup_history_model.dart';
+import 'package:pedidos/enums/backup_status_enum.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -800,22 +802,4 @@ class _BackupScreenState extends State<BackupScreen> {
       ),
     );
   }
-}
-
-enum BackupStatus { success, failed }
-
-class BackupHistory {
-  final String id;
-  final DateTime date;
-  final String size;
-  final String type;
-  final BackupStatus status;
-
-  BackupHistory({
-    required this.id,
-    required this.date,
-    required this.size,
-    required this.type,
-    required this.status,
-  });
 }

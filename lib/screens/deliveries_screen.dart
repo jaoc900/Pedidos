@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pedidos/enums/delivery_status_enum.dart';
+import 'package:pedidos/models/delivery_data_model.dart';
 
 class DeliveriesScreen extends StatefulWidget {
   const DeliveriesScreen({super.key});
@@ -734,38 +736,4 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
       ),
     );
   }
-}
-
-enum DeliveryStatus { pending, inRoute, delivered }
-
-class Delivery {
-  final String id;
-  final String orderId;
-  final String client;
-  final String address;
-  DeliveryStatus status;
-  final DateTime estimatedTime;
-  final double amount;
-  final int items;
-  final String contactPhone;
-  final String notes;
-  final double lat;
-  final double lng;
-  DateTime? deliveredAt;
-
-  Delivery({
-    required this.id,
-    required this.orderId,
-    required this.client,
-    required this.address,
-    required this.status,
-    required this.estimatedTime,
-    required this.amount,
-    required this.items,
-    required this.contactPhone,
-    required this.notes,
-    required this.lat,
-    required this.lng,
-    this.deliveredAt,
-  });
 }

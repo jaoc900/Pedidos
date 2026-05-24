@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/tax_period_model.dart';
+import 'package:pedidos/enums/taxes_status_enum.dart';
+import 'package:pedidos/models/chart_data_model.dart';
 
 class TaxesScreen extends StatefulWidget {
   const TaxesScreen({super.key});
@@ -863,38 +866,4 @@ class _TaxesScreenState extends State<TaxesScreen> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-}
-
-enum TaxStatus { paid, pending, upcoming }
-
-class TaxPeriod {
-  final String period;
-  final DateTime date;
-  final double iva;
-  final double isr;
-  final double ieps;
-  final TaxStatus status;
-  final DateTime paymentDate;
-
-  TaxPeriod({
-    required this.period,
-    required this.date,
-    required this.iva,
-    required this.isr,
-    required this.ieps,
-    required this.status,
-    required this.paymentDate,
-  });
-}
-
-class ChartData {
-  final String label;
-  final double value;
-  final Color color;
-
-  ChartData({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
 }

@@ -15,6 +15,7 @@ import 'package:pedidos/screens/budget_comparison_screen.dart';
 import 'package:pedidos/screens/financial_alerts_screen.dart';
 import 'package:pedidos/screens/pending_invoices_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
+import 'package:pedidos/models/report_data_model.dart';
 
 class FinancesScreen extends StatelessWidget {
   const FinancesScreen({super.key});
@@ -527,7 +528,7 @@ class FinancesScreen extends StatelessWidget {
 
   Widget _buildReportsSection(BuildContext context) {
     final reports = [
-      _ReportData(
+      ReportData(
         title: 'Estado de Resultados',
         subtitle: 'Actualizado hace 2h',
         icon: FontAwesomeIcons.chartSimple,
@@ -539,7 +540,7 @@ class FinancesScreen extends StatelessWidget {
           );
         },
       ),
-      _ReportData(
+      ReportData(
         title: 'Flujo de Caja',
         subtitle: 'Proyección semanal',
         icon: FontAwesomeIcons.wallet,
@@ -551,7 +552,7 @@ class FinancesScreen extends StatelessWidget {
           );
         },
       ),
-      _ReportData(
+      ReportData(
         title: 'Balance General',
         subtitle: 'Cierre de mes anterior',
         icon: FontAwesomeIcons.scaleBalanced,
@@ -972,21 +973,4 @@ class FinancesScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para reportes
-class _ReportData {
-  final String title;
-  final String subtitle;
-  final FaIconData icon;
-  final Color iconColor;
-  final VoidCallback onTap;
-
-  _ReportData({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.iconColor,
-    required this.onTap,
-  });
 }

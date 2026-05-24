@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/balance_item.dart';
+import 'package:pedidos/models/composition_data_model.dart';
 
 class BalanceSheetScreen extends StatefulWidget {
   const BalanceSheetScreen({super.key});
@@ -917,28 +919,4 @@ class _BalanceSheetScreenState extends State<BalanceSheetScreen> {
       ],
     );
   }
-}
-
-class BalanceItem {
-  final String description;
-  final double amount;
-  final String category;
-
-  BalanceItem({
-    required this.description,
-    required this.amount,
-    required this.category,
-  });
-}
-
-class CompositionData {
-  final String label;
-  final double value;
-  final Color color;
-
-  CompositionData({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
 }

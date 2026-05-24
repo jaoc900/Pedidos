@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/models/payment_data_model.dart';
 
 class CustomerPaymentsScreen extends StatelessWidget {
   const CustomerPaymentsScreen({super.key});
@@ -260,55 +261,40 @@ class CustomerPaymentsScreen extends StatelessWidget {
 
   Widget _buildPaymentList() {
     final payments = [
-      PaymentData(
+      PaymentData.completed(
         id: 'PAY-001',
+        client: 'Javier Arboleda', // ← Agregar cliente
         date: 'Oct 24, 2023',
         amount: 1240.50,
-        status: 'Completed',
         method: 'Credit Card',
-        statusColor: AppTheme.secondary,
-        statusBgColor: const Color(0xFFE8F5E9),
-        icon: FontAwesomeIcons.creditCard,
       ),
-      PaymentData(
+      PaymentData.completed(
         id: 'PAY-002',
+        client: 'Elena Martínez',
         date: 'Oct 18, 2023',
         amount: 450.00,
-        status: 'Completed',
         method: 'Bank Transfer',
-        statusColor: AppTheme.secondary,
-        statusBgColor: const Color(0xFFE8F5E9),
-        icon: FontAwesomeIcons.buildingColumns,
       ),
-      PaymentData(
+      PaymentData.pending(
         id: 'PAY-003',
+        client: 'Roberto Gómez',
         date: 'Oct 15, 2023',
         amount: 890.75,
-        status: 'Pending',
         method: 'Cash',
-        statusColor: const Color(0xFFFF9800),
-        statusBgColor: const Color(0xFFFFF3E0),
-        icon: FontAwesomeIcons.moneyBill,
       ),
-      PaymentData(
+      PaymentData.completed(
         id: 'PAY-004',
+        client: 'Constructora Sur',
         date: 'Oct 10, 2023',
         amount: 2890.75,
-        status: 'Completed',
         method: 'Credit Card',
-        statusColor: AppTheme.secondary,
-        statusBgColor: const Color(0xFFE8F5E9),
-        icon: FontAwesomeIcons.creditCard,
       ),
-      PaymentData(
+      PaymentData.completed(
         id: 'PAY-005',
+        client: 'Finca El Oasis',
         date: 'Sep 28, 2023',
         amount: 89.90,
-        status: 'Completed',
         method: 'PayPal',
-        statusColor: AppTheme.secondary,
-        statusBgColor: const Color(0xFFE8F5E9),
-        icon: FontAwesomeIcons.paypal,
       ),
     ];
 
@@ -448,27 +434,4 @@ class CustomerPaymentsScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para pagos
-class PaymentData {
-  final String id;
-  final String date;
-  final double amount;
-  final String status;
-  final String method;
-  final Color statusColor;
-  final Color statusBgColor;
-  final FaIconData icon;
-
-  PaymentData({
-    required this.id,
-    required this.date,
-    required this.amount,
-    required this.status,
-    required this.method,
-    required this.statusColor,
-    required this.statusBgColor,
-    required this.icon,
-  });
 }

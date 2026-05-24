@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pedidos/models/team_member_model.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -687,16 +688,4 @@ class AboutScreen extends StatelessWidget {
       ],
     );
   }
-}
-
-class TeamMember {
-  final String name;
-  final String role;
-  final String avatar;
-
-  TeamMember({
-    required this.name,
-    required this.role,
-    required this.avatar,
-  });
 }

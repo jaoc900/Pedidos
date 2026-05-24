@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/enums/alert_type_enum.dart';
+import 'package:pedidos/enums/severity_alert_enum.dart';
+import 'package:pedidos/models/alert_model.dart';
 
 class FinancialAlertsScreen extends StatefulWidget {
   const FinancialAlertsScreen({super.key});
@@ -647,30 +650,4 @@ class _FinancialAlertsScreenState extends State<FinancialAlertsScreen> {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
-}
-
-// Enums y modelos
-enum AlertType { budget, payment, stock, dueDate }
-enum Severity { critical, warning, info, success }
-
-class Alert {
-  final String id;
-  final String title;
-  final String description;
-  final AlertType type;
-  final Severity severity;
-  final DateTime date;
-  bool isRead;
-  final String? actionText;
-
-  Alert({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.type,
-    required this.severity,
-    required this.date,
-    required this.isRead,
-    this.actionText,
-  });
 }

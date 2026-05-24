@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/enums/stock_status_enum.dart';
+import 'package:pedidos/models/product_item_model.dart';
 
 class ProductCatalogScreen extends StatefulWidget {
   const ProductCatalogScreen({super.key});
@@ -522,27 +524,4 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
       ),
     );
   }
-}
-
-// Modelo de producto
-enum StockStatus { inStock, lowStock }
-
-class Product {
-  final String id;
-  final String name;
-  final double price;
-  final int stock;
-  final StockStatus stockStatus;
-  final String imageUrl;
-  final String category;
-
-  Product({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.stock,
-    required this.stockStatus,
-    required this.imageUrl,
-    required this.category,
-  });
 }

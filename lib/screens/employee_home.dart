@@ -11,6 +11,11 @@ import 'package:pedidos/screens/deliveries_screen.dart';
 import 'package:pedidos/screens/invoices_screen.dart';
 import 'package:pedidos/screens/profile_screen.dart';
 
+import 'package:pedidos/models/order_data_model.dart';
+import 'package:pedidos/models/navItem_model.dart';
+import 'package:pedidos/models/payment_data_model.dart';
+import 'package:pedidos/models/inventory_alert_model.dart';
+
 class EmployeeHome extends StatefulWidget {
   const EmployeeHome({super.key});
 
@@ -514,8 +519,26 @@ class _EmployeeHomeState extends State<EmployeeHome> {
 
   Widget _buildRecentOrdersList() {
     final orders = [
-      _OrderData(id: '#ORD-5842', address: 'Calle Mayor, 15', status: 'En ruta', amount: 1240.00, statusColor: AppTheme.primary),
-      _OrderData(id: '#ORD-5841', address: 'Av. Libertad, 240', status: 'Pendiente', amount: 850.50, statusColor: AppTheme.warning),
+      OrderData.fromDetailed(
+        id: '#ORD-5842',
+        address: 'Calle Mayor, 15',
+        status: 'En ruta',
+        amount: 1240.00,
+        statusColor: AppTheme.primary,
+        statusIcon: FontAwesomeIcons.truck,
+        client: 'Jardines del Prado',
+        items: 12,
+      ),
+      OrderData.fromDetailed(
+        id: '#ORD-5841',
+        address: 'Av. Libertad, 240',
+        status: 'Pendiente',
+        amount: 850.50,
+        statusColor: AppTheme.warning,
+        statusIcon: FontAwesomeIcons.clock,
+        client: 'Vivero San Pedro',
+        items: 5,
+      ),
     ];
 
     return Column(
@@ -550,7 +573,7 @@ class _EmployeeHomeState extends State<EmployeeHome> {
     );
   }
 
-  Widget _buildOrderItem(_OrderData order) {
+  Widget _buildOrderItem(OrderData order) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -723,9 +746,9 @@ class _EmployeeHomeState extends State<EmployeeHome> {
 
   Widget _buildInventoryAlertList() {
     final alerts = [
-      _InventoryAlert(product: 'Fertilizante Orgánico', stock: 3, critical: true),
-      _InventoryAlert(product: 'Semillas Premium', stock: 8, critical: false),
-      _InventoryAlert(product: 'Herramienta Podadora', stock: 2, critical: true),
+      InventoryAlert(product: 'Fertilizante Orgánico', stock: 3, critical: true),
+      InventoryAlert(product: 'Semillas Premium', stock: 8, critical: false),
+      InventoryAlert(product: 'Herramienta Podadora', stock: 2, critical: true),
     ];
 
     return Column(
@@ -812,9 +835,30 @@ class _EmployeeHomeState extends State<EmployeeHome> {
 
   Widget _buildPaymentsList() {
     final payments = [
-      _PaymentData(client: 'Javier Arboleda', amount: 1250.00, status: 'Pendiente', isPending: true),
-      _PaymentData(client: 'Elena Martínez', amount: 3400.00, status: 'Completado', isPending: false),
-      _PaymentData(client: 'Constructora Sur', amount: 12800.00, status: 'Completado', isPending: false),
+      PaymentData.simple(
+        id: 'PAY-001',
+        client: 'Javier Arboleda',
+        date: '24 Oct, 2023',
+        amount: 1250.00,
+        status: 'Pendiente',
+        isPending: true,
+      ),
+      PaymentData.simple(
+        id: 'PAY-002',
+        client: 'Elena Martínez',
+        date: '23 Oct, 2023',
+        amount: 3400.00,
+        status: 'Completado',
+        isPending: false,
+      ),
+      PaymentData.simple(
+        id: 'PAY-003',
+        client: 'Constructora Sur',
+        date: '22 Oct, 2023',
+        amount: 12800.00,
+        status: 'Completado',
+        isPending: false,
+      ),
     ];
 
     return Column(
@@ -1120,57 +1164,4 @@ class _EmployeeHomeState extends State<EmployeeHome> {
       ),
     );
   }
-}
-
-// Modelos de datos
-class _OrderData {
-  final String id;
-  final String address;
-  final String status;
-  final double amount;
-  final Color statusColor;
-
-  _OrderData({
-    required this.id,
-    required this.address,
-    required this.status,
-    required this.amount,
-    required this.statusColor,
-  });
-}
-
-class _InventoryAlert {
-  final String product;
-  final int stock;
-  final bool critical;
-
-  _InventoryAlert({
-    required this.product,
-    required this.stock,
-    required this.critical,
-  });
-}
-
-class _PaymentData {
-  final String client;
-  final double amount;
-  final String status;
-  final bool isPending;
-
-  _PaymentData({
-    required this.client,
-    required this.amount,
-    required this.status,
-    required this.isPending,
-  });
-}
-
-class NavItem {
-  final FaIconData icon;
-  final String label;
-
-  NavItem({
-    required this.icon,
-    required this.label,
-  });
 }

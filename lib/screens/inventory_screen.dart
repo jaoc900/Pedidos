@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/edit_product_screen.dart';
+import 'package:pedidos/enums/view_model_enum.dart';
+import 'package:pedidos/models/product_item_model.dart';
+import 'package:pedidos/enums/stock_status_enum.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -10,16 +13,14 @@ class InventoryScreen extends StatefulWidget {
   State<InventoryScreen> createState() => _InventoryScreenState();
 }
 
-enum ViewMode { list, largeIcons, mediumIcons, smallIcons }
-
 class _InventoryScreenState extends State<InventoryScreen> {
   // Modos de visualización
 
   ViewMode _currentViewMode = ViewMode.mediumIcons;
 
   // Lista de productos (la misma de antes)
-  final List<ProductItem> products = [
-    ProductItem(
+  final List<Product> products = [
+    Product(
       id: 'SHO-0021',
       name: 'UltraBoost Pro X',
       price: 149.99,
@@ -29,7 +30,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       imageUrl:
           'https://lh3.googleusercontent.com/aida-public/AB6AXuDqmlHh7LKWdjhfzNvxRbePX66p0ofPsDklPk1jWv7JB2ZI_3bldN46ewYvjufEvd3rg9s9K_sDqxlw6-9NBfpDZ-n5pHEt0XzopQUbBvbsM17o0btLdw6gMX352Dp-Pl6c3pfEsuBVvB3JpRL_XBWy66u3ViaIfhEBEB7PoalusJ6TuOuPmaWGhjlBUDl7d3xUQl-eWwYZl0Ntf2OhfJCoul3b1sDNJgkYsFsiOE6637uqS1u1GIdSkadjCHKCNyJUYU8xnk6RIKwd',
     ),
-    ProductItem(
+    Product(
       id: 'WAT-8842',
       name: 'Classic Minimalist',
       price: 210.00,
@@ -39,7 +40,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       imageUrl:
           'https://lh3.googleusercontent.com/aida-public/AB6AXuC_Mcf8RJhjhrC2FuBpInEuF41WSWSOEmGEQ1U_o5Y4ppD64qRnfPeMh8AkyIHR-35FI_gH0zcvo8dyVyepGj5jkkxjnbpTb7IGvTEyVqzeqHk4Eb4Z5_aLwc9YLsws2SvXNxqeTXX9HpRlxlw5ots4NeiAwsjTD-ozmksaHZIA85ZD-WvSAPM54ZlkL50Dcb_gt3V_lHP_HIO0rcMbFUvwM-oYJGCzVQIDBalEr9ge77fc5wWfefb72vNLAATNGpX6WHjcz0cYzbg5',
     ),
-    ProductItem(
+    Product(
       id: 'AUD-1190',
       name: 'Elite Sound X1',
       price: 299.00,
@@ -49,7 +50,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       imageUrl:
           'https://lh3.googleusercontent.com/aida-public/AB6AXuAr84JXf-DkbN2goXF2c_pvEf_xk1PR98fAQQwTBKbJRk_z2jS94jI6tKCU0AaFTT5VhLBmLxWN1ZODlnS_jyCFil0lev0-WmeMP_47aLO79OAtciChdQ4VSDNjufrNfZwDSPXfwP9ifBug9ju8quF0rBwvh4P5AChcBMJgTLOZCx7j5hHHlpAnNDIvrE0PJUivIpzsJ3_IZC7VXj1-odXozjltLXsa6gVaewlFRci-q3i4scTrxQI5K1N4KuQwS81eYCDTOJsVQZsD',
     ),
-    ProductItem(
+    Product(
       id: 'HOM-4421',
       name: 'Eco Flask 500ml',
       price: 35.00,
@@ -59,7 +60,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       imageUrl:
           'https://lh3.googleusercontent.com/aida-public/AB6AXuCNu7GxmS8o-8z1yly4d5xF1ECk7-dq3axGOXSftpsLL38adnVNV-P7EdKR1iVTduU0T04w1iB7B66JlI_xxjhrbXRfVKaqmYDLQBbOVqIrmx74GG8dWC3BLHUdXvuyE8jUME1ktPpuKYlmTrilnSTc6xzGicoR3GFdJoLmkOStxkD8fj_pUQupJaZryyr3eVonO8FhiFYh-eaCRQg6u6fyWpyNfbxuWLdxesk0bjZay-_xrcCYStMOtsbdyipaUCtwujssruOhxXBe',
     ),
-    ProductItem(
+    Product(
       id: 'FUR-9902',
       name: 'Aero Chair v2',
       price: 450.00,
@@ -69,7 +70,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       imageUrl:
           'https://lh3.googleusercontent.com/aida-public/AB6AXuBp8eCTQhRBL6AsodvBFOqfA9p-gQ6g_VUPqMQq9M81mEZV2fvjZuM3Xy1clmeRPCR5hYxswlSkdZtsS2L1n59B3yZOUvcFo8ffBofopRrtkR2Mp8jJHjxETbVtkATqGApiEL3cOgdel1w6_pP9R6bjPZB16x6hY-QEmB23PkhfKQczE_RoY1LdkJQBSA0UtSKnmQ4W3UW2Bxxq-Py5UM1IQobx3mEqH8NGqdjF_9CuirsLfSVYw_X7n8Girn5MUKeQX1IVkqOWuFNa',
     ),
-    ProductItem(
+    Product(
       id: 'HOM-1102',
       name: 'Soft Knit Blanket',
       price: 79.99,
@@ -314,7 +315,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildListCard(ProductItem product) {
+  Widget _buildListCard(Product product) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -487,7 +488,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildProductCard(ProductItem product) {
+  Widget _buildProductCard(Product product) {
     return Container(
       height: 440, // Altura fija de 400px
       decoration: BoxDecoration(
@@ -680,7 +681,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildStockBadge(ProductItem product) {
+  Widget _buildStockBadge(Product product) {
     String label;
     Color bgColor;
     Color textColor;
@@ -817,27 +818,4 @@ class _InventoryScreenState extends State<InventoryScreen> {
       ],
     );
   }
-}
-
-// Enums y modelos
-enum StockStatus { inStock, lowStock, critical }
-
-class ProductItem {
-  final String id;
-  final String name;
-  final double price;
-  final String category;
-  final int stock;
-  final StockStatus stockStatus;
-  final String imageUrl;
-
-  ProductItem({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.category,
-    required this.stock,
-    required this.stockStatus,
-    required this.imageUrl,
-  });
 }

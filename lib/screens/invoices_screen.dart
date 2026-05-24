@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/enums/invoice_status_enum.dart';
+import 'package:pedidos/models/invoice_model.dart';
 
 class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});
@@ -28,6 +30,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 1438.40,
       status: InvoiceStatus.paid,
       items: 12,
+      category: 'Jardinería', // ← Agregar categoría
       paymentDate: DateTime(2025, 5, 10),
       paymentMethod: 'Transferencia',
     ),
@@ -43,6 +46,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 986.58,
       status: InvoiceStatus.pending,
       items: 5,
+      category: 'Viveros', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-003',
@@ -56,6 +60,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 3353.27,
       status: InvoiceStatus.overdue,
       items: 28,
+      category: 'Paisajismo', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-004',
@@ -69,6 +74,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 6496.00,
       status: InvoiceStatus.pending,
       items: 45,
+      category: 'Insumos', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-005',
@@ -82,6 +88,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 3712.00,
       status: InvoiceStatus.overdue,
       items: 18,
+      category: 'Semillas', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-006',
@@ -95,6 +102,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       total: 2146.00,
       status: InvoiceStatus.pending,
       items: 8,
+      category: 'Herramientas', // ← Agregar categoría
     ),
   ];
 
@@ -787,38 +795,4 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       ),
     );
   }
-}
-
-enum InvoiceStatus { pending, paid, overdue }
-
-class Invoice {
-  final String id;
-  final String number;
-  final String client;
-  final String clientId;
-  final DateTime issueDate;
-  final DateTime dueDate;
-  final double amount;
-  final double tax;
-  final double total;
-  InvoiceStatus status;
-  final int items;
-  DateTime? paymentDate;
-  String? paymentMethod;
-
-  Invoice({
-    required this.id,
-    required this.number,
-    required this.client,
-    required this.clientId,
-    required this.issueDate,
-    required this.dueDate,
-    required this.amount,
-    required this.tax,
-    required this.total,
-    required this.status,
-    required this.items,
-    this.paymentDate,
-    this.paymentMethod,
-  });
 }

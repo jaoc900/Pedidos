@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/models/size_item_model.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({super.key});
@@ -1000,17 +1001,4 @@ class _EditProductScreenState extends State<EditProductScreen> {
       borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
-}
-
-// Modelo para tallas/tamaños
-class SizeItem {
-  String size;
-  int stock;
-  bool isEnabled;
-
-  SizeItem({
-    required this.size,
-    required this.stock,
-    required this.isEnabled,
-  });
 }

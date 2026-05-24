@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pedidos/models/help_article_model.dart';
+import 'package:pedidos/models/help_category_model.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({super.key});
@@ -833,30 +835,4 @@ class _HelpScreenState extends State<HelpScreen> {
       borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
-}
-
-class HelpCategory {
-  final String title;
-  final FaIconData icon;
-  final Color color;
-  final List<HelpArticle> articles;
-
-  HelpCategory({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.articles,
-  });
-}
-
-class HelpArticle {
-  final String title;
-  final String description;
-  final String content;
-
-  HelpArticle({
-    required this.title,
-    required this.description,
-    required this.content,
-  });
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/enums/invoice_status_enum.dart';
+import 'package:pedidos/models/invoice_model.dart';
 
 class PendingInvoicesScreen extends StatefulWidget {
   const PendingInvoicesScreen({super.key});
@@ -18,83 +20,89 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
   final List<Invoice> _invoices = [
     Invoice(
       id: 'INV-2025-001',
-      supplier: 'Agroinsumos S.A.',
-      amount: 12500.00,
+      number: 'FAC-001',
+      client: 'Jardines del Prado',
+      clientId: 'CLT-001',
       issueDate: DateTime(2025, 5, 1),
       dueDate: DateTime(2025, 5, 15),
-      status: InvoiceStatus.pending,
-      category: 'Insumos',
-      invoiceNumber: 'FAC-001',
+      amount: 1240.00,
+      tax: 198.40,
+      total: 1438.40,
+      status: InvoiceStatus.paid,
+      items: 12,
+      category: 'Jardinería', // ← Agregar categoría
+      paymentDate: DateTime(2025, 5, 10),
+      paymentMethod: 'Transferencia',
     ),
     Invoice(
       id: 'INV-2025-002',
-      supplier: 'Servicios Agrícolas',
-      amount: 3500.00,
+      number: 'FAC-002',
+      client: 'Vivero San Pedro',
+      clientId: 'CLT-002',
       issueDate: DateTime(2025, 5, 5),
       dueDate: DateTime(2025, 5, 20),
+      amount: 850.50,
+      tax: 136.08,
+      total: 986.58,
       status: InvoiceStatus.pending,
-      category: 'Servicios',
-      invoiceNumber: 'FAC-002',
+      items: 5,
+      category: 'Viveros', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-003',
-      supplier: 'Semillas Premium',
-      amount: 8500.00,
+      number: 'FAC-003',
+      client: 'EcoHogar Paisajismo',
+      clientId: 'CLT-003',
       issueDate: DateTime(2025, 4, 28),
       dueDate: DateTime(2025, 5, 10),
+      amount: 2890.75,
+      tax: 462.52,
+      total: 3353.27,
       status: InvoiceStatus.overdue,
-      category: 'Semillas',
-      invoiceNumber: 'FAC-003',
+      items: 28,
+      category: 'Paisajismo', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-004',
-      supplier: 'Herramientas Agrícolas',
-      amount: 3200.00,
+      number: 'FAC-004',
+      client: 'Agroinsumos S.A.',
+      clientId: 'CLT-004',
       issueDate: DateTime(2025, 5, 10),
       dueDate: DateTime(2025, 5, 25),
+      amount: 5600.00,
+      tax: 896.00,
+      total: 6496.00,
       status: InvoiceStatus.pending,
-      category: 'Herramientas',
-      invoiceNumber: 'FAC-004',
+      items: 45,
+      category: 'Insumos', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-005',
-      supplier: 'Fertilizantes del Valle',
-      amount: 12400.00,
-      issueDate: DateTime(2025, 4, 15),
+      number: 'FAC-005',
+      client: 'Semillas Premium',
+      clientId: 'CLT-005',
+      issueDate: DateTime(2025, 4, 20),
       dueDate: DateTime(2025, 5, 5),
+      amount: 3200.00,
+      tax: 512.00,
+      total: 3712.00,
       status: InvoiceStatus.overdue,
-      category: 'Fertilizantes',
-      invoiceNumber: 'FAC-005',
+      items: 18,
+      category: 'Semillas', // ← Agregar categoría
     ),
     Invoice(
       id: 'INV-2025-006',
-      supplier: 'Logística Express',
-      amount: 2800.00,
-      issueDate: DateTime(2025, 5, 8),
-      dueDate: DateTime(2025, 5, 22),
-      status: InvoiceStatus.pending,
-      category: 'Logística',
-      invoiceNumber: 'FAC-006',
-    ),
-    Invoice(
-      id: 'INV-2025-007',
-      supplier: 'Servicios Contables',
-      amount: 1500.00,
+      number: 'FAC-006',
+      client: 'Herramientas Agrícolas',
+      clientId: 'CLT-006',
       issueDate: DateTime(2025, 5, 12),
-      dueDate: DateTime(2025, 5, 26),
+      dueDate: DateTime(2025, 5, 27),
+      amount: 1850.00,
+      tax: 296.00,
+      total: 2146.00,
       status: InvoiceStatus.pending,
-      category: 'Servicios',
-      invoiceNumber: 'FAC-007',
-    ),
-    Invoice(
-      id: 'INV-2025-008',
-      supplier: 'Mantenimiento Agrícola',
-      amount: 4200.00,
-      issueDate: DateTime(2025, 4, 20),
-      dueDate: DateTime(2025, 5, 4),
-      status: InvoiceStatus.paid,
-      category: 'Mantenimiento',
-      invoiceNumber: 'FAC-008',
+      items: 8,
+      category: 'Herramientas', // ← Agregar categoría
     ),
   ];
 
@@ -121,9 +129,8 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
     // Aplicar búsqueda
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((invoice) {
-        return invoice.supplier.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            invoice.invoiceNumber.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            invoice.category.toLowerCase().contains(_searchQuery.toLowerCase());
+        return invoice.client.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            invoice.number.toLowerCase().contains(_searchQuery.toLowerCase());
       }).toList();
     }
 
@@ -163,7 +170,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
                   Text(
-                    invoice.invoiceNumber,
+                    invoice.number,
                     style: TextStyle(
                       fontSize: AppTheme.fontSizeTitle,
                       fontWeight: FontWeight.w700,
@@ -171,7 +178,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
                     ),
                   ),
                   const Divider(),
-                  _buildDetailRow('Proveedor', invoice.supplier),
+                  _buildDetailRow('Proveedor', invoice.client),
                   _buildDetailRow('Categoría', invoice.category),
                   _buildDetailRow('Monto', '\$${invoice.amount.toStringAsFixed(2)}'),
                   _buildDetailRow('Fecha Emisión', _formatDate(invoice.issueDate)),
@@ -628,7 +635,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
                         Row(
                           children: [
                             Text(
-                              invoice.invoiceNumber,
+                              invoice.number,
                               style: TextStyle(
                                 fontSize: AppTheme.fontSizeLabel,
                                 fontWeight: FontWeight.w700,
@@ -660,7 +667,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          invoice.supplier,
+                          invoice.client,
                           style: TextStyle(
                             fontSize: AppTheme.fontSizeBody,
                             fontWeight: FontWeight.w600,
@@ -794,7 +801,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
     ConfirmationModal.show(
       context,
       title: 'Registrar Pago',
-      message: '¿Deseas registrar el pago de la factura ${invoice.invoiceNumber} por \$${invoice.amount.toStringAsFixed(2)}?',
+      message: '¿Deseas registrar el pago de la factura ${invoice.number} por \$${invoice.amount.toStringAsFixed(2)}?',
       confirmText: 'Registrar Pago',
       cancelText: 'Cancelar',
       type: ConfirmationType.success,
@@ -805,7 +812,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Pago registrado para ${invoice.supplier}'),
+            content: Text('Pago registrado para ${invoice.client}'),
             backgroundColor: AppTheme.secondary,
           ),
         );
@@ -813,28 +820,4 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
     );
   }
 
-}
-
-enum InvoiceStatus { pending, overdue, paid }
-
-class Invoice {
-  final String id;
-  final String supplier;
-  final double amount;
-  final DateTime issueDate;
-  final DateTime dueDate;
-  InvoiceStatus status;
-  final String category;
-  final String invoiceNumber;
-
-  Invoice({
-    required this.id,
-    required this.supplier,
-    required this.amount,
-    required this.issueDate,
-    required this.dueDate,
-    required this.status,
-    required this.category,
-    required this.invoiceNumber,
-  });
 }

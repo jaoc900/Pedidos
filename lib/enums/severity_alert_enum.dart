@@ -1,0 +1,1 @@
+enum Severity { critical, warning, info, success }

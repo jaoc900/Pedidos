@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/cashflow_model.dart';
 
 class CashFlowScreen extends StatefulWidget {
   const CashFlowScreen({super.key});
@@ -792,18 +793,4 @@ class _CashFlowScreenState extends State<CashFlowScreen> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-}
-
-class CashFlowItem {
-  final String description;
-  final double amount;
-  final DateTime date;
-  final String category;
-
-  CashFlowItem({
-    required this.description,
-    required this.amount,
-    required this.date,
-    required this.category,
-  });
 }

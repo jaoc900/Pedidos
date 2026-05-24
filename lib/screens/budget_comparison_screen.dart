@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/budget_category_model.dart';
 
 class BudgetComparisonScreen extends StatefulWidget {
   const BudgetComparisonScreen({super.key});
@@ -960,20 +961,4 @@ class _BudgetComparisonScreenState extends State<BudgetComparisonScreen> {
       ),
     );
   }
-}
-
-class BudgetCategory {
-  final String name;
-  final double budgeted;
-  final double actual;
-  final FaIconData icon;
-  final Color color;
-
-  BudgetCategory({
-    required this.name,
-    required this.budgeted,
-    required this.actual,
-    required this.icon,
-    required this.color,
-  });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/transaction_model.dart';
 
 class PaymentsManagementScreen extends StatefulWidget {
   const PaymentsManagementScreen({super.key});
@@ -452,7 +453,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
 
   Widget _buildRecentHistory() {
     final transactions = [
-      _TransactionData(
+      TransactionData(
         name: 'Javier Arboleda',
         time: 'Hoy, 10:45 AM',
         amount: 1250.00,
@@ -460,7 +461,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
         statusColor: AppTheme.primary,
         isCompleted: true,
       ),
-      _TransactionData(
+      TransactionData(
         name: 'Elena Martínez',
         time: 'Ayer, 04:12 PM',
         amount: 3400.00,
@@ -468,7 +469,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
         statusColor: AppTheme.primary,
         isCompleted: true,
       ),
-      _TransactionData(
+      TransactionData(
         name: 'Constructora Sur',
         time: '22 May, 11:20 AM',
         amount: 12800.00,
@@ -476,7 +477,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
         statusColor: AppTheme.primary,
         isCompleted: true,
       ),
-      _TransactionData(
+      TransactionData(
         name: 'Roberto Gómez',
         time: '21 May, 09:15 AM',
         amount: 850.00,
@@ -484,7 +485,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
         statusColor: AppTheme.error,
         isCompleted: false,
       ),
-      _TransactionData(
+      TransactionData(
         name: 'Finca El Oasis',
         time: '20 May, 05:40 PM',
         amount: 5200.00,
@@ -533,7 +534,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
     );
   }
 
-  Widget _buildTransactionItem(_TransactionData transaction) {
+  Widget _buildTransactionItem(TransactionData transaction) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -620,22 +621,4 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
       ),
     );
   }
-}
-
-class _TransactionData {
-  final String name;
-  final String time;
-  final double amount;
-  final String status;
-  final Color statusColor;
-  final bool isCompleted;
-
-  _TransactionData({
-    required this.name,
-    required this.time,
-    required this.amount,
-    required this.status,
-    required this.statusColor,
-    required this.isCompleted,
-  });
 }

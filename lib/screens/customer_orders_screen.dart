@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/models/order_data_model.dart';
 
 class CustomerOrdersScreen extends StatelessWidget {
   const CustomerOrdersScreen({super.key});
@@ -260,7 +261,7 @@ class CustomerOrdersScreen extends StatelessWidget {
 
   Widget _buildOrderList() {
     final orders = [
-      OrderData(
+      OrderData.fromSimple(
         id: '#ORD-9921',
         date: 'Oct 24, 2023',
         amount: 1240.50,
@@ -268,7 +269,7 @@ class CustomerOrdersScreen extends StatelessWidget {
         statusColor: const Color(0xFFFF9800),
         statusBgColor: const Color(0xFFFFF3E0),
       ),
-      OrderData(
+      OrderData.fromSimple(
         id: '#ORD-9845',
         date: 'Oct 18, 2023',
         amount: 450.00,
@@ -276,7 +277,7 @@ class CustomerOrdersScreen extends StatelessWidget {
         statusColor: AppTheme.loginButtonColor,
         statusBgColor: const Color(0xFFE8F5E9),
       ),
-      OrderData(
+      OrderData.fromSimple(
         id: '#ORD-9812',
         date: 'Oct 12, 2023',
         amount: 2890.75,
@@ -284,7 +285,7 @@ class CustomerOrdersScreen extends StatelessWidget {
         statusColor: const Color(0xFF2196F3),
         statusBgColor: const Color(0xFFE3F2FD),
       ),
-      OrderData(
+      OrderData.fromSimple(
         id: '#ORD-9777',
         date: 'Sep 28, 2023',
         amount: 89.90,
@@ -407,23 +408,4 @@ class CustomerOrdersScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para órdenes
-class OrderData {
-  final String id;
-  final String date;
-  final double amount;
-  final String status;
-  final Color statusColor;
-  final Color statusBgColor;
-
-  OrderData({
-    required this.id,
-    required this.date,
-    required this.amount,
-    required this.status,
-    required this.statusColor,
-    required this.statusBgColor,
-  });
 }

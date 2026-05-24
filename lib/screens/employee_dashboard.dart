@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/models/order_data_model.dart';
 
 class EmployeeDashboard extends StatelessWidget {
   const EmployeeDashboard({super.key});
@@ -495,21 +496,37 @@ class EmployeeDashboard extends StatelessWidget {
 
   Widget _buildRecentOrdersCard() {
     final orders = [
-      _OrderData(
-        id: '#ORD-5842',
-        address: 'Calle Mayor, 15',
-        status: 'En ruta',
-        amount: '\$1,240.00',
-        statusColor: AppTheme.primary,
-        statusIcon: FontAwesomeIcons.truck,
+      OrderData.fromSimple(
+        id: '#ORD-9921',
+        date: 'Oct 24, 2023',
+        amount: 1240.50,
+        status: 'Pending',
+        statusColor: const Color(0xFFFF9800),
+        statusBgColor: const Color(0xFFFFF3E0),
       ),
-      _OrderData(
-        id: '#ORD-5841',
-        address: 'Av. Libertad, 240',
-        status: 'Pendiente',
-        amount: '\$850.50',
-        statusColor: AppTheme.warning,
-        statusIcon: FontAwesomeIcons.clock,
+      OrderData.fromSimple(
+        id: '#ORD-9845',
+        date: 'Oct 18, 2023',
+        amount: 450.00,
+        status: 'Delivered',
+        statusColor: AppTheme.loginButtonColor,
+        statusBgColor: const Color(0xFFE8F5E9),
+      ),
+      OrderData.fromSimple(
+        id: '#ORD-9812',
+        date: 'Oct 12, 2023',
+        amount: 2890.75,
+        status: 'In Transit',
+        statusColor: const Color(0xFF2196F3),
+        statusBgColor: const Color(0xFFE3F2FD),
+      ),
+      OrderData.fromSimple(
+        id: '#ORD-9777',
+        date: 'Sep 28, 2023',
+        amount: 89.90,
+        status: 'Delivered',
+        statusColor: AppTheme.loginButtonColor,
+        statusBgColor: const Color(0xFFE8F5E9),
       ),
     ];
 
@@ -559,7 +576,7 @@ class EmployeeDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItem(_OrderData order) {
+  Widget _buildOrderItem(OrderData order) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -633,7 +650,7 @@ class EmployeeDashboard extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacingSm),
           Text(
-            order.amount,
+            order.amount.toString(),
             style: TextStyle(
               fontSize: AppTheme.fontSizeBody,
               fontWeight: FontWeight.w600,
@@ -730,23 +747,4 @@ class EmployeeDashboard extends StatelessWidget {
       ],
     );
   }
-}
-
-// Data class para órdenes
-class _OrderData {
-  final String id;
-  final String address;
-  final String status;
-  final String amount;
-  final Color statusColor;
-  final FaIconData statusIcon;
-
-  _OrderData({
-    required this.id,
-    required this.address,
-    required this.status,
-    required this.amount,
-    required this.statusColor,
-    required this.statusIcon,
-  });
 }

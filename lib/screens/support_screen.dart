@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pedidos/models/faq_model.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -784,16 +785,4 @@ class _SupportScreenState extends State<SupportScreen> {
       borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
-}
-
-class FaqItem {
-  final String question;
-  final String answer;
-  final String category;
-
-  FaqItem({
-    required this.question,
-    required this.answer,
-    required this.category,
-  });
 }

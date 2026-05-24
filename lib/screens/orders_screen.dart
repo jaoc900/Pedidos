@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/new_order_screen.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/models/order_data_model.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -17,45 +18,47 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   final List<String> _filters = ['Todas', 'Pendientes', 'En Camino', 'Entregadas'];
 
-  final List<Order> _orders = [
-    Order(
-      id: '#ORD-8829-24',
-      customer: 'Jardines del Prado',
-      status: 'En Camino',
-      statusColor: const Color(0xFF289045),
-      statusBgColor: const Color(0xFFE8F5E9),
-      date: '14 Oct, 2023',
-      items: 12,
-      amount: 1240.00,
-    ),
-    Order(
-      id: '#ORD-8712-24',
-      customer: 'Vivero San Pedro',
-      status: 'Pendiente',
+  final List<OrderData> _orders = [
+    OrderData.fromSimple(
+      id: '#ORD-9921',
+      date: 'Oct 24, 2023',
+      amount: 1240.50,
+      status: 'Pending',
       statusColor: const Color(0xFFFF9800),
       statusBgColor: const Color(0xFFFFF3E0),
-      date: '15 Oct, 2023',
-      items: 5,
-      amount: 450.50,
     ),
-    Order(
-      id: '#ORD-8699-24',
-      customer: 'EcoHogar Paisajismo',
-      status: 'Entregada',
-      statusColor: const Color(0xFF6B7280),
-      statusBgColor: const Color(0xFFF3F4F6),
-      date: '12 Oct, 2023',
-      items: 28,
-      amount: 3890.00,
+    OrderData.fromSimple(
+      id: '#ORD-9845',
+      date: 'Oct 18, 2023',
+      amount: 450.00,
+      status: 'Delivered',
+      statusColor: AppTheme.loginButtonColor,
+      statusBgColor: const Color(0xFFE8F5E9),
+    ),
+    OrderData.fromSimple(
+      id: '#ORD-9812',
+      date: 'Oct 12, 2023',
+      amount: 2890.75,
+      status: 'In Transit',
+      statusColor: const Color(0xFF2196F3),
+      statusBgColor: const Color(0xFFE3F2FD),
+    ),
+    OrderData.fromSimple(
+      id: '#ORD-9777',
+      date: 'Sep 28, 2023',
+      amount: 89.90,
+      status: 'Delivered',
+      statusColor: AppTheme.loginButtonColor,
+      statusBgColor: const Color(0xFFE8F5E9),
     ),
   ];
 
-  List<Order> get _filteredOrders {
+  List<OrderData> get _filteredOrders {
     return _orders.where((order) {
       final matchesFilter = _selectedFilter == 'Todas' || order.status == _selectedFilter;
       final matchesSearch = _searchQuery.isEmpty ||
           order.id.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          order.customer.toLowerCase().contains(_searchQuery.toLowerCase());
+          order.client.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesFilter && matchesSearch;
     }).toList();
   }
@@ -303,7 +306,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  Widget _buildOrderCard(Order order) {
+  Widget _buildOrderCard(OrderData order) {
     return Container(
       width: double.infinity, // Ocupa todo el ancho disponible
       decoration: BoxDecoration(
@@ -341,7 +344,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      order.customer,
+                      order.client,
                       style: TextStyle(
                         fontSize: AppTheme.fontSizeBody,
                         fontWeight: FontWeight.w700,
@@ -555,7 +558,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  void _cancelOrder(Order order) {
+  void _cancelOrder(OrderData order) {
     context.showConfirmation(
       title: 'Cancelar Pedido',
       message: '¿Estás seguro de que deseas cancelar el pedido ${order.id}?\n\nEsta acción no se puede deshacer.',
@@ -577,27 +580,4 @@ class _OrdersScreenState extends State<OrdersScreen> {
       },
     );
   }
-}
-
-// Modelo de datos para pedidos
-class Order {
-  final String id;
-  final String customer;
-  final String status;
-  final Color statusColor;
-  final Color statusBgColor;
-  final String date;
-  final int items;
-  final double amount;
-
-  Order({
-    required this.id,
-    required this.customer,
-    required this.status,
-    required this.statusColor,
-    required this.statusBgColor,
-    required this.date,
-    required this.items,
-    required this.amount,
-  });
 }

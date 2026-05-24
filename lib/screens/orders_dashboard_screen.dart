@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/screens/painters/donut_chart_painter.dart';
+import 'package:pedidos/models/kpi_model.dart';
+import 'package:pedidos/models/bar_data_model.dart';
+import 'package:pedidos/models/order_data_model.dart';
 
 class OrdersDashboardScreen extends StatelessWidget {
   const OrdersDashboardScreen({super.key});
@@ -91,10 +95,10 @@ class OrdersDashboardScreen extends StatelessWidget {
 
   Widget _buildKPISection() {
     final kpis = [
-      _KPIData(title: 'Total Órdenes', value: '1,284', color: AppTheme.primary),
-      _KPIData(title: 'Pendientes', value: '56', color: AppTheme.error),
-      _KPIData(title: 'En camino', value: '142', color: AppTheme.secondary),
-      _KPIData(title: 'Eficiencia', value: '98.4%', color: AppTheme.tertiary),
+      KPIData(title: 'Total Órdenes', value: '1,284', color: AppTheme.primary),
+      KPIData(title: 'Pendientes', value: '56', color: AppTheme.error),
+      KPIData(title: 'En camino', value: '142', color: AppTheme.secondary),
+      KPIData(title: 'Eficiencia', value: '98.4%', color: AppTheme.tertiary),
     ];
 
     return SizedBox(
@@ -400,29 +404,37 @@ class OrdersDashboardScreen extends StatelessWidget {
 
   Widget _buildRecentOrders() {
     final orders = [
-      _OrderData(
-        id: '#ORD-9421',
-        customer: 'Carlos Méndez',
-        amount: 1420.50,
-        status: 'Completado',
-        statusColor: AppTheme.primary,
-        statusBgColor: AppTheme.primaryContainer.withValues(alpha: 0.2),
+      OrderData.fromSimple(
+        id: '#ORD-9921',
+        date: 'Oct 24, 2023',
+        amount: 1240.50,
+        status: 'Pending',
+        statusColor: const Color(0xFFFF9800),
+        statusBgColor: const Color(0xFFFFF3E0),
       ),
-      _OrderData(
-        id: '#ORD-9418',
-        customer: 'Sofía Rivas',
-        amount: 842.00,
-        status: 'En camino',
-        statusColor: AppTheme.secondary,
-        statusBgColor: AppTheme.secondaryContainer,
+      OrderData.fromSimple(
+        id: '#ORD-9845',
+        date: 'Oct 18, 2023',
+        amount: 450.00,
+        status: 'Delivered',
+        statusColor: AppTheme.loginButtonColor,
+        statusBgColor: const Color(0xFFE8F5E9),
       ),
-      _OrderData(
-        id: '#ORD-9415',
-        customer: 'Marcos Paz',
-        amount: 2105.75,
-        status: 'Pendiente',
-        statusColor: AppTheme.error,
-        statusBgColor: AppTheme.errorContainer,
+      OrderData.fromSimple(
+        id: '#ORD-9812',
+        date: 'Oct 12, 2023',
+        amount: 2890.75,
+        status: 'In Transit',
+        statusColor: const Color(0xFF2196F3),
+        statusBgColor: const Color(0xFFE3F2FD),
+      ),
+      OrderData.fromSimple(
+        id: '#ORD-9777',
+        date: 'Sep 28, 2023',
+        amount: 89.90,
+        status: 'Delivered',
+        statusColor: AppTheme.loginButtonColor,
+        statusBgColor: const Color(0xFFE8F5E9),
       ),
     ];
 
@@ -458,7 +470,7 @@ class OrdersDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderCard(_OrderData order) {
+  Widget _buildOrderCard(OrderData order) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -514,7 +526,7 @@ class OrdersDashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                order.customer,
+                order.client,
                 style: TextStyle(
                   fontSize: AppTheme.fontSizeBody,
                   color: AppTheme.onSurfaceVariant,
@@ -539,79 +551,4 @@ class OrdersDashboardScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para KPI
-class _KPIData {
-  final String title;
-  final String value;
-  final Color color;
-
-  _KPIData({required this.title, required this.value, required this.color});
-}
-
-// Modelo de datos para la gráfica de barras
-class BarData {
-  final String day;
-  final double height;
-  final bool isHighlighted;
-
-  BarData({
-    required this.day,
-    required this.height,
-    required this.isHighlighted,
-  });
-}
-
-// Modelo de datos para órdenes
-class _OrderData {
-  final String id;
-  final String customer;
-  final double amount;
-  final String status;
-  final Color statusColor;
-  final Color statusBgColor;
-
-  _OrderData({
-    required this.id,
-    required this.customer,
-    required this.amount,
-    required this.status,
-    required this.statusColor,
-    required this.statusBgColor,
-  });
-}
-
-// Painter para el gráfico de dona
-class DonutChartPainter extends CustomPainter {
-  final List<double> percentages;
-  final List<Color> colors;
-
-  DonutChartPainter({required this.percentages, required this.colors});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 12;
-
-    double startAngle = -90; // Empezar desde arriba
-
-    for (int i = 0; i < percentages.length; i++) {
-      final sweepAngle = (percentages[i] / 100) * 360;
-      paint.color = colors[i];
-      canvas.drawArc(
-        rect,
-        startAngle * (3.14159 / 180),
-        sweepAngle * (3.14159 / 180),
-        false,
-        paint,
-      );
-      startAngle += sweepAngle;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

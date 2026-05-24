@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/product_catalog_screen.dart';
+import 'package:pedidos/models/order_data_model.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -658,21 +659,4 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       MaterialPageRoute(builder: (context) => const ProductCatalogScreen()),
     );
   }
-}
-
-// Modelo para los items del pedido
-class OrderItem {
-  final String id;
-  final String name;
-  final double price;
-  int quantity;
-  final String imageUrl;
-
-  OrderItem({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.quantity,
-    required this.imageUrl,
-  });
 }

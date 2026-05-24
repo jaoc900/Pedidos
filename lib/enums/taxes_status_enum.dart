@@ -1,0 +1,1 @@
+enum TaxStatus { paid, pending, upcoming }

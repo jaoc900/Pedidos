@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/models/notification_item_model.dart';
+import 'package:pedidos/enums/notification_type_enum.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -615,33 +617,4 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
     );
   }
-}
-
-enum NotificationType {
-  order,
-  alert,
-  payment,
-  report,
-  shipping,
-  user,
-}
-
-class NotificationItem {
-  final String id;
-  final String title;
-  final String message;
-  final DateTime time;
-  final NotificationType type;
-  bool isRead;
-  final String imageUrl;
-
-  NotificationItem({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.time,
-    required this.type,
-    required this.isRead,
-    required this.imageUrl,
-  });
 }

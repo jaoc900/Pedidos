@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pedidos/models/monthly_model.dart';
+import 'package:pedidos/models/movement_model.dart';
+import 'package:pedidos/enums/movement_enum.dart';
 
 class ProfitsScreen extends StatelessWidget {
   const ProfitsScreen({super.key});
@@ -460,7 +463,7 @@ class ProfitsScreen extends StatelessWidget {
 
   Widget _buildRecentMovements() {
     final movements = [
-      _MovementData(
+      MovementData(
         title: 'Suscripción Premium',
         description: 'Hace 2 horas • Factura #892',
         amount: '+\$540.00',
@@ -469,7 +472,7 @@ class ProfitsScreen extends StatelessWidget {
         iconBgColor: AppTheme.secondaryContainer,
         iconColor: AppTheme.secondary,
       ),
-      _MovementData(
+      MovementData(
         title: 'Cloud Hosting Services',
         description: 'Ayer • Servicios',
         amount: '-\$1,200.00',
@@ -478,7 +481,7 @@ class ProfitsScreen extends StatelessWidget {
         iconBgColor: AppTheme.errorContainer,
         iconColor: AppTheme.error,
       ),
-      _MovementData(
+      MovementData(
         title: 'Venta de Hardware',
         description: '24 Mayo • Cliente Corporativo',
         amount: '+\$3,250.00',
@@ -521,7 +524,7 @@ class ProfitsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMovementItem(_MovementData movement) {
+  Widget _buildMovementItem(MovementData movement) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -607,40 +610,4 @@ class ProfitsScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para la gráfica mensual
-class MonthlyData {
-  final String month;
-  final double income;
-  final double expense;
-
-  MonthlyData({
-    required this.month,
-    required this.income,
-    required this.expense,
-  });
-}
-
-// Modelo de datos para movimientos
-enum MovementType { income, expense }
-
-class _MovementData {
-  final String title;
-  final String description;
-  final String amount;
-  final MovementType type;
-  final FaIconData icon;
-  final Color iconBgColor;
-  final Color iconColor;
-
-  _MovementData({
-    required this.title,
-    required this.description,
-    required this.amount,
-    required this.type,
-    required this.icon,
-    required this.iconBgColor,
-    required this.iconColor,
-  });
 }

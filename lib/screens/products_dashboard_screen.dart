@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/models/kpi_model.dart';
+import 'package:pedidos/models/size_dashboard_model.dart';
+import 'package:pedidos/models/top_product_model.dart';
+import 'package:pedidos/screens/painters/donut_chart_painter.dart';
+import 'package:pedidos/models/low_rotation_model.dart';
 
 class ProductsDashboardScreen extends StatelessWidget {
   const ProductsDashboardScreen({super.key});
@@ -127,21 +132,21 @@ class ProductsDashboardScreen extends StatelessWidget {
 
   Widget _buildKPIsSection() {
     final kpis = [
-      _KPIData(
+      KPIData(
         title: 'Stock Total',
         value: '42,850',
         unit: 'u.',
         color: AppTheme.primary,
         icon: FontAwesomeIcons.boxes,
       ),
-      _KPIData(
+      KPIData(
         title: 'Valor Inventario',
         value: '€128k',
         unit: '',
         color: AppTheme.secondary,
         icon: FontAwesomeIcons.moneyBill,
       ),
-      _KPIData(
+      KPIData(
         title: 'Rotación',
         value: '85%',
         unit: '',
@@ -160,7 +165,7 @@ class ProductsDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildKPIItem(_KPIData kpi) {
+  Widget _buildKPIItem(KPIData kpi) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -202,7 +207,7 @@ class ProductsDashboardScreen extends StatelessWidget {
                         color: AppTheme.onSurface,
                       ),
                     ),
-                    if (kpi.unit.isNotEmpty)
+                    if ((kpi.unit?? '').isNotEmpty)
                       TextSpan(
                         text: ' ${kpi.unit}',
                         style: TextStyle(
@@ -235,11 +240,11 @@ class ProductsDashboardScreen extends StatelessWidget {
 
   Widget _buildTopSellingProducts() {
     final products = [
-      _ProductData(name: 'Fertilizante Orgánico N-P-K', units: 12400, percentage: 95),
-      _ProductData(name: 'Semillas de Maíz Híbrido', units: 9850, percentage: 78),
-      _ProductData(name: 'Sustrato Universal Premium', units: 7200, percentage: 60),
-      _ProductData(name: 'Fungicida Sistémico 1L', units: 5400, percentage: 45),
-      _ProductData(name: 'Herramienta Podadora Pro', units: 3900, percentage: 32),
+      TopProduct(name: 'Fertilizante Orgánico N-P-K', units: 12400, percentage: 95),
+      TopProduct(name: 'Semillas de Maíz Híbrido', units: 9850, percentage: 78),
+      TopProduct(name: 'Sustrato Universal Premium', units: 7200, percentage: 60),
+      TopProduct(name: 'Fungicida Sistémico 1L', units: 5400, percentage: 45),
+      TopProduct(name: 'Herramienta Podadora Pro', units: 3900, percentage: 32),
     ];
 
     return Container(
@@ -289,7 +294,7 @@ class ProductsDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductBar(_ProductData product) {
+  Widget _buildProductBar(TopProduct product) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -376,7 +381,7 @@ class ProductsDashboardScreen extends StatelessWidget {
             // Anillo exterior (L - 52%)
             CustomPaint(
               size: const Size(160, 160),
-              painter: DonutSegmentPainter(
+              painter: DonutChartPainter.single(
                 percentage: 52,
                 color: AppTheme.primary,
                 strokeWidth: 12,
@@ -385,7 +390,7 @@ class ProductsDashboardScreen extends StatelessWidget {
             // Anillo medio (M - 30%)
             CustomPaint(
               size: const Size(120, 120),
-              painter: DonutSegmentPainter(
+              painter: DonutChartPainter.single(
                 percentage: 30,
                 color: AppTheme.secondary,
                 strokeWidth: 10,
@@ -394,7 +399,7 @@ class ProductsDashboardScreen extends StatelessWidget {
             // Anillo interior (S - 18%)
             CustomPaint(
               size: const Size(80, 80),
-              painter: DonutSegmentPainter(
+              painter: DonutChartPainter.single(
                 percentage: 18,
                 color: AppTheme.tertiary,
                 strokeWidth: 8,
@@ -424,9 +429,9 @@ class ProductsDashboardScreen extends StatelessWidget {
 
   Widget _buildSizeLegend() {
     final sizes = [
-      _SizeData(size: 'L (25kg)', percentage: '52%', color: AppTheme.primary),
-      _SizeData(size: 'M (10kg)', percentage: '30%', color: AppTheme.secondary),
-      _SizeData(size: 'S (5kg)', percentage: '18%', color: AppTheme.tertiary),
+      SizeData(size: 'L (25kg)', percentage: '52%', color: AppTheme.primary),
+      SizeData(size: 'M (10kg)', percentage: '30%', color: AppTheme.secondary),
+      SizeData(size: 'S (5kg)', percentage: '18%', color: AppTheme.tertiary),
     ];
 
     return Column(
@@ -619,9 +624,9 @@ class ProductsDashboardScreen extends StatelessWidget {
 
   Widget _buildLowRotationProducts() {
     final products = [
-      _LowRotationData(name: 'Azada Forjada Pro', stock: 142, days: 120, isCritical: true),
-      _LowRotationData(name: 'Abono Cítricos 5kg', stock: 85, days: 95, isCritical: true),
-      _LowRotationData(name: 'Aspersor G3', stock: 320, days: 75, isCritical: false),
+      LowRotationData(name: 'Azada Forjada Pro', stock: 142, days: 120, isCritical: true),
+      LowRotationData(name: 'Abono Cítricos 5kg', stock: 85, days: 95, isCritical: true),
+      LowRotationData(name: 'Aspersor G3', stock: 320, days: 75, isCritical: false),
     ];
 
     return Container(
@@ -658,7 +663,7 @@ class ProductsDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLowRotationItem(_LowRotationData product) {
+  Widget _buildLowRotationItem(LowRotationData product) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
@@ -737,97 +742,4 @@ class ProductsDashboardScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// Modelo de datos para KPI
-class _KPIData {
-  final String title;
-  final String value;
-  final String unit;
-  final Color color;
-  final FaIconData icon;
-
-  _KPIData({
-    required this.title,
-    required this.value,
-    required this.unit,
-    required this.color,
-    required this.icon,
-  });
-}
-
-// Modelo de datos para productos top
-class _ProductData {
-  final String name;
-  final int units;
-  final double percentage;
-
-  _ProductData({
-    required this.name,
-    required this.units,
-    required this.percentage,
-  });
-}
-
-// Modelo de datos para tamaños
-class _SizeData {
-  final String size;
-  final String percentage;
-  final Color color;
-
-  _SizeData({
-    required this.size,
-    required this.percentage,
-    required this.color,
-  });
-}
-
-// Modelo de datos para baja rotación
-class _LowRotationData {
-  final String name;
-  final int stock;
-  final int days;
-  final bool isCritical;
-
-  _LowRotationData({
-    required this.name,
-    required this.stock,
-    required this.days,
-    required this.isCritical,
-  });
-}
-
-// Painter para el gráfico de dona
-class DonutSegmentPainter extends CustomPainter {
-  final double percentage;
-  final Color color;
-  final double strokeWidth;
-
-  DonutSegmentPainter({
-    required this.percentage,
-    required this.color,
-    required this.strokeWidth,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final sweepAngle = (percentage / 100) * 360;
-
-    canvas.drawArc(
-      rect,
-      -90 * (3.14159 / 180),
-      sweepAngle * (3.14159 / 180),
-      false,
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

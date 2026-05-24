@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/models/category_data_model.dart';
+import 'package:pedidos/models/expense_data_model.dart';
+import 'package:pedidos/screens/painters/donut_chart_painter.dart';
+import 'package:pedidos/enums/chart_type_model.dart';
 
 class ExpensesDashboardScreen extends StatefulWidget {
   const ExpensesDashboardScreen({super.key});
@@ -318,10 +322,10 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
 
   Widget _buildChartSection() {
     final categories = [
-      _CategoryData(name: 'Logística', amount: 4357.50, percentage: 35, color: const Color(0xFF289045)),
-      _CategoryData(name: 'Marketing', amount: 3112.50, percentage: 25, color: const Color(0xFF1B5E20)),
-      _CategoryData(name: 'Servicios Públicos', amount: 3112.50, percentage: 25, color: const Color(0xFFA3E14C)),
-      _CategoryData(name: 'Suministros', amount: 1867.50, percentage: 15, color: const Color(0xFFBECABB)),
+      CategoryData(name: 'Logística', amount: 4357.50, percentage: 35, color: const Color(0xFF289045)),
+      CategoryData(name: 'Marketing', amount: 3112.50, percentage: 25, color: const Color(0xFF1B5E20)),
+      CategoryData(name: 'Servicios Públicos', amount: 3112.50, percentage: 25, color: const Color(0xFFA3E14C)),
+      CategoryData(name: 'Suministros', amount: 1867.50, percentage: 15, color: const Color(0xFFBECABB)),
     ];
 
     return LayoutBuilder(
@@ -436,7 +440,7 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
     );
   }
 
-  Widget _buildCategoryItem(_CategoryData category) {
+  Widget _buildCategoryItem(CategoryData category) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
@@ -478,7 +482,7 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
     );
   }
 
-  Widget _buildDonutChart(List<_CategoryData> categories) {
+  Widget _buildDonutChart(List<CategoryData> categories) {
     // Construir el gradiente cónico para el donut
     return Center(
       child: SizedBox(
@@ -490,7 +494,12 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
             // Donut chart usando CustomPaint
             CustomPaint(
               size: const Size(200, 200),
-              painter: DonutChartPainter(categories),
+              painter: DonutChartPainter(
+                percentages: [70, 20, 10],  // Lista de porcentajes
+                colors: [AppTheme.primary, AppTheme.secondary, AppTheme.error], // Lista de colores
+                chartType: ChartType.donut,
+                strokeWidth: 12,
+              ),
             ),
             // Centro del donut
             Container(
@@ -618,28 +627,28 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
   // Tabla de Gastos Mayores
   Widget _buildLargestExpensesSection() {
     final expenses = [
-      _ExpenseData(
+      ExpenseData(
         title: 'Envío Continental Logística',
         category: 'Logística',
         date: '12 Oct 2023',
         amount: 2450.00,
         icon: FontAwesomeIcons.truck,
       ),
-      _ExpenseData(
+      ExpenseData(
         title: 'Campaña Digital Q4',
         category: 'Marketing',
         date: '08 Oct 2023',
         amount: 1800.00,
         icon: FontAwesomeIcons.bullhorn,
       ),
-      _ExpenseData(
+      ExpenseData(
         title: 'Suministro Eléctrico Planta 2',
         category: 'Servicios',
         date: '05 Oct 2023',
         amount: 1200.00,
         icon: FontAwesomeIcons.bolt,
       ),
-      _ExpenseData(
+      ExpenseData(
         title: 'Renovación Hardware Oficina',
         category: 'Suministros',
         date: '02 Oct 2023',
@@ -937,69 +946,4 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
       ],
     );
   }
-}
-
-// Modelo de datos para categorías
-class _CategoryData {
-  final String name;
-  final double amount;
-  final int percentage;
-  final Color color;
-
-  _CategoryData({
-    required this.name,
-    required this.amount,
-    required this.percentage,
-    required this.color,
-  });
-}
-
-// Modelo de datos para gastos
-class _ExpenseData {
-  final String title;
-  final String category;
-  final String date;
-  final double amount;
-  final FaIconData icon;
-
-  _ExpenseData({
-    required this.title,
-    required this.category,
-    required this.date,
-    required this.amount,
-    required this.icon,
-  });
-}
-
-// Painter para el gráfico de dona
-class DonutChartPainter extends CustomPainter {
-  final List<_CategoryData> categories;
-
-  DonutChartPainter(this.categories);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    double startAngle = -90; // Empezar desde arriba
-
-    for (var category in categories) {
-      final sweepAngle = (category.percentage / 100) * 360;
-      paint.color = category.color;
-      canvas.drawArc(
-        rect,
-        startAngle * (3.14159 / 180),
-        sweepAngle * (3.14159 / 180),
-        true,
-        paint,
-      );
-      startAngle += sweepAngle;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

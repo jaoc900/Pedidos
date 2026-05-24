@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/enums/device_type_enum.dart';
+import 'package:pedidos/models/login_device_model.dart';
+import 'package:pedidos/models/login_history_model.dart';
+import 'package:pedidos/enums/login_status_enum.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key});
@@ -1092,43 +1096,4 @@ class _SecurityScreenState extends State<SecurityScreen> {
       ),
     );
   }
-}
-
-enum DeviceType { mobile, tablet, desktop }
-enum LoginStatus { success, failed }
-
-class LoginDevice {
-  final String id;
-  final String name;
-  final String location;
-  final DateTime lastActive;
-  final bool isCurrent;
-  final DeviceType deviceType;
-
-  LoginDevice({
-    required this.id,
-    required this.name,
-    required this.location,
-    required this.lastActive,
-    required this.isCurrent,
-    required this.deviceType,
-  });
-}
-
-class LoginHistory {
-  final String id;
-  final DateTime date;
-  final String location;
-  final String device;
-  final String ip;
-  final LoginStatus status;
-
-  LoginHistory({
-    required this.id,
-    required this.date,
-    required this.location,
-    required this.device,
-    required this.ip,
-    required this.status,
-  });
 }

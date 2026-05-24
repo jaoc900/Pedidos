@@ -1,0 +1,1 @@
+enum ViewMode { list, largeIcons, mediumIcons, smallIcons }

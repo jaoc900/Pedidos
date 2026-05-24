@@ -1,0 +1,1 @@
+enum EmployeeStatus { active, inactive }
