@@ -4,6 +4,8 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/upgrade_flow_screen.dart';
 import 'package:pedidos/screens/painters/donut_chart_painter.dart';
 import 'package:pedidos/models/transaction_model.dart';
+import 'package:pedidos/screens/payment_checkout_screen.dart';
+import 'package:pedidos/screens/membership_history_screen.dart';
 
 class MembershipFlowScreen extends StatelessWidget {
   const MembershipFlowScreen({super.key});
@@ -28,7 +30,7 @@ class MembershipFlowScreen extends StatelessWidget {
                       _buildHeaderSection(context),
                       const SizedBox(height: AppTheme.spacingXl),
                       // Bento Grid Dashboard
-                      _buildBentoGrid(),
+                      _buildBentoGrid(context),
                       const SizedBox(height: AppTheme.spacingXl),
                       // Promotion / Action Section
                       _buildPromotionSection(),
@@ -175,10 +177,15 @@ class MembershipFlowScreen extends StatelessWidget {
 
         return Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppTheme.spacingLg,
+              runSpacing: AppTheme.spacingMd,
               children: [
-                Expanded(
+                // Texto a la izquierda
+                SizedBox(
+                  width: isDesktop ? 400 : double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -201,13 +208,13 @@ class MembershipFlowScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isDesktop) ...[
-                  const SizedBox(width: AppTheme.spacingLg),
+                // Botones a la derecha
+                if (isDesktop)
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: 160,
+                        width: 140,
                         height: 48,
                         child: OutlinedButton.icon(
                           onPressed: () {},
@@ -224,15 +231,10 @@ class MembershipFlowScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: AppTheme.spacingMd),
                       SizedBox(
-                        width: 160,
+                        width: 140,
                         height: 48,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const UpgradeFlowScreen()),
-                            );
-                          },
+                          onPressed: () {},
                           icon: const FaIcon(FontAwesomeIcons.arrowUp, size: 18),
                           label: const Text('Upgrade'),
                           style: ElevatedButton.styleFrom(
@@ -247,7 +249,6 @@ class MembershipFlowScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
               ],
             ),
             if (!isDesktop) ...[
@@ -262,7 +263,6 @@ class MembershipFlowScreen extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.loginButtonColor,
                         side: BorderSide(color: AppTheme.loginButtonColor, width: 1.5),
-                        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
                       ),
                     ),
                   ),
@@ -275,7 +275,6 @@ class MembershipFlowScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.loginButtonColor,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
                       ),
                     ),
                   ),
@@ -288,7 +287,7 @@ class MembershipFlowScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBentoGrid() {
+  Widget _buildBentoGrid(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth > 900;
@@ -296,23 +295,21 @@ class MembershipFlowScreen extends StatelessWidget {
         if (isDesktop) {
           return Column(
             children: [
-              // Fila 1: Plan Card + Subscription Status
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     flex: 8,
-                    child: _buildPlanCard(),
+                    child: _buildPlanCard(context),
                   ),
                   const SizedBox(width: AppTheme.spacingLg),
                   Expanded(
                     flex: 4,
-                    child: _buildSubscriptionStatus(),
+                    child: _buildSubscriptionStatus(context),
                   ),
                 ],
               ),
               const SizedBox(height: AppTheme.spacingLg),
-              // Fila 2: Feature Usage + Recent Transactions
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -332,9 +329,9 @@ class MembershipFlowScreen extends StatelessWidget {
         } else {
           return Column(
             children: [
-              _buildPlanCard(),
+              _buildPlanCard(context),
               const SizedBox(height: AppTheme.spacingLg),
-              _buildSubscriptionStatus(),
+              _buildSubscriptionStatus(context),
               const SizedBox(height: AppTheme.spacingLg),
               _buildFeatureUsage(),
               const SizedBox(height: AppTheme.spacingLg),
@@ -346,7 +343,7 @@ class MembershipFlowScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlanCard() {
+  Widget _buildPlanCard(BuildContext context) {
     return Container(
       height: 320,
       padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -459,12 +456,16 @@ class MembershipFlowScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Botón CORREGIDO - con tamaño fijo
                   SizedBox(
                     width: 140,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const UpgradeFlowScreen()),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.loginButtonColor,
                         foregroundColor: Colors.white,
@@ -484,7 +485,7 @@ class MembershipFlowScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubscriptionStatus() {
+  Widget _buildSubscriptionStatus(BuildContext context) {
     return Container(
       height: 320,
       padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -572,7 +573,17 @@ class MembershipFlowScreen extends StatelessWidget {
           const SizedBox(height: AppTheme.spacingLg),
           Center(
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PaymentCheckoutScreen(
+                      planName: 'Plan Growth Pro',
+                      planPrice: 299.00,
+                    ),
+                  ),
+                );
+              },
               style: TextButton.styleFrom(
                 foregroundColor: AppTheme.primary,
               ),
@@ -967,7 +978,6 @@ class MembershipFlowScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Botón CORREGIDO
                 SizedBox(
                   width: 220,
                   height: 52,
