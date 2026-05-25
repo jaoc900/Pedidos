@@ -13,6 +13,7 @@ import 'package:pedidos/screens/payment_calendar_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
 import 'package:pedidos/screens/budget_comparison_screen.dart';
 import 'package:pedidos/screens/employees_screen.dart';
+import 'package:pedidos/screens/membership_flow_screen.dart'; 
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -69,6 +70,23 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
+                  // Sección de Membresía (NUEVA)
+                  _buildSectionHeader('Membresía', FontAwesomeIcons.crown),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  _buildMenuItem(
+                    icon: FontAwesomeIcons.crown,
+                    title: 'Flujo de Membresía',
+                    subtitle: 'Planes, beneficios y suscripción',
+                    badge: 'NUEVO',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MembershipFlowScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppTheme.spacingXl),
+
                   // Sección de Configuración
                   _buildSectionHeader('Configuración', FontAwesomeIcons.gear),
                   const SizedBox(height: AppTheme.spacingMd),
@@ -118,7 +136,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
-// Sección de Personal (nueva)
+                  // Sección de Personal
                   _buildSectionHeader('Personal', FontAwesomeIcons.usersGear),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(
@@ -382,7 +400,7 @@ class MoreScreen extends StatelessWidget {
             vertical: 4,
           ),
           decoration: BoxDecoration(
-            color: AppTheme.error,
+            color: badge == 'NUEVO' ? AppTheme.primary : AppTheme.error,
             borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
           ),
           child: Text(
