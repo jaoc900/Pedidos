@@ -6,6 +6,7 @@ import 'package:pedidos/screens/painters/donut_chart_painter.dart';
 import 'package:pedidos/models/transaction_model.dart';
 import 'package:pedidos/screens/payment_checkout_screen.dart';
 import 'package:pedidos/screens/membership_history_screen.dart';
+import 'package:pedidos/screens/upgrade_flow_screen.dart';
 
 class MembershipFlowScreen extends StatelessWidget {
   const MembershipFlowScreen({super.key});
@@ -100,70 +101,6 @@ class MembershipFlowScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.bell,
-                      size: 20,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.questionCircle,
-                      size: 20,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.primary, width: 2),
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuBSBazmpFD_yQpchrqrAxcS7R5q80EOZGwO5V5SZyWClx_tnKSdhaW1eusD83UYyIkbPg-IoYwbIxRzmaCRwpWkrVx7m-ZyAAZag6YFNdvWobmeoNHLNwAaYffs3SMvLH1sEK8qehK_f04wK_TWUjRQMXjWNEV-dhq2ayxgJf3TgLMGN3KZ-W-ne0nxdHQOzYhDZE-TS88eQR1IAnU2iXVKcXkrSDtuCjH3MPKg7lE2rGuwvv1274EA0LHn_UUPusQ5Q2MXv5avwzDO',
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppTheme.primaryContainer,
-                          child: const Center(
-                            child: FaIcon(
-                              FontAwesomeIcons.user,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -217,7 +154,14 @@ class MembershipFlowScreen extends StatelessWidget {
                         width: 140,
                         height: 48,
                         child: OutlinedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MembershipHistoryScreen(),
+                              ),
+                            );
+                          },
                           icon: const FaIcon(FontAwesomeIcons.clock, size: 18),
                           label: const Text('Historial'),
                           style: OutlinedButton.styleFrom(
@@ -234,7 +178,14 @@ class MembershipFlowScreen extends StatelessWidget {
                         width: 140,
                         height: 48,
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UpgradeFlowScreen(),
+                              ),
+                            );
+                          },
                           icon: const FaIcon(FontAwesomeIcons.arrowUp, size: 18),
                           label: const Text('Upgrade'),
                           style: ElevatedButton.styleFrom(
@@ -320,7 +271,7 @@ class MembershipFlowScreen extends StatelessWidget {
                   const SizedBox(width: AppTheme.spacingLg),
                   Expanded(
                     flex: 8,
-                    child: _buildRecentTransactions(),
+                    child: _buildRecentTransactions(context),
                   ),
                 ],
               ),
@@ -335,7 +286,7 @@ class MembershipFlowScreen extends StatelessWidget {
               const SizedBox(height: AppTheme.spacingLg),
               _buildFeatureUsage(),
               const SizedBox(height: AppTheme.spacingLg),
-              _buildRecentTransactions(),
+              _buildRecentTransactions(context),
             ],
           );
         }
@@ -758,7 +709,7 @@ class MembershipFlowScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentTransactions() {
+  Widget _buildRecentTransactions(BuildContext context) {
     final transactions = [
       TransactionData(
         name: 'Factura INV-2024-009',
@@ -796,6 +747,7 @@ class MembershipFlowScreen extends StatelessWidget {
 
     return Container(
       height: 420,
+      width: double.infinity, // Ocupa todo el ancho
       padding: const EdgeInsets.all(AppTheme.spacingXl),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -846,64 +798,192 @@ class MembershipFlowScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppTheme.spacingLg),
+          // Tabla que ocupa todo el ancho
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columnSpacing: 24,
-                headingRowColor: WidgetStateProperty.resolveWith(
-                      (states) => AppTheme.surfaceContainerLow,
-                ),
-                columns: const [
-                  DataColumn(label: Text('Factura', style: TextStyle(fontWeight: FontWeight.w600))),
-                  DataColumn(label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.w600))),
-                  DataColumn(label: Text('Monto', style: TextStyle(fontWeight: FontWeight.w600))),
-                  DataColumn(label: Text('Estado', style: TextStyle(fontWeight: FontWeight.w600))),
-                  DataColumn(label: Text('', style: TextStyle(fontWeight: FontWeight.w600))),
-                ],
-                rows: transactions.map((t) {
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600))),
-                      DataCell(Text(t.time)),
-                      DataCell(Text('\$${t.amount.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600))),
-                      DataCell(
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: t.statusColor.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                          ),
-                          child: Text(
-                            t.status,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: t.statusColor,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isSmallScreen = constraints.maxWidth < 500;
+
+                if (isSmallScreen) {
+                  // Vista de tarjetas para móvil
+                  return ListView.separated(
+                    itemCount: transactions.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: AppTheme.spacingMd),
+                    itemBuilder: (context, index) {
+                      final t = transactions[index];
+                      return Container(
+                        padding: const EdgeInsets.all(AppTheme.spacingLg),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  t.name,
+                                  style: const TextStyle(
+                                    fontSize: AppTheme.fontSizeLabel,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: t.statusColor.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
+                                  ),
+                                  child: Text(
+                                    t.status,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: t.statusColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(height: AppTheme.spacingSm),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  t.time,
+                                  style: TextStyle(
+                                    fontSize: AppTheme.fontSizeSmall,
+                                    color: AppTheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                Text(
+                                  '\$${t.amount.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: AppTheme.fontSizeBody,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppTheme.spacingSm),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.eye,
+                                  size: 16,
+                                  color: AppTheme.primary,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      DataCell(
-                        IconButton(
-                          icon: FaIcon(
-                            FontAwesomeIcons.eye,
-                            size: 16,
-                            color: AppTheme.primary,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   );
-                }).toList(),
-              ),
+                }
+
+                // Tabla completa para desktop/tablet
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: constraints.maxWidth,
+                    ),
+                    child: DataTable(
+                      columnSpacing: 32,
+                      headingRowColor: WidgetStateProperty.resolveWith(
+                            (states) => AppTheme.surfaceContainerLow,
+                      ),
+                      columns: const [
+                        DataColumn(
+                          label: Text('Factura', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text('Monto', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text('Estado', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text('', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                      rows: transactions.map((t) {
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Text(
+                                t.name,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            DataCell(Text(t.time)),
+                            DataCell(
+                              Text(
+                                '\$${t.amount.toStringAsFixed(2)}',
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingSm,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: t.statusColor.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
+                                ),
+                                child: Text(
+                                  t.status,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: t.statusColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.eye,
+                                  size: 16,
+                                  color: AppTheme.primary,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: AppTheme.spacingLg),
           Center(
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MembershipHistoryScreen(),
+                  ),
+                );
+              },
               style: TextButton.styleFrom(
                 foregroundColor: AppTheme.primary,
               ),
@@ -924,6 +1004,7 @@ class MembershipFlowScreen extends StatelessWidget {
 
   Widget _buildPromotionSection() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.spacingXl),
       decoration: BoxDecoration(
         color: AppTheme.inverseSurface,
@@ -935,49 +1016,56 @@ class MembershipFlowScreen extends StatelessWidget {
 
           if (isDesktop) {
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppTheme.tertiary,
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                      ),
-                      child: const Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.rocket,
-                          size: 40,
-                          color: Colors.white,
+                // Contenido izquierdo - ocupa todo el espacio disponible
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppTheme.tertiary,
+                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacingLg),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '¿Necesitas más potencia?',
-                          style: TextStyle(
-                            fontSize: AppTheme.fontSizeTitle,
-                            fontWeight: FontWeight.w700,
+                        child: const Center(
+                          child: FaIcon(
+                            FontAwesomeIcons.rocket,
+                            size: 40,
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Desbloquea usuarios ilimitados y soporte prioritario 24/7 con el Plan Enterprise.',
-                          style: TextStyle(
-                            fontSize: AppTheme.fontSizeBody,
-                            color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
-                          ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingLg),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '¿Necesitas más potencia?',
+                              style: TextStyle(
+                                fontSize: AppTheme.fontSizeTitle,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Desbloquea usuarios ilimitados y soporte prioritario 24/7 con el Plan Enterprise.',
+                              style: TextStyle(
+                                fontSize: AppTheme.fontSizeBody,
+                                color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: AppTheme.spacingLg),
+                // Botón derecho - tamaño fijo
                 SizedBox(
                   width: 220,
                   height: 52,
