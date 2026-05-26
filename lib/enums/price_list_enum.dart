@@ -1,0 +1,1 @@
+enum PriceListStatus { active, inactive }

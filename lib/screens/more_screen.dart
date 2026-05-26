@@ -16,6 +16,7 @@ import 'package:pedidos/screens/employees_screen.dart';
 import 'package:pedidos/screens/membership_flow_screen.dart';
 import 'package:pedidos/screens/payment_methods_screen.dart';
 import 'package:pedidos/screens/expense_categories_screen.dart';
+import 'package:pedidos/screens/price_list_screen.dart'; 
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -72,7 +73,23 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
-                  // Sección de Finanzas (NUEVA)
+                  // Sección de Productos (NUEVA)
+                  _buildSectionHeader('Productos', FontAwesomeIcons.box),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  _buildMenuItem(
+                    icon: FontAwesomeIcons.tags,
+                    title: 'Lista de Precios',
+                    subtitle: 'Consulta y gestiona precios de productos',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PriceListScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppTheme.spacingXl),
+
+                  // Sección de Finanzas
                   _buildSectionHeader('Finanzas', FontAwesomeIcons.moneyBill),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(
