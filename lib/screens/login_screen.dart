@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/register_screen.dart';
 import 'package:pedidos/screens/home.dart';
+import 'package:pedidos/screens/terms_conditions_screen.dart';
+import 'package:pedidos/screens/privacy_policy_screen.dart';
+import 'package:pedidos/screens/contact_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -328,7 +331,12 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const TermsConditionsScreen()),
+            );
+          },
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey.shade500,
             textStyle: const TextStyle(fontSize: 12),
@@ -338,7 +346,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(width: 16),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
+            );
+          },
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey.shade500,
             textStyle: const TextStyle(fontSize: 12),
@@ -348,7 +361,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(width: 16),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ContactScreen()),
+            );
+          },
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey.shade500,
             textStyle: const TextStyle(fontSize: 12),
