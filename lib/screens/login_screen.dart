@@ -4,7 +4,7 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/register_screen.dart';
 import 'package:pedidos/screens/admin_dashboard.dart';
 import 'package:pedidos/screens/admin_home_screen.dart';
-import 'package:pedidos/screens/employee_home.dart';
+import 'package:pedidos/screens/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -264,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const AdminHome(),
+                builder: (context) => const EmployeeHome(),
               ),
             );
           },
