@@ -13,7 +13,9 @@ import 'package:pedidos/screens/payment_calendar_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
 import 'package:pedidos/screens/budget_comparison_screen.dart';
 import 'package:pedidos/screens/employees_screen.dart';
-import 'package:pedidos/screens/membership_flow_screen.dart'; 
+import 'package:pedidos/screens/membership_flow_screen.dart';
+import 'package:pedidos/screens/payment_methods_screen.dart';
+import 'package:pedidos/screens/expense_categories_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -70,7 +72,34 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
-                  // Sección de Membresía (NUEVA)
+                  // Sección de Finanzas (NUEVA)
+                  _buildSectionHeader('Finanzas', FontAwesomeIcons.moneyBill),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  _buildMenuItem(
+                    icon: FontAwesomeIcons.creditCard,
+                    title: 'Métodos de Pago',
+                    subtitle: 'Gestiona tus tarjetas y formas de pago',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PaymentMethodsScreen()),
+                      );
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: FontAwesomeIcons.tags,
+                    title: 'Categorías de Gastos',
+                    subtitle: 'Organiza tus gastos por categorías',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ExpenseCategoriesScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppTheme.spacingXl),
+
+                  // Sección de Membresía
                   _buildSectionHeader('Membresía', FontAwesomeIcons.crown),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(

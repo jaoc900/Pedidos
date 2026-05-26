@@ -1,4 +1,5 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ExpenseData {
   final String title;
@@ -15,3 +16,4 @@ class ExpenseData {
     required this.icon,
   });
 }
+
