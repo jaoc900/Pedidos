@@ -66,6 +66,7 @@ class AppTheme {
   static const double borderRadiusMd = 12;
   static const double borderRadiusLg = 16;
   static const double borderRadiusXl = 20;
+  static const double borderRadiusXXl = 40;
   static const double borderRadiusFull = 9999;
 
   // Alturas de touch target mínimo (accesibilidad)

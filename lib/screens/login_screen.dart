@@ -6,6 +6,7 @@ import 'package:pedidos/screens/home.dart';
 import 'package:pedidos/screens/terms_conditions_screen.dart';
 import 'package:pedidos/screens/privacy_policy_screen.dart';
 import 'package:pedidos/screens/contact_screen.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -79,25 +80,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Stack(
       children: [
         Positioned(
-          top: 0,
-          right: 0,
+          top: 40,
+          right: 40,
           child: Opacity(
             opacity: 0.05,
             child: FaIcon(
-              FontAwesomeIcons.seedling,
-              size: MediaQuery.of(context).size.width * 0.8,
+              FontAwesomeIcons.fileInvoice,
+              size: MediaQuery.of(context).size.width * 0.3,
               color: AppTheme.primary,
             ),
           ),
         ),
         Positioned(
-          bottom: 0,
-          left: 0,
+          bottom: 40,
+          left: 40,
           child: Opacity(
             opacity: 0.05,
             child: FaIcon(
-              FontAwesomeIcons.leaf,
-              size: MediaQuery.of(context).size.width * 0.8,
+              FontAwesomeIcons.truck,
+              size: MediaQuery.of(context).size.width * 0.3,
               color: AppTheme.primary,
             ),
           ),
@@ -165,55 +166,38 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Campo de email
-        TextFormField(
+        CustomTextField(
           controller: _emailController,
+          label: 'Correo electrónico',
+          hint: 'nombre@empresa.com',
+          icon: FontAwesomeIcons.envelope,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
-          decoration: InputDecoration(
-            labelText: 'Correo electrónico',
-            labelStyle: TextStyle(
-              color: AppTheme.onSurfaceVariant,
-            ),
-            prefixIcon: FaIcon(
-              FontAwesomeIcons.envelope,
-              size: 20,
-              color: AppTheme.outline,
-            ),
-            hintText: 'nombre@empresa.com',
-          ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppTheme.spacingLg),
         // Campo de contraseña
-        TextFormField(
+        CustomTextField(
           controller: _passwordController,
+          label: 'Contraseña',
+          hint: '••••••••',
+          icon: FontAwesomeIcons.lock,
+          borderRadius: AppTheme.borderRadiusXXl,
           obscureText: _obscurePassword,
           textInputAction: TextInputAction.done,
-          decoration: InputDecoration(
-            labelText: 'Contraseña',
-            labelStyle: TextStyle(
-              color: AppTheme.onSurfaceVariant,
-            ),
-            prefixIcon: FaIcon(
-              FontAwesomeIcons.lock,
-              size: 20,
+          suffixIcon: IconButton(
+            icon: FaIcon(
+              _obscurePassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
+              size: 18,
               color: AppTheme.outline,
             ),
-            suffixIcon: IconButton(
-              icon: FaIcon(
-                _obscurePassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                size: 18,
-                color: AppTheme.outline,
-              ),
-              onPressed: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-            hintText: '••••••••',
+            onPressed: () {
+              setState(() {
+                _obscurePassword = !_obscurePassword;
+              });
+            },
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingSm),
         // Olvidaste contraseña
         Align(
           alignment: Alignment.centerRight,
@@ -228,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Text('¿Olvidaste tu contraseña?'),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingSm),
         // Recordarme
         Row(
           children: [
@@ -258,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppTheme.spacingXl),
         // Botón de login
         ElevatedButton(
           onPressed: () {
@@ -286,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppTheme.spacingXl),
         // Link de registro
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -302,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RegisterScreen(), // Asegúrate de importar RegisterScreen
+                    builder: (context) => const RegisterScreen(),
                   ),
                 );
               },
@@ -319,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppTheme.spacingXl),
         // Footer
         _buildFooter(),
       ],

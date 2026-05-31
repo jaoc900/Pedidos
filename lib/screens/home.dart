@@ -29,7 +29,7 @@ class EmployeeHome extends StatefulWidget {
 
 class _EmployeeHomeState extends State<EmployeeHome> {
   // TODO: Obtener el rol del usuario logueado desde el sistema de autenticación
-  UserRole _currentUserRole = UserRole.admin;
+  UserRole _currentUserRole = UserRole.seller;
   int _currentIndex = 0;
 
   // Pantallas principales según rol
