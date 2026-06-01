@@ -20,16 +20,16 @@ import 'package:pedidos/models/navItem_model.dart';
 import 'package:pedidos/models/payment_data_model.dart';
 import 'package:pedidos/models/inventory_alert_model.dart';
 
-class EmployeeHome extends StatefulWidget {
-  const EmployeeHome({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<EmployeeHome> createState() => _EmployeeHomeState();
+  State<Home> createState() => _HomeState();
 }
 
-class _EmployeeHomeState extends State<EmployeeHome> {
+class _HomeState extends State<Home> {
   // TODO: Obtener el rol del usuario logueado desde el sistema de autenticación
-  UserRole _currentUserRole = UserRole.seller;
+  UserRole _currentUserRole = UserRole.admin;
   int _currentIndex = 0;
 
   // Pantallas principales según rol

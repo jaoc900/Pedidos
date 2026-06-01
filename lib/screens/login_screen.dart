@@ -7,6 +7,7 @@ import 'package:pedidos/screens/terms_conditions_screen.dart';
 import 'package:pedidos/screens/privacy_policy_screen.dart';
 import 'package:pedidos/screens/contact_screen.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -171,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
           label: 'Correo electrónico',
           hint: 'nombre@empresa.com',
           icon: FontAwesomeIcons.envelope,
+          borderRadius: AppTheme.borderRadiusXXl,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
         ),
@@ -242,33 +244,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingXl),
-        // Botón de login
-        ElevatedButton(
+        PrimaryButton(
+          text: 'Ingresar',
+          borderRadius: AppTheme.borderRadiusXXl,
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const EmployeeHome(),
+                builder: (context) => const Home(),
               ),
             );
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.loginButtonColor,
-            foregroundColor: AppTheme.onPrimary,
-            minimumSize: const Size.fromHeight(56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text('Ingresar'),
-              SizedBox(width: 8),
-              FaIcon(FontAwesomeIcons.arrowRight, size: 16),
-            ],
-          ),
         ),
         const SizedBox(height: AppTheme.spacingXl),
         // Link de registro
