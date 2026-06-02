@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/models/supplier_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class SupplierDetailScreen extends StatefulWidget {
   final Supplier? supplier;
@@ -84,215 +86,179 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.arrowLeft, color: AppTheme.primary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          widget.supplier == null ? 'Nuevo Proveedor' : 'Editar Proveedor',
-          style: const TextStyle(
-            fontSize: AppTheme.fontSizeTitle,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.primary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: _isLoading ? null : _saveSupplier,
-            child: _isLoading
-                ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
-              ),
-            )
-                : const Text(
-              'Guardar',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primary,
+      body: Column(
+        children: [
+          // CustomTopAppBar
+          _buildTopAppBar(),
+          // Formulario
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Nombre del Proveedor
+                    CustomTextField(
+                      controller: _nameController,
+                      label: 'Nombre del Proveedor',
+                      hint: 'Ej. Agroinsumos S.A.',
+                      icon: FontAwesomeIcons.building,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingresa el nombre';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Persona de Contacto
+                    CustomTextField(
+                      controller: _contactController,
+                      label: 'Persona de Contacto',
+                      hint: 'Ej. Juan Pérez',
+                      icon: FontAwesomeIcons.user,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Teléfono
+                    CustomTextField(
+                      controller: _phoneController,
+                      label: 'Teléfono',
+                      hint: '+52 555 123 4567',
+                      icon: FontAwesomeIcons.phone,
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Correo Electrónico
+                    CustomTextField(
+                      controller: _emailController,
+                      label: 'Correo Electrónico',
+                      hint: 'ventas@proveedor.com',
+                      icon: FontAwesomeIcons.envelope,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      validator: (value) {
+                        if (value != null && value.isNotEmpty) {
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
+                          if (!emailRegex.hasMatch(value)) {
+                            return 'Ingresa un correo válido';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Dirección
+                    CustomTextField(
+                      controller: _addressController,
+                      label: 'Dirección',
+                      hint: 'Calle, Número, Ciudad...',
+                      icon: FontAwesomeIcons.locationDot,
+                      maxLines: 2,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Categoría
+                    CustomTextField(
+                      controller: _categoryController,
+                      label: 'Categoría',
+                      hint: 'Ej. Insumos, Herramientas, Semillas',
+                      icon: FontAwesomeIcons.tag,
+                      textInputAction: TextInputAction.next,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Días de Pago
+                    CustomTextField(
+                      controller: _paymentDaysController,
+                      label: 'Días de Pago',
+                      hint: '30',
+                      icon: FontAwesomeIcons.calendar,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Requerido';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Switch Activo
+                    SwitchListTile(
+                      title: const Text('Proveedor Activo'),
+                      subtitle: const Text('Permite realizar compras a este proveedor'),
+                      value: _isActive,
+                      onChanged: (value) {
+                        setState(() {
+                          _isActive = value;
+                        });
+                      },
+                      activeColor: AppTheme.primary,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    const SizedBox(height: AppTheme.spacingXl),
+                  ],
+                ),
               ),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildTextField(
-                controller: _nameController,
-                label: 'Nombre del Proveedor',
-                hint: 'Ej. Agroinsumos S.A.',
-                icon: FontAwesomeIcons.building,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa el nombre';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _contactController,
-                label: 'Persona de Contacto',
-                hint: 'Ej. Juan Pérez',
-                icon: FontAwesomeIcons.user,
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _phoneController,
-                label: 'Teléfono',
-                hint: '+52 555 123 4567',
-                icon: FontAwesomeIcons.phone,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _emailController,
-                label: 'Correo Electrónico',
-                hint: 'ventas@proveedor.com',
-                icon: FontAwesomeIcons.envelope,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    final emailRegex = RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    );
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Ingresa un correo válido';
-                    }
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _addressController,
-                label: 'Dirección',
-                hint: 'Calle, Número, Ciudad...',
-                icon: FontAwesomeIcons.locationDot,
-                maxLines: 2,
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _categoryController,
-                label: 'Categoría',
-                hint: 'Ej. Insumos, Herramientas, Semillas',
-                icon: FontAwesomeIcons.tag,
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              _buildTextField(
-                controller: _paymentDaysController,
-                label: 'Días de Pago',
-                hint: '30',
-                icon: FontAwesomeIcons.calendar,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Requerido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              SwitchListTile(
-                title: const Text('Proveedor Activo'),
-                subtitle: const Text('Permite realizar compras a este proveedor'),
-                value: _isActive,
-                onChanged: (value) {
-                  setState(() {
-                    _isActive = value;
-                  });
-                },
-                activeColor: AppTheme.primary,
-                contentPadding: EdgeInsets.zero,
-              ),
-              const SizedBox(height: AppTheme.spacingXl),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
+  Widget _buildTopAppBar() {
+    return CustomTopAppBar(
+      title: widget.supplier == null ? 'Nuevo Proveedor' : 'Editar Proveedor',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        TextButton(
+          onPressed: _isLoading ? null : _saveSupplier,
+          style: TextButton.styleFrom(
+            foregroundColor: AppTheme.primary,
+            minimumSize: Size.zero,
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
             ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
+          )
+              : const Text(
+            'Guardar',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
       ],
-    );
-  }
-
-  OutlineInputBorder _buildInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: BorderSide(color: AppTheme.outlineVariant, width: 1),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
 }
