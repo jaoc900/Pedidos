@@ -4,6 +4,9 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/supplier_model.dart';
 import 'package:pedidos/screens/supplier_detail_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class SuppliersScreen extends StatefulWidget {
   const SuppliersScreen({super.key});
@@ -15,6 +18,7 @@ class SuppliersScreen extends StatefulWidget {
 class _SuppliersScreenState extends State<SuppliersScreen> {
   String _searchQuery = '';
   String _selectedFilter = 'Todos';
+  final TextEditingController _searchController = TextEditingController();
 
   final List<String> _filters = ['Todos', 'Activos', 'Inactivos', 'Con Deuda'];
 
@@ -208,7 +212,9 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSearchAndFilters(),
+                  _buildSearchBar(),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  _buildFilters(),
                   const SizedBox(height: AppTheme.spacingLg),
                   _buildSuppliersList(),
                   const SizedBox(height: AppTheme.spacingXl),
@@ -235,191 +241,43 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Proveedores',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primary, width: 2),
-              ),
-              child: ClipOval(
-                child: Image.network(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuBv_6iZ29fNDT9qzWxDsmKL2dSfXzmNo85liJ-wV1CW46883sjJQuX3X8aGsUhAVXzWS5AYwbj34abpIVpbyp5eCmgHyMy6pBNZE6AQq5GVxBaKg3fCyVan7njjhkxfr--2xeOca6agoJ0C4TZtG5gjs2nOuw0PO1_miNOOt2H6piXw5LcfRZCcZjCAn6LgE2UjCVwBS9q58jPHjko4L9MEZJZLlYpZIbKSpfzomNeKBL-xaV4AAvCxceRExeU_xnc8m0arrCqrhdsX',
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: AppTheme.primaryContainer,
-                      child: const Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.user,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+        title: 'Proveedores',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+    );
+  }
+  Widget _buildSearchBar() {
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar proveedor por nombre, contacto o email...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
     );
   }
 
-  Widget _buildSearchAndFilters() {
-    return Column(
-      children: [
-        // Barra de búsqueda
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: 'Buscar proveedor por nombre, contacto o email...',
-              hintStyle: TextStyle(
-                color: AppTheme.outline,
-                fontSize: AppTheme.fontSizeBody,
-              ),
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                child: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  size: 20,
-                  color: AppTheme.outline,
-                ),
-              ),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.times,
-                  size: 16,
-                  color: AppTheme.outline,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _searchQuery = '';
-                  });
-                },
-              )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg,
-                vertical: AppTheme.spacingLg,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingLg),
-        // Filtros horizontales
-        SizedBox(
-          height: 44,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _filters.length,
-            separatorBuilder: (context, index) => const SizedBox(width: AppTheme.spacingMd),
-            itemBuilder: (context, index) {
-              final filter = _filters[index];
-              final isSelected = _selectedFilter == filter;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedFilter = filter;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingXl,
-                    vertical: AppTheme.spacingSm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppTheme.primary
-                        : AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                  ),
-                  child: Center(
-                    child: Text(
-                      filter,
-                      style: TextStyle(
-                        fontSize: AppTheme.fontSizeLabel,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? AppTheme.onPrimary
-                            : AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+  Widget _buildFilters() {
+    final filters = [
+      const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
+      const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
+      const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+    ];
+
+    return CustomFilterChipWithIcon(
+      filters: filters,
+      selectedFilter: _selectedFilter,
+      onFilterSelected: (filter) {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
     );
   }
 

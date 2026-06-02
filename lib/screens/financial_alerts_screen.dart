@@ -4,6 +4,7 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/enums/alert_type_enum.dart';
 import 'package:pedidos/enums/severity_alert_enum.dart';
 import 'package:pedidos/models/alert_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class FinancialAlertsScreen extends StatefulWidget {
   const FinancialAlertsScreen({super.key});
@@ -204,104 +205,15 @@ class _FinancialAlertsScreenState extends State<FinancialAlertsScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Alertas Financieras',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-                if (_unreadCount > 0)
-                  Container(
-                    margin: const EdgeInsets.only(left: AppTheme.spacingSm),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingSm,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.error,
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                    ),
-                    child: Text(
-                      '$_unreadCount',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.checkDouble,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                  onPressed: _unreadCount > 0 ? _markAllAsRead : null,
-                  tooltip: 'Marcar todas como leídas',
-                ),
-                IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.trashCan,
-                    size: 20,
-                    color: AppTheme.error,
-                  ),
-                  onPressed: _alerts.isNotEmpty ? _clearAllAlerts : null,
-                  tooltip: 'Eliminar todas',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+        title: 'Alertas financieras',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions:[
+          AppBarButton(
+              icon: FontAwesomeIcons.save,
+              onPressed: () =>{})
+        ]
     );
   }
 

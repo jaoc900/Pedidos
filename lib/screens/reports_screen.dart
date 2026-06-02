@@ -7,7 +7,6 @@ import 'package:pedidos/screens/expenses_dashboard_screen.dart';
 import 'package:pedidos/screens/orders_dashboard_screen.dart';
 import 'package:pedidos/screens/products_dashboard_screen.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
-import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});

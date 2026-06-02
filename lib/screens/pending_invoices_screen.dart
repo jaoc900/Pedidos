@@ -4,6 +4,9 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/enums/invoice_status_enum.dart';
 import 'package:pedidos/models/invoice_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
 
 class PendingInvoicesScreen extends StatefulWidget {
   const PendingInvoicesScreen({super.key});
@@ -13,6 +16,7 @@ class PendingInvoicesScreen extends StatefulWidget {
 }
 
 class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedFilter = 'Todas';
   final List<String> _filters = ['Todas', 'Próximas', 'Vencidas', 'Pagadas'];
@@ -262,7 +266,9 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
                   _buildSummaryCards(),
                   const SizedBox(height: AppTheme.spacingLg),
                   // Barra de búsqueda y filtros
-                  _buildSearchAndFilters(),
+                  _buildSearchBar(),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  _buildFilters(),
                   const SizedBox(height: AppTheme.spacingLg),
                   // Lista de facturas
                   _buildInvoicesList(),
@@ -277,84 +283,34 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Facturas Pendientes',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.fileExport,
-                  size: 20,
-                  color: AppTheme.primary,
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Exportar facturas'),
-                      backgroundColor: AppTheme.primary,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+        title: 'Facturas pendientes',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions:[
+          AppBarButton(
+              icon: FontAwesomeIcons.save,
+              onPressed: () =>{})
+        ]
+    );
+  }
+
+  Widget _buildFilters() {
+    final filters = [
+      const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
+      const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
+      const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+    ];
+
+    return CustomFilterChipWithIcon(
+      filters: filters,
+      selectedFilter: _selectedFilter,
+      onFilterSelected: (filter) {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
     );
   }
 
@@ -443,104 +399,18 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
     );
   }
 
-  Widget _buildSearchAndFilters() {
-    return Column(
-      children: [
-        // Barra de búsqueda
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: 'Buscar por proveedor, factura o categoría...',
-              hintStyle: TextStyle(
-                color: AppTheme.outline,
-                fontSize: AppTheme.fontSizeBody,
-              ),
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                child: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  size: 20,
-                  color: AppTheme.outline,
-                ),
-              ),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.times,
-                  size: 16,
-                  color: AppTheme.outline,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _searchQuery = '';
-                  });
-                },
-              )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg,
-                vertical: AppTheme.spacingLg,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingLg),
-        // Filtros
-        SizedBox(
-          height: 44,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _filters.length,
-            separatorBuilder: (context, index) => const SizedBox(width: AppTheme.spacingMd),
-            itemBuilder: (context, index) {
-              final filter = _filters[index];
-              final isSelected = _selectedFilter == filter;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedFilter = filter;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingXl,
-                    vertical: AppTheme.spacingSm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppTheme.primary
-                        : AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                  ),
-                  child: Center(
-                    child: Text(
-                      filter,
-                      style: TextStyle(
-                        fontSize: AppTheme.fontSizeLabel,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? AppTheme.onPrimary
-                            : AppTheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+  Widget _buildSearchBar() {
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar por proveedor, factura o categoría...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
     );
   }
 
@@ -819,5 +689,4 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
       },
     );
   }
-
 }

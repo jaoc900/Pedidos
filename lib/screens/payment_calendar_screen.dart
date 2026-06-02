@@ -4,6 +4,7 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:pedidos/enums/payment_status_enum.dart';
 import 'package:pedidos/models/payment_event_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class PaymentCalendarScreen extends StatefulWidget {
   const PaymentCalendarScreen({super.key});
@@ -143,56 +144,10 @@ class _PaymentCalendarScreenState extends State<PaymentCalendarScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Calendario de Pagos',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 40),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+        title: 'Calendario de pagos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
     );
   }
 

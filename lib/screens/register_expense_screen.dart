@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class RegisterExpenseScreen extends StatefulWidget {
   const RegisterExpenseScreen({super.key});
@@ -131,94 +132,15 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                // Botón de regresar
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Registrar Gasto',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            // Botón de guardar en la barra de título
-            GestureDetector(
-              onTap: _isLoading ? null : _saveExpense,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary,
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-                    : Row(
-                  children: const [
-                    FaIcon(
-                      FontAwesomeIcons.save,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: AppTheme.spacingSm),
-                    Text(
-                      'Guardar',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Registrar gasto',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions:[
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: () =>{})
+      ]
     );
   }
 
@@ -341,11 +263,7 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
       children: [
         Row(
           children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
+            FaIcon(icon, size: 14, color: AppTheme.primary),
             const SizedBox(width: AppTheme.spacingSm),
             Text(
               label,
@@ -368,7 +286,9 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
             value: value.isEmpty ? null : value,
             decoration: const InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg,
+              ),
             ),
             hint: Text(
               hint,
@@ -383,10 +303,7 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
               color: AppTheme.onSurfaceVariant,
             ),
             items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
+              return DropdownMenuItem<String>(value: item, child: Text(item));
             }).toList(),
             onChanged: onChanged,
           ),
@@ -597,7 +514,11 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
             decoration: BoxDecoration(
               color: AppTheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-              border: Border.all(color: AppTheme.outlineVariant, width: 2, style: BorderStyle.solid),
+              border: Border.all(
+                color: AppTheme.outlineVariant,
+                width: 2,
+                style: BorderStyle.solid,
+              ),
             ),
             child: Column(
               children: [

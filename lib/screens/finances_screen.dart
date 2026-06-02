@@ -16,6 +16,7 @@ import 'package:pedidos/screens/financial_alerts_screen.dart';
 import 'package:pedidos/screens/pending_invoices_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
 import 'package:pedidos/models/report_data_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class FinancesScreen extends StatelessWidget {
   const FinancesScreen({super.key});
@@ -63,39 +64,9 @@ class FinancesScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const SizedBox(width: AppTheme.spacingSm),
-                Text(
-                  'Finanzas',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Finanzas',
+      showBackButton: false,
     );
   }
 
@@ -106,7 +77,7 @@ class FinancesScreen extends StatelessWidget {
 
         if (isDesktop) {
           return SizedBox(
-            height: 160, // 👈 Altura uniforme para todas las tarjetas
+            height: 160,
             child: Row(
               children: [
                 // Card grande (Balance)
