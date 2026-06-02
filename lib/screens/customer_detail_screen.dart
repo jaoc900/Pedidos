@@ -6,6 +6,8 @@ import 'package:pedidos/models/customer_model.dart';
 import 'package:pedidos/enums/customer_type_enum.dart';
 import 'package:pedidos/screens/customer_orders_screen.dart';
 import 'package:pedidos/screens/customer_payments_screen.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   final Customer? customer;
@@ -143,8 +145,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   // Mapa preview
                   _buildMapPreview(),
                   const SizedBox(height: AppTheme.spacingXl),
-                  // Botón Guardar
-                  _buildSaveButton(),
                 ],
               ),
             ),
@@ -155,76 +155,16 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   }
 
   Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade100,
-            width: 1,
-          ),
+    return CustomTopAppBar(
+      title: 'Detalle de cliente',
+      showBackButton: true,
+      onBackPressed: _confirmCancel,
+      actions: [
+        AppBarButton(
+          icon: FontAwesomeIcons.solidFloppyDisk,
+          onPressed: _saveCustomer,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Botón de regresar
-            GestureDetector(
-              onTap: _confirmCancel,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.arrowLeft,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ),
-            ),
-            Text(
-              'Customer Details',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primary,
-              ),
-            ),
-            // Botón de guardar (check)
-            GestureDetector(
-              onTap: _saveCustomer,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.check,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
@@ -335,11 +275,13 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Nombre completo
-          _buildTextField(
+          CustomTextField(
             controller: _nameController,
             label: 'Nombre',
             hint: 'Ej. Juan Pérez',
             icon: FontAwesomeIcons.user,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingresa el nombre';
@@ -351,22 +293,28 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
             },
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
           // Teléfono
-          _buildTextField(
+          CustomTextField(
             controller: _phoneController,
             label: 'Teléfono',
             hint: '+34 600 000 000',
             icon: FontAwesomeIcons.phone,
             keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
           // Correo electrónico
-          _buildTextField(
+          CustomTextField(
             controller: _emailController,
             label: 'Correo',
             hint: 'nombre@ejemplo.com',
             icon: FontAwesomeIcons.envelope,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
             validator: (value) {
               if (value != null && value.isNotEmpty) {
                 final emailRegex = RegExp(
@@ -380,13 +328,16 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
             },
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          // Dirección
-          _buildMultilineTextField(
+
+          // Dirección (multilínea)
+          CustomTextField(
             controller: _addressController,
             label: 'Dirección',
             hint: 'Calle, Número, Ciudad...',
             icon: FontAwesomeIcons.locationDot,
             maxLines: 3,
+            textInputAction: TextInputAction.done,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
         ],
       ),
@@ -532,108 +483,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _saveCustomer,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.loginButtonColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-          ),
-          elevation: 8,
-        ),
-        child: _isLoading
-            ? const SizedBox(
-          height: 24,
-          width: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-        )
-            : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const FaIcon(
-              FontAwesomeIcons.save,
-              size: 18,
-              color: Colors.white,
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Text(
-              'Guardar Cambios',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeBody,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: 1,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            isDense: true,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

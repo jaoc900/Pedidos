@@ -5,6 +5,8 @@ import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/screens/customer_detail_screen.dart';
 import 'package:pedidos/models/customer_model.dart';
 import 'package:pedidos/enums/customer_type_enum.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class CustomersScreen extends StatefulWidget {
   const CustomersScreen({super.key});
@@ -15,6 +17,8 @@ class CustomersScreen extends StatefulWidget {
 
 class _CustomersScreenState extends State<CustomersScreen> {
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
   final List<Customer> _customers = [
     Customer(
       id: '1',
@@ -200,112 +204,31 @@ class _CustomersScreenState extends State<CustomersScreen> {
   }
 
   Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                // Menu button
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Clientes',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            // Search button
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  size: 20,
-                  color: AppTheme.primary,
-                ),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Clientes',
+      showBackButton: false,
     );
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.outlineVariant),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Buscar por nombre o email...',
-                hintStyle: TextStyle(
-                  color: AppTheme.outline,
-                  fontSize: AppTheme.fontSizeBody,
-                ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  child: FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    size: 20,
-                    color: AppTheme.outline,
-                  ),
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg,
-                  vertical: AppTheme.spacingLg,
-                ),
-              ),
-            ),
+    return Row(
+      children: [
+        // Campo de búsqueda
+        Expanded(
+          child: CustomTextField(
+            controller: _searchController,
+            label: '',
+            hint: 'Buscar por nombre o email...',
+            icon: FontAwesomeIcons.magnifyingGlass,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
-          Container(
-            margin: const EdgeInsets.only(right: AppTheme.spacingMd),
-            child: IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.filter,
-                size: 20,
-                color: AppTheme.primary,
-              ),
-              onPressed: () {
-                // Aquí iría la lógica de filtros
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
