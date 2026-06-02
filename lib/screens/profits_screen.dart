@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:pedidos/models/monthly_model.dart';
 import 'package:pedidos/models/movement_model.dart';
 import 'package:pedidos/enums/movement_enum.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class ProfitsScreen extends StatelessWidget {
   const ProfitsScreen({super.key});
@@ -43,63 +44,10 @@ class ProfitsScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                // Botón de regresar (backbutton)
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Text(
-                  'Ganancias',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.loginButtonColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Ganancias',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 

@@ -141,7 +141,7 @@ class CustomTopAppBar extends StatelessWidget implements PreferredSizeWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Manrope',
-                              fontSize: AppTheme.fontSizeBody,
+                              fontSize: AppTheme.fontSizeTitle,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.5,
                               color: titleColor ?? AppTheme.primary,

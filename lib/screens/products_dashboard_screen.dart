@@ -6,6 +6,7 @@ import 'package:pedidos/models/size_dashboard_model.dart';
 import 'package:pedidos/models/top_product_model.dart';
 import 'package:pedidos/screens/painters/donut_chart_painter.dart';
 import 'package:pedidos/models/low_rotation_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class ProductsDashboardScreen extends StatelessWidget {
   const ProductsDashboardScreen({super.key});
@@ -53,56 +54,10 @@ class ProductsDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Text(
-                  'Análisis de productos',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Análisis de productos',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pedidos/models/transaction_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class PaymentsManagementScreen extends StatefulWidget {
   const PaymentsManagementScreen({super.key});
@@ -50,59 +51,10 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingXl,
-        vertical: AppTheme.spacingLg,
-      ),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // Botón de regreso
-            GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.arrowLeft,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(width: AppTheme.spacingLg),
-
-            // Título
-            Text(
-              'Gestión de Pagos',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeTitle,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.loginButtonColor,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Pagos',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:pedidos/screens/painters/donut_chart_painter.dart';
 import 'package:pedidos/models/kpi_model.dart';
 import 'package:pedidos/models/bar_data_model.dart';
 import 'package:pedidos/models/order_data_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class OrdersDashboardScreen extends StatelessWidget {
   const OrdersDashboardScreen({super.key});
@@ -43,53 +44,9 @@ class OrdersDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingXl,
-        vertical: AppTheme.spacingLg,
-      ),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // Botón de regresar
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(shape: BoxShape.circle),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.arrowLeft,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Text(
-              'Gestión de Órdenes',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeTitle,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.primary,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Gestión de Órdenes',
+      showBackButton: true,
     );
   }
 

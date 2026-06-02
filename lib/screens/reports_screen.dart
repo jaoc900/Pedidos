@@ -6,6 +6,8 @@ import 'package:pedidos/screens/profits_screen.dart';
 import 'package:pedidos/screens/expenses_dashboard_screen.dart';
 import 'package:pedidos/screens/orders_dashboard_screen.dart';
 import 'package:pedidos/screens/products_dashboard_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
@@ -17,7 +19,7 @@ class ReportsScreen extends StatelessWidget {
       body: Column(
         children: [
           // TopAppBar
-          _buildTopAppBar(),
+          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -82,45 +84,10 @@ class ReportsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Reportes',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.loginButtonColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+  Widget _buildTopAppBar(BuildContext context) {
+    return CustomTopAppBar(
+      title: 'Reportes',
+      showBackButton: false,
     );
   }
 
