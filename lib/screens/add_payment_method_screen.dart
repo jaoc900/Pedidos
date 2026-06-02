@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
+import 'package:pedidos/widgets/custom_dropdown_field.dart';
 
 class AddPaymentMethodScreen extends StatefulWidget {
   const AddPaymentMethodScreen({super.key});
@@ -94,18 +99,9 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Header Section
-                  _buildHeader(),
-                  const SizedBox(height: AppTheme.spacingLg),
-                  // Illustration
-                  _buildIllustration(),
-                  const SizedBox(height: AppTheme.spacingLg),
                   // Form Container
                   _buildForm(),
                   const SizedBox(height: AppTheme.spacingLg),
-                  // Suggested Methods
-                  _buildSuggestedMethods(),
-                  const SizedBox(height: AppTheme.spacingXl * 2),
                 ],
               ),
             ),
@@ -116,137 +112,15 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Registrar Método',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'PAYLINK',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1,
-                color: AppTheme.loginButtonColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Registrar Método de Pago',
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeTitle,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        Text(
-          'Configure una nueva vía de cobro para su negocio con los detalles necesarios.',
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeBody,
-            color: AppTheme.onSurfaceVariant,
-          ),
-        ),
+    return CustomTopAppBar(
+      title: 'Registrar métodos',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: () => {})
       ],
-    );
-  }
-
-  Widget _buildIllustration() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-      child: Stack(
-        children: [
-          Image.network(
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuCpR11GxAP8CVOMCydc8jrHPPe5edcysf7tdACkXFbG19FV_yjI95_I83m1Si4DLFoP_tRDnoJO2wsAq8Riu23tTHIiYKDhQ9tBk5aSXttbuBDwVq_jRpzQB4QGI2KJ5Z7cwUctg97xH_jAWf-mE5UvdQxIUXTXBHzaN9ZOVfHZ4NAeui7j9_fcKKUdPuP_0zQaVgo2IgCRWBu_q8uZ8w90ioIXusXnkHU6qrN4X5eL0CQpCx1ZLtWPObRWEE30rdzUVW36LrhbHKLB',
-            height: 160,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 160,
-                color: AppTheme.primaryContainer.withValues(alpha: 0.1),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.creditCard,
-                    size: 48,
-                    color: AppTheme.outline,
-                  ),
-                ),
-              );
-            },
-          ),
-          Container(
-            height: 160,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.3),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -272,11 +146,13 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Nombre del Método
-            _buildTextField(
+            CustomTextField(
               controller: _nameController,
               label: 'Nombre del Método',
               hint: 'Ej: Banco Nacional o Stripe',
               icon: FontAwesomeIcons.tag,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa el nombre';
@@ -285,6 +161,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
               },
             ),
             const SizedBox(height: AppTheme.spacingLg),
+
             // Tipo de Pago
             _buildDropdownField(
               label: 'Tipo de Pago',
@@ -294,84 +171,53 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
               hint: 'Seleccione una opción',
               onChanged: (value) {
                 setState(() {
-                  _selectedType = value;
+                  _selectedType = value ?? '';
                 });
               },
             ),
             const SizedBox(height: AppTheme.spacingLg),
+
             // Detalles/Instrucciones
-            _buildTextField(
+            CustomTextField(
               controller: _detailsController,
               label: 'Detalles/Instrucciones',
               hint: 'Ingrese números de cuenta, CLABE o instrucciones para el cliente...',
               icon: FontAwesomeIcons.fileLines,
               maxLines: 4,
+              textInputAction: TextInputAction.done,
+              borderRadius: AppTheme.borderRadiusXXl,
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            // Information Card
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: AppTheme.secondaryContainer.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-                border: Border.all(color: AppTheme.secondaryContainer),
-              ),
-              child: Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.circleInfo,
-                    size: 20,
-                    color: AppTheme.secondary,
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: Text(
-                      'Esta información será visible para sus clientes al momento de realizar el pago.',
-                      style: TextStyle(
-                        fontSize: AppTheme.fontSizeSmall,
-                        color: AppTheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingLg),
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _savePaymentMethod,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.loginButtonColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-                    : const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FaIcon(FontAwesomeIcons.save, size: 18),
-                    SizedBox(width: AppTheme.spacingSm),
-                    Text('Guardar Método'),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownField({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required FaIconData icon,
+    required String hint,
+    required Function(String?) onChanged,
+  }) {
+    return CustomDropdownField(
+      value: items.contains(value) ? value : null,
+      label: label,
+      hint: hint,
+      items: items,
+      icon: icon,
+      onChanged: onChanged,
+      enabled: true,
+      showLabel: true,
+      borderRadius: AppTheme.borderRadiusXXl,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Seleccione una opción';
+        }
+        return null;
+      },
     );
   }
 
@@ -424,77 +270,6 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
               horizontal: AppTheme.spacingLg,
               vertical: AppTheme.spacingLg,
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required String value,
-    required List<String> items,
-    required FaIconData icon,
-    required String hint,
-    required void Function(String) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceBright,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value.isEmpty ? null : value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-            ),
-            hint: Text(
-              hint,
-              style: TextStyle(
-                color: AppTheme.outlineVariant,
-                fontSize: AppTheme.fontSizeBody,
-              ),
-            ),
-            icon: FaIcon(
-              FontAwesomeIcons.chevronDown,
-              size: 16,
-              color: AppTheme.onSurfaceVariant,
-            ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              if (newValue != null) {
-                onChanged(newValue);
-              }
-            },
           ),
         ),
       ],

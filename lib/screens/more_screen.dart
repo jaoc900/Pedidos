@@ -16,7 +16,8 @@ import 'package:pedidos/screens/employees_screen.dart';
 import 'package:pedidos/screens/membership_flow_screen.dart';
 import 'package:pedidos/screens/payment_methods_screen.dart';
 import 'package:pedidos/screens/expense_categories_screen.dart';
-import 'package:pedidos/screens/price_list_screen.dart'; 
+import 'package:pedidos/screens/price_list_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -321,45 +322,9 @@ class MoreScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Más Opciones',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Más opciones',
+      showBackButton: false,
     );
   }
 

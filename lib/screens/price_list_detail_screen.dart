@@ -4,6 +4,9 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/utils/icon_helper.dart';
 import 'package:pedidos/models/price_list_model.dart';
 import 'package:pedidos/models/product_price_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
 
 class PriceListDetailScreen extends StatefulWidget {
   final String? listName;
@@ -15,8 +18,10 @@ class PriceListDetailScreen extends StatefulWidget {
 }
 
 class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  String _selectedCategory = 'Todos';
+  String _selectedFilter = 'Todas';
+  String _selectedCategory = '';
   bool _isEditing = false;
   String? _editingProductId;
 
@@ -187,9 +192,10 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildSearchSection(),
+                  _buildSearchBar(),
                   const SizedBox(height: AppTheme.spacingLg),
-                  _buildCategoryFilters(),
+                  // Filtros
+                  _buildFilters(),
                   const SizedBox(height: AppTheme.spacingLg),
                   _buildProductsList(),
                   const SizedBox(height: AppTheme.spacingXl),
@@ -208,7 +214,7 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
             ),
           );
         },
-        backgroundColor: AppTheme.tertiary,
+        backgroundColor: AppTheme.primary,
         foregroundColor: AppTheme.onTertiary,
         elevation: 4,
         heroTag: 'add_product_fab',
@@ -222,56 +228,49 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  widget.listName != null ? 'Lista: ${widget.listName}' : 'Nueva Lista',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Lista: ',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: () => {})
+      ],
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar por número o cliente...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
+    );
+  }
+
+  Widget _buildFilters() {
+    final filters = [
+      const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
+      const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
+      const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+    ];
+
+    return CustomFilterChipWithIcon(
+      filters: filters,
+      selectedFilter: _selectedFilter,
+      onFilterSelected: (filter) {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
     );
   }
 

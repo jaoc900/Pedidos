@@ -5,6 +5,8 @@ import 'package:pedidos/models/price_list_model.dart';
 import 'package:pedidos/enums/price_list_enum.dart';
 import 'package:pedidos/screens/price_list_detail_screen.dart';
 import 'package:pedidos/models/product_price_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class PriceListScreen extends StatefulWidget {
   const PriceListScreen({super.key});
@@ -14,6 +16,7 @@ class PriceListScreen extends StatefulWidget {
 }
 
 class _PriceListScreenState extends State<PriceListScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
   final List<PriceList> _priceLists = [
@@ -88,7 +91,7 @@ class _PriceListScreenState extends State<PriceListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildSearchAndFilter(),
+                  _buildSearchBar(),
                   const SizedBox(height: AppTheme.spacingLg),
                   _buildSectionTitle(),
                   const SizedBox(height: AppTheme.spacingLg),
@@ -124,130 +127,30 @@ class _PriceListScreenState extends State<PriceListScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Lista de Precios',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Lista de precios',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: () => {})
+      ],
     );
   }
 
-  Widget _buildSearchAndFilter() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-              border: Border.all(color: AppTheme.outlineVariant),
-            ),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Buscar listas...',
-                hintStyle: TextStyle(
-                  color: AppTheme.onSurfaceVariant,
-                  fontSize: AppTheme.fontSizeBody,
-                ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  child: FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    size: 20,
-                    color: AppTheme.onSurfaceVariant,
-                  ),
-                ),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.times,
-                    size: 16,
-                    color: AppTheme.onSurfaceVariant,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _searchQuery = '';
-                    });
-                  },
-                )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg,
-                  vertical: AppTheme.spacingLg,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: AppTheme.spacingMd),
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-          ),
-          child: IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.sliders,
-              size: 20,
-              color: AppTheme.onSurfaceVariant,
-            ),
-            onPressed: () {},
-          ),
-        ),
-      ],
+  Widget _buildSearchBar() {
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar por número o cliente...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
     );
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -214,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppTheme.background,
       body: Column(
         children: [
-          _buildTopAppBar(context),
+          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -242,94 +244,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
+  Widget _buildTopAppBar() {
+    // Construir acciones según modo edición
+    List<Widget> actions = [];
+
+    if (!_isEditing) {
+      actions.add(
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.pen,
+            size: 20,
+            color: AppTheme.primary,
           ),
+          onPressed: _toggleEditMode,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+      );
+    } else {
+      actions.addAll([
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.save,
+            size: 20,
+            color: AppTheme.secondary,
           ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Mi Perfil',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                if (!_isEditing)
-                  IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.pen,
-                      size: 20,
-                      color: AppTheme.primary,
-                    ),
-                    onPressed: _toggleEditMode,
-                  ),
-                if (_isEditing)
-                  IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.save,
-                      size: 20,
-                      color: AppTheme.secondary,
-                    ),
-                    onPressed: _saveProfile,
-                  ),
-                if (_isEditing)
-                  IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.times,
-                      size: 20,
-                      color: AppTheme.error,
-                    ),
-                    onPressed: _toggleEditMode,
-                  ),
-              ],
-            ),
-          ],
+          onPressed: _saveProfile,
         ),
-      ),
+        const SizedBox(width: AppTheme.spacingSm),
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.times,
+            size: 20,
+            color: AppTheme.error,
+          ),
+          onPressed: _toggleEditMode,
+        ),
+      ]);
+    }
+
+    return CustomTopAppBar(
+      title: 'Mi Perfil',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: () => {})
+      ],
     );
   }
 
@@ -422,11 +382,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Column(
           children: [
-            _buildProfileField(
+            // Nombre completo
+            CustomTextField(
               controller: _nameController,
               label: 'Nombre completo',
+              hint: 'Tu nombre completo',
               icon: FontAwesomeIcons.user,
               enabled: _isEditing,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Ingresa tu nombre';
@@ -435,12 +399,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            _buildProfileField(
+
+            // Correo electrónico
+            CustomTextField(
               controller: _emailController,
               label: 'Correo electrónico',
+              hint: 'correo@ejemplo.com',
               icon: FontAwesomeIcons.envelope,
               enabled: _isEditing,
               keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Ingresa tu correo';
@@ -453,135 +422,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            _buildProfileField(
+
+            // Teléfono
+            CustomTextField(
               controller: _phoneController,
               label: 'Teléfono',
+              hint: '+52 555 123 4567',
               icon: FontAwesomeIcons.phone,
               enabled: _isEditing,
               keyboardType: TextInputType.phone,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            _buildProfileField(
+
+            // Cargo
+            CustomTextField(
               controller: _positionController,
               label: 'Cargo',
+              hint: 'Tu cargo en la empresa',
               icon: FontAwesomeIcons.briefcase,
               enabled: _isEditing,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            _buildBioField(
+
+            // Biografía
+            CustomTextField(
               controller: _bioController,
               label: 'Biografía',
+              hint: 'Cuéntanos sobre ti...',
               icon: FontAwesomeIcons.alignLeft,
               enabled: _isEditing,
+              maxLines: 3,
+              textInputAction: TextInputAction.done,
+              borderRadius: AppTheme.borderRadiusXXl,
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildProfileField({
-    required TextEditingController controller,
-    required String label,
-    required FaIconData icon,
-    bool enabled = true,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          enabled: enabled,
-          keyboardType: keyboardType,
-          validator: validator,
-          style: TextStyle(
-            color: enabled ? AppTheme.onSurface : AppTheme.outline,
-          ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: enabled ? Colors.white : AppTheme.surfaceContainer,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBioField({
-    required TextEditingController controller,
-    required String label,
-    required FaIconData icon,
-    bool enabled = true,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          enabled: enabled,
-          maxLines: 3,
-          style: TextStyle(
-            color: enabled ? AppTheme.onSurface : AppTheme.outline,
-          ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: enabled ? Colors.white : AppTheme.surfaceContainer,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -733,20 +613,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  OutlineInputBorder _buildInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: BorderSide(color: AppTheme.outlineVariant, width: 1),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
 }
