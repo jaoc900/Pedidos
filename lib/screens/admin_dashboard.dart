@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/orders_screen.dart';
 import 'package:pedidos/screens/notifications_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -47,96 +48,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+    return CustomTopAppBar(
+      title: 'Home',
+      profileImageUrl: 'https://lh3.googleusercont1ent.com/aida-public/AB6AXuDY8qEs_fHpWSUS07h2xPpseJpoGAcVIAe46Q6nEkgvxuZKxxq5IUG7m3pkj3NxJdA3F7oqxeJd5e-NN2hfLzXXavdIfYZAEYEf12xopfzI-_plbRSeP6p-rbeoPeQbMBL69AfgJJWlrIThrCfz7cyXt3L1U9zqJ3xnyTRu_G7fAslgzht7KCAHTAV6oyoHEr-oo1KulVGEie7MW7S4diypaZcO4ZCveY_Ids7i735YwnodrAuS88rB4aPM8pmyQP1hhTSUTFwuJbU7',
+      onProfileTap: () { },
+      actions: [
+        AppBarButton(
+          icon: FontAwesomeIcons.bell,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+            );
+          },
+          showBadge: true,
+          badgeCount: 3,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                // Avatar de perfil
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppTheme.primaryContainer,
-                      width: 2,
-                    ),
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuDY8qEs_fHpWSUS07h2xPpseJpoGAcVIAe46Q6nEkgvxuZKxxq5IUG7m3pkj3NxJdA3F7oqxeJd5e-NN2hfLzXXavdIfYZAEYEf12xopfzI-_plbRSeP6p-rbeoPeQbMBL69AfgJJWlrIThrCfz7cyXt3L1U9zqJ3xnyTRu_G7fAslgzht7KCAHTAV6oyoHEr-oo1KulVGEie7MW7S4diypaZcO4ZCveY_Ids7i735YwnodrAuS88rB4aPM8pmyQP1hhTSUTFwuJbU7',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppTheme.primaryContainer,
-                          child: const FaIcon(
-                            FontAwesomeIcons.user,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Text(
-                  'Home',
-                  style: TextStyle(
-                    fontFamily: 'Manrope',
-                    fontSize: AppTheme.fontSizeBody,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            // Botón de notificaciones
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: AppTheme.primary,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const NotificationsScreen())
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
