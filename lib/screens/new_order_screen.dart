@@ -227,7 +227,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           icon: FontAwesomeIcons.plusCircle,
           textColor: AppTheme.secondary,
           borderColor: AppTheme.outlineVariant,
-          borderRadius: AppTheme.borderRadiusXXlXl,
+          borderRadius: AppTheme.borderRadiusXXl,
         ),
       ],
     );
