@@ -4,6 +4,9 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/new_order_screen.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/order_data_model.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -13,6 +16,7 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedFilter = 'Todas';
 
@@ -78,9 +82,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título de la sección
-                  _buildSectionTitle(),
-                  const SizedBox(height: AppTheme.spacingLg),
                   // Barra de búsqueda
                   _buildSearchBar(),
                   const SizedBox(height: AppTheme.spacingLg),
@@ -122,153 +123,49 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Widget _buildCustomHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  size: 20,
-                  color: AppTheme.primary,
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Text(
-                  'VerdantOrders',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.loginButtonColor,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: Colors.grey.shade600,
-                ),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle() {
-    return Text(
-      'Pedidos',
-      style: TextStyle(
-        fontSize: AppTheme.fontSizeHeadline,
-        fontWeight: FontWeight.w700,
-        color: AppTheme.loginButtonColor,
-      ),
+    return CustomTopAppBar(
+      title: 'Órdenes',
+      showBackButton: false,
+      profileImageUrl: null,
+      onProfileTap: null,
+      backgroundColor: Colors.white.withValues(alpha: 0.8),
+      titleColor: AppTheme.loginButtonColor,
+      iconColor: AppTheme.primary,
+      elevation: 0.5,
     );
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.outlineVariant),
-      ),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Buscar por número o cliente...',
-          hintStyle: TextStyle(
-            color: AppTheme.outline,
-            fontSize: AppTheme.fontSizeBody,
-          ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: FaIcon(
-              FontAwesomeIcons.magnifyingGlass,
-              size: 20,
-              color: AppTheme.outline,
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingLg,
-            vertical: AppTheme.spacingLg,
-          ),
-        ),
-      ),
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar por número o cliente...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
     );
   }
 
   Widget _buildFilters() {
-    return SizedBox(
-      height: 44,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _filters.length,
-        separatorBuilder: (context, index) => const SizedBox(width: AppTheme.spacingMd),
-        itemBuilder: (context, index) {
-          final filter = _filters[index];
-          final isSelected = _selectedFilter == filter;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedFilter = filter;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingSm,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppTheme.primary
-                    : AppTheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-              ),
-              child: Center(
-                child: Text(
-                  filter,
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeLabel,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? AppTheme.onPrimary
-                        : AppTheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+    final filters = [
+      const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
+      const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
+      const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+    ];
+
+    return CustomFilterChipWithIcon(
+      filters: filters,
+      selectedFilter: _selectedFilter,
+      onFilterSelected: (filter) {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
     );
   }
 

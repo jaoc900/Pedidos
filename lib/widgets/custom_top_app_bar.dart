@@ -7,7 +7,7 @@ class CustomTopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? profileImageUrl;
   final Widget? customProfileImage;
   final VoidCallback? onProfileTap;
-  final List<AppBarButton> actions;
+  final List actions;
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final Color? backgroundColor;
@@ -32,155 +32,155 @@ class CustomTopAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle = false,
   });
 
-  @override
-  Widget build(BuildContext context) {
+  bool _isTablet(BuildContext context) {
+    return MediaQuery.of(context).size.width > 600;
+  }
+
+  double _height(BuildContext context) {
+    return _isTablet(context) ? 76 : 64;
+  }
+
+  double _avatarSize(BuildContext context) {
+    return _isTablet(context) ? 44 : 40;
+  }
+
+  double _iconSize(BuildContext context) {
+    return _isTablet(context) ? 22 : 20;
+  }
+
+  Widget _circleBox(double size, Widget child) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingXl,
-        vertical: AppTheme.spacingLg,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor ?? AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: elevation > 0
-            ? [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: Offset(0, elevation),
-          ),
-        ]
-            : null,
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Left section
-            Row(
-              children: [
-                // Back button
-                if (showBackButton)
-                  GestureDetector(
-                    onTap: onBackPressed ?? () => Navigator.pop(context),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.arrowLeft,
-                          size: 20,
-                          color: iconColor ?? AppTheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                if (showBackButton) const SizedBox(width: AppTheme.spacingMd),
-
-                // Profile image
-                if (profileImageUrl != null || customProfileImage != null)
-                  GestureDetector(
-                    onTap: onProfileTap,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppTheme.primaryContainer,
-                          width: 2,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: customProfileImage ??
-                            (profileImageUrl != null
-                                ? Image.network(
-                              profileImageUrl!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 40,
-                                  height: 40,
-                                  color: AppTheme.primaryContainer,
-                                  child: const Center(
-                                    child: FaIcon(
-                                      FontAwesomeIcons.user,
-                                      size: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                                : Container(
-                              width: 40,
-                              height: 40,
-                              color: AppTheme.primaryContainer,
-                              child: const Center(
-                                child: FaIcon(
-                                  FontAwesomeIcons.user,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )),
-                      ),
-                    ),
-                  ),
-
-                if ((profileImageUrl != null || customProfileImage != null) && title.isNotEmpty)
-                  const SizedBox(width: AppTheme.spacingMd),
-
-                // Title
-                if (title.isNotEmpty)
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontFamily: 'Manrope',
-                      fontSize: AppTheme.fontSizeBody,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                      color: titleColor ?? AppTheme.primary,
-                    ),
-                  ),
-              ],
-            ),
-
-            // Right section - Actions
-            if (actions.isNotEmpty)
-              Row(
-                children: actions.map((action) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: AppTheme.spacingMd),
-                    child: action,
-                  );
-                }).toList(),
-              ),
-          ],
-        ),
-      ),
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(shape: BoxShape.circle),
+      child: child,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(72);
+  Widget build(BuildContext context) {
+    final isTablet = _isTablet(context);
+
+    return Material(
+      elevation: elevation,
+      color: backgroundColor ?? AppTheme.background,
+      child: SafeArea(
+        bottom: false,
+        child: SizedBox(
+          height: _height(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl),
+            child: Row(
+              children: [
+                // LEFT SECTION
+                Flexible(
+                  child: Row(
+                    children: [
+                      if (showBackButton)
+                        GestureDetector(
+                          onTap: onBackPressed ?? () => Navigator.pop(context),
+                          child: _circleBox(
+                            40,
+                            Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.arrowLeft,
+                                size: _iconSize(context),
+                                color: iconColor ?? AppTheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      if (showBackButton)
+                        const SizedBox(width: AppTheme.spacingMd),
+
+                      if (profileImageUrl != null || customProfileImage != null)
+                        GestureDetector(
+                          onTap: onProfileTap,
+                          child: Container(
+                            width: _avatarSize(context),
+                            height: _avatarSize(context),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTheme.primaryContainer,
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: customProfileImage ??
+                                  Image.network(
+                                    profileImageUrl ?? '',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) {
+                                      return Container(
+                                        color: AppTheme.primaryContainer,
+                                        child: Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.user,
+                                            size: _iconSize(context),
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                            ),
+                          ),
+                        ),
+
+                      if ((profileImageUrl != null || customProfileImage != null) &&
+                          title.isNotEmpty)
+                        const SizedBox(width: AppTheme.spacingMd),
+
+                      if (title.isNotEmpty)
+                        Flexible(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Manrope',
+                              fontSize: AppTheme.fontSizeBody,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                              color: titleColor ?? AppTheme.primary,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // RIGHT ACTIONS
+                if (actions.isNotEmpty)
+                  Row(
+                    children: actions
+                        .map(
+                          (action) => Padding(
+                        padding: const EdgeInsets.only(left: AppTheme.spacingMd),
+                        child: action,
+                      ),
+                    )
+                        .toList(),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(64);
 }
 
-// Botón configurable para las acciones
 class AppBarButton extends StatelessWidget {
   final FaIconData icon;
   final VoidCallback onPressed;
   final Color? color;
-  final double size;
   final bool showBadge;
   final int badgeCount;
 
@@ -189,32 +189,35 @@ class AppBarButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.color,
-    this.size = 20,
     this.showBadge = false,
     this.badgeCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
+    final size = isTablet ? 44.0 : 40.0;
+    final iconSize = isTablet ? 22.0 : 20.0;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: FaIcon(
-              icon,
-              size: size,
-              color: color ?? AppTheme.primary,
+        GestureDetector(
+          onTap: onPressed,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: iconSize,
+                color: color ?? AppTheme.primary,
+              ),
             ),
-            onPressed: onPressed,
-            padding: EdgeInsets.zero,
           ),
         ),
+
         if (showBadge && badgeCount > 0)
           Positioned(
             top: 0,
@@ -225,10 +228,7 @@ class AppBarButton extends StatelessWidget {
                 color: AppTheme.error,
                 shape: BoxShape.circle,
               ),
-              constraints: const BoxConstraints(
-                minWidth: 18,
-                minHeight: 18,
-              ),
+              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
               child: Text(
                 badgeCount > 99 ? '99+' : badgeCount.toString(),
                 style: const TextStyle(
@@ -242,5 +242,6 @@ class AppBarButton extends StatelessWidget {
           ),
       ],
     );
+
   }
 }

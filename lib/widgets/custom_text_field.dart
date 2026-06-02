@@ -14,12 +14,12 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputAction textInputAction;
   final double borderRadius;
-
-  // Nuevas propiedades
   final String? errorText;
   final bool readOnly;
   final bool enabled;
   final VoidCallback? onTap;
+  final ValueChanged<String>? onChanged; // Nuevo: callback para cambios de texto
+  final bool showLabel; // Nuevo: controlar si mostrar el label
 
   const CustomTextField({
     super.key,
@@ -37,7 +37,9 @@ class CustomTextField extends StatelessWidget {
     this.readOnly = false,
     this.enabled = true,
     this.onTap,
+    this.onChanged,
     this.borderRadius = AppTheme.borderRadiusLg,
+    this.showLabel = true,
   });
 
   @override
@@ -47,65 +49,69 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: _getIconColor(hasError),
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: _getLabelColor(hasError),
+        // Label - solo mostrar si showLabel es true y label no está vacío
+        if (showLabel && label.isNotEmpty)
+          Row(
+            children: [
+              FaIcon(
+                icon,
+                size: 14,
+                color: _getIconColor(hasError),
               ),
-            ),
-            if (!enabled)
-              Container(
-                margin: const EdgeInsets.only(left: AppTheme.spacingSm),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingSm,
-                  vertical: 2,
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: AppTheme.fontSizeLabel,
+                  fontWeight: FontWeight.w600,
+                  color: _getLabelColor(hasError),
                 ),
-                decoration: BoxDecoration(
-                  color: AppTheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusSm),
-                ),
-                child: Text(
-                  'Deshabilitado',
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.onSurfaceVariant,
+              ),
+              if (!enabled)
+                Container(
+                  margin: const EdgeInsets.only(left: AppTheme.spacingSm),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingSm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusSm),
+                  ),
+                  child: Text(
+                    'Deshabilitado',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
-              ),
-            if (readOnly)
-              Container(
-                margin: const EdgeInsets.only(left: AppTheme.spacingSm),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingSm,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusSm),
-                ),
-                child: Text(
-                  'Solo lectura',
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.primary,
+              if (readOnly)
+                Container(
+                  margin: const EdgeInsets.only(left: AppTheme.spacingSm),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingSm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusSm),
+                  ),
+                  child: Text(
+                    'Solo lectura',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primary,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
+            ],
+          ),
+        if (showLabel && label.isNotEmpty) const SizedBox(height: AppTheme.spacingSm),
+
+        // TextField
         GestureDetector(
           onTap: readOnly ? onTap : null,
           child: AbsorbPointer(
@@ -119,6 +125,7 @@ class CustomTextField extends StatelessWidget {
               textInputAction: textInputAction,
               readOnly: readOnly,
               enabled: enabled,
+              onChanged: onChanged, // Agregar callback onChanged
               style: TextStyle(
                 color: enabled ? AppTheme.onSurface : AppTheme.outline,
               ),
@@ -127,6 +134,14 @@ class CustomTextField extends StatelessWidget {
                 hintStyle: TextStyle(
                   color: AppTheme.outlineVariant,
                   fontSize: AppTheme.fontSizeBody,
+                ),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  child: FaIcon(
+                    icon,
+                    size: 20,
+                    color: _getIconColor(hasError),
+                  ),
                 ),
                 suffixIcon: suffixIcon,
                 errorText: enabled ? errorText : null,
