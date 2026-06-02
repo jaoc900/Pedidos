@@ -5,6 +5,9 @@ import 'package:pedidos/screens/edit_product_screen.dart';
 import 'package:pedidos/enums/view_model_enum.dart';
 import 'package:pedidos/models/product_item_model.dart';
 import 'package:pedidos/enums/stock_status_enum.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -14,9 +17,22 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
-  // Modos de visualización
+  String _selectedCategory = 'Todos';
 
   ViewMode _currentViewMode = ViewMode.mediumIcons;
+  final List<String> _categories = [
+    'Todos',
+    'Fertilizantes',
+    'Semillas',
+    'Herramientas',
+  ];
+
+  List<Product> get _filteredProducts {
+    if (_selectedCategory == 'Todos') {
+      return products;
+    }
+    return products.where((product) => product.category == _selectedCategory).toList();
+  }
 
   // Lista de productos (la misma de antes)
   final List<Product> products = [
@@ -88,17 +104,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
       backgroundColor: AppTheme.surface,
       body: Column(
         children: [
-          _buildTopAppBar(),
+          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Botones de cambio de visualización
-                  _buildViewModeButtons(),
-                  //const SizedBox(height: AppTheme.spacingXl),
-                  // Contenido según el modo seleccionado
+                  _buildCategoryFilter(),
+                  _buildSearchInfoBar(),// Contenido según el modo seleccionado
                   LayoutBuilder(
                     builder: (context, constraints) {
                       return _buildContent(constraints.maxWidth);
@@ -136,7 +150,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   Widget _buildViewModeButtons() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
@@ -147,31 +161,38 @@ class _InventoryScreenState extends State<InventoryScreen> {
           // Modo Lista
           _buildViewModeButton(
             icon: FontAwesomeIcons.bars,
-            label: 'Lista',
             mode: ViewMode.list,
             isSelected: _currentViewMode == ViewMode.list,
           ),
           // Modo Iconos Grandes
           _buildViewModeButton(
             icon: FontAwesomeIcons.tableCellsLarge,
-            label: 'Grandes',
             mode: ViewMode.largeIcons,
             isSelected: _currentViewMode == ViewMode.largeIcons,
           ),
           // Modo Iconos Medianos
           _buildViewModeButton(
             icon: FontAwesomeIcons.tableCells,
-            label: 'Medianos',
             mode: ViewMode.mediumIcons,
             isSelected: _currentViewMode == ViewMode.mediumIcons,
           ),
           // Modo Iconos Pequeños
           _buildViewModeButton(
-            icon: FontAwesomeIcons.list,
-            label: 'Pequeños',
+            icon: FontAwesomeIcons.grip,
             mode: ViewMode.smallIcons,
             isSelected: _currentViewMode == ViewMode.smallIcons,
           ),
+
+          // Separador vertical
+          Container(
+            width: 1,
+            height: 24,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            color: AppTheme.outlineVariant,
+          ),
+
+          // Botón de filtrar
+          _buildFilterButton(),
         ],
       ),
     );
@@ -179,7 +200,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   Widget _buildViewModeButton({
     required FaIconData icon,
-    required String label,
     required ViewMode mode,
     required bool isSelected,
   }) {
@@ -190,99 +210,96 @@ class _InventoryScreenState extends State<InventoryScreen> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingSm,
-        ),
-        margin: const EdgeInsets.symmetric(horizontal: 2),
+        width: 36,
+        height: 36,
+        margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(
-              icon,
-              size: 16,
-              color: isSelected ? Colors.white : AppTheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeSmall,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+        child: Center(
+          child: FaIcon(
+            icon,
+            size: 16,
+            color: isSelected ? Colors.white : AppTheme.onSurfaceVariant,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
+  Widget _buildTopAppBar(BuildContext context) {
+    return CustomTopAppBar(
+      title: 'Artículos',
+      showBackButton: false,
+    );
+  }
+
+  Widget _buildCategoryFilter() {
+    return CustomFilterChips(
+      filters: _categories,
+      selectedFilter: _selectedCategory,
+      onFilterSelected: (category) {
+        setState(() {
+          _selectedCategory = category;
+        });
+      },
+      height: 44,
+      itemPadding: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacingXl,
-        vertical: AppTheme.spacingLg,
+        vertical: AppTheme.spacingSm,
       ),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200, width: 1),
+    );
+  }
+
+  Widget _buildFilterChip(String label, bool isSelected) {
+    return GestureDetector(
+      onTap: () {
+        // Lógica para seleccionar/deseleccionar
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryContainer : AppTheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+          border: isSelected ? null : Border.all(color: AppTheme.outlineVariant),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: AppTheme.fontSizeSmall,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? AppTheme.onPrimaryContainer : AppTheme.onSurfaceVariant,
+            ),
+          ),
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Artículos',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.filter,
-                      size: 20,
-                      color: AppTheme.primary,
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.magnifyingGlass,
-                      size: 20,
-                      color: AppTheme.primary,
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
-            ),
-          ],
+    );
+  }
+
+  Widget _buildFilterButton() {
+    return GestureDetector(
+      onTap: () {
+        _showFilterDialog();
+      },
+      child: Container(
+        width: 36,
+        height: 36,
+        margin: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+        ),
+        child: Center(
+          child: FaIcon(
+            FontAwesomeIcons.filter,
+            size: 16,
+            color: AppTheme.primary,
+          ),
         ),
       ),
     );
@@ -733,6 +750,172 @@ class _InventoryScreenState extends State<InventoryScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showFilterDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppTheme.borderRadiusXl),
+        ),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Filtrar productos',
+                    style: TextStyle(
+                      fontSize: AppTheme.fontSizeTitle,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Rango de precios
+                  Text(
+                    'Rango de precio',
+                    style: TextStyle(
+                      fontSize: AppTheme.fontSizeLabel,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppTheme.outlineVariant),
+                            borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                          ),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Mín',
+                              border: InputBorder.none,
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      const Text('-'),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppTheme.outlineVariant),
+                            borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                          ),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Máx',
+                              border: InputBorder.none,
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Stock
+                  Text(
+                    'Disponibilidad',
+                    style: TextStyle(
+                      fontSize: AppTheme.fontSizeLabel,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildFilterChip('En stock', true),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _buildFilterChip('Stock bajo', false),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingXl),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.onSurfaceVariant,
+                            side: BorderSide(color: AppTheme.outlineVariant),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                            ),
+                          ),
+                          child: const Text('Limpiar'),
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Aplicar filtros
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                            ),
+                          ),
+                          child: const Text('Aplicar'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildSearchInfoBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Cantidad de artículos (izquierda)
+        Text(
+          '${_filteredProducts.length} Artículos',
+          style: TextStyle(
+            fontSize: AppTheme.fontSizeLabel,
+            fontWeight: FontWeight.w500,
+            color: AppTheme.onSurfaceVariant,
+          ),
+        ),
+
+        // Botones de cambio de vista + filtro (derecha)
+        _buildViewModeButtons(),
+      ],
     );
   }
 

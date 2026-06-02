@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/size_item_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_dropdown_field.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({super.key});
@@ -157,7 +160,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       body: Column(
         children: [
           // TopAppBar
-          _buildTopAppBar(),
+          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -176,9 +179,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     // Sizes Section
                     _buildSizesSection(),
                     const SizedBox(height: AppTheme.spacingXl),
-                    // Delete Button
-                    _buildDeleteButton(),
-                    const SizedBox(height: AppTheme.spacingXl),
                   ],
                 ),
               ),
@@ -189,78 +189,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+  Widget _buildTopAppBar(BuildContext context) {
+    return CustomTopAppBar(
+      title: 'Artículos',
+      showBackButton: true,
+      actions:[
+        AppBarButton(
+            icon: FontAwesomeIcons.trashCan,
+            color: AppTheme.error,
+            onPressed: _deleteProduct
         ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Editar Artículo',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            TextButton(
-              onPressed: _isLoading ? null : _saveProduct,
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primary,
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
-                ),
-              )
-                  : const Text(
-                'Guardar',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+        AppBarButton(
+          icon: FontAwesomeIcons.solidFloppyDisk,
+          onPressed: _saveProduct,
+        )
+      ]
     );
   }
 
@@ -359,11 +302,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Nombre del Producto
-        _buildTextField(
+        CustomTextField(
           controller: _nameController,
           label: 'Nombre del Producto',
           hint: 'Ej. Zapatilla Runner Pro',
           icon: FontAwesomeIcons.box,
+          textInputAction: TextInputAction.next,
+          borderRadius: AppTheme.borderRadiusXXl,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Por favor ingresa el nombre del producto';
@@ -378,11 +323,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: _buildTextField(
+              child: CustomTextField(
                 controller: _skuController,
                 label: 'SKU/ID',
                 hint: 'Ej. SNK-990-R',
                 icon: FontAwesomeIcons.barcode,
+                textInputAction: TextInputAction.next,
+                borderRadius: AppTheme.borderRadiusXXl,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Requerido';
@@ -393,14 +340,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
             const SizedBox(width: AppTheme.spacingLg),
             Expanded(
-              child: _buildDropdownField(
-                value: _selectedCategory,
+              child: CustomDropdownField(
                 label: 'Categoría',
-                items: _categories,
-                icon: FontAwesomeIcons.tag,
+                hint: 'Seleccione una categoría',
+                icon: FontAwesomeIcons.list,
+                borderRadius: AppTheme.borderRadiusXXl,
+                value: _selectedCategory,
+                items: const [
+                  'Electrónica',
+                  'Ropa',
+                  'Hogar',
+                  'Papelería',
+                  'Calzado'
+                ],
                 onChanged: (value) {
                   setState(() {
-                    _selectedCategory = value!;
+                    _selectedCategory = value ?? '';
                   });
                 },
               ),
@@ -413,11 +368,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
         Row(
           children: [
             Expanded(
-              child: _buildPriceField(
+              child: CustomTextField(
                 controller: _priceController,
                 label: 'Precio de Venta',
                 hint: '0.00',
                 icon: FontAwesomeIcons.dollarSign,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.next,
+                borderRadius: AppTheme.borderRadiusXXl,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Requerido';
@@ -435,12 +393,98 @@ class _EditProductScreenState extends State<EditProductScreen> {
         const SizedBox(height: AppTheme.spacingLg),
 
         // Descripción
-        _buildMultilineTextField(
+        CustomTextField(
           controller: _descriptionController,
           label: 'Descripción',
           hint: 'Descripción del producto...',
           icon: FontAwesomeIcons.alignLeft,
           maxLines: 4,
+          textInputAction: TextInputAction.done,
+          borderRadius: AppTheme.borderRadiusXXl,
+        ),
+      ],
+    );
+  }
+
+// Método auxiliar para el campo de precio
+  Widget _buildPriceField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required FaIconData icon,
+    String? Function(String?)? validator,
+  }) {
+    return CustomTextField(
+      controller: controller,
+      label: label,
+      hint: hint,
+      icon: icon,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      textInputAction: TextInputAction.next,
+      borderRadius: AppTheme.borderRadiusXXl,
+      validator: validator,
+    );
+  }
+
+// Método auxiliar para el dropdown (necesitas crear este widget)
+  Widget _buildDropdownField({
+    required String? value,
+    required String label,
+    required List<String> items,
+    required FaIconData icon,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            FaIcon(
+              icon,
+              size: 14,
+              color: AppTheme.primary,
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: AppTheme.fontSizeLabel,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXXl),
+            border: Border.all(color: AppTheme.outlineVariant),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: value,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg,
+                vertical: AppTheme.spacingLg,
+              ),
+            ),
+            items: items.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: onChanged,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Selecciona una categoría';
+              }
+              return null;
+            },
+          ),
         ),
       ],
     );
@@ -721,272 +765,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            isDense: true,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPriceField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.number,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            prefixText: '\$ ',
-            prefixStyle: TextStyle(
-              color: AppTheme.onSurfaceVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            isDense: true,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String value,
-    required String label,
-    required List<String> items,
-    required FaIconData icon,
-    required void Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-            ),
-            icon: FaIcon(
-              FontAwesomeIcons.chevronDown,
-              size: 16,
-              color: AppTheme.onSurfaceVariant,
-            ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMultilineTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    int maxLines = 4,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          minLines: 3,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            isDense: true,
-            alignLabelWithHint: true,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDeleteButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton(
-        onPressed: _deleteProduct,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppTheme.error, width: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              FontAwesomeIcons.trashCan,
-              size: 18,
-              color: AppTheme.error,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              'Eliminar Artículo',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.error,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   OutlineInputBorder _buildInputBorder() {
     return OutlineInputBorder(
