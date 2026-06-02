@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/product_catalog_screen.dart';
 import 'package:pedidos/models/order_data_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -87,79 +90,23 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-          // Bottom Bar con botón de guardar
-          _buildBottomBar(),
         ],
       ),
     );
   }
 
   Widget _buildTopAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-      height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+    return CustomTopAppBar(
+      title: 'Nueva Orden',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+          icon: FontAwesomeIcons.solidFloppyDisk, // Icono de guardar
+          onPressed: () => _saveOrder(),
+          color: AppTheme.primary,
         ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // Botón de cerrar
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.transparent,
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.xmark,
-                    size: 20,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingLg),
-            // Título
-            Expanded(
-              child: Text(
-                'New Order',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeTitle,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade900,
-                ),
-              ),
-            ),
-            // Botón de guardar
-            TextButton(
-              onPressed: () {
-                _saveOrder();
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primary,
-                minimumSize: Size.zero,
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-              ),
-              child: const Text(
-                'Save',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
@@ -186,75 +133,30 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ],
         ),
         const SizedBox(height: AppTheme.spacingLg),
+
         // Nombre del Cliente
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Nombre del Cliente',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeSmall,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.outline,
-              ),
-            ),
-            const SizedBox(height: 4),
-            TextFormField(
-              controller: _customerNameController,
-              decoration: InputDecoration(
-                hintText: 'Ej. Juan Pérez',
-                hintStyle: TextStyle(
-                  color: AppTheme.outlineVariant,
-                  fontSize: AppTheme.fontSizeBody,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: _buildInputBorder(),
-                enabledBorder: _buildInputBorder(),
-                focusedBorder: _buildFocusedBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg,
-                  vertical: AppTheme.spacingLg,
-                ),
-              ),
-            ),
-          ],
+        CustomTextField(
+          controller: _customerNameController,
+          label: 'Nombre del Cliente',
+          hint: 'Ej. Juan Pérez',
+          icon: FontAwesomeIcons.user,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          borderRadius: AppTheme.borderRadiusXXl,
+          showLabel: true,
         ),
         const SizedBox(height: AppTheme.spacingLg),
+
         // Teléfono
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Teléfono',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeSmall,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.outline,
-              ),
-            ),
-            const SizedBox(height: 4),
-            TextFormField(
-              controller: _customerPhoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                hintText: '+52 000 000 0000',
-                hintStyle: TextStyle(
-                  color: AppTheme.outlineVariant,
-                  fontSize: AppTheme.fontSizeBody,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: _buildInputBorder(),
-                enabledBorder: _buildInputBorder(),
-                focusedBorder: _buildFocusedBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg,
-                  vertical: AppTheme.spacingLg,
-                ),
-              ),
-            ),
-          ],
+        CustomTextField(
+          controller: _customerPhoneController,
+          label: 'Teléfono',
+          hint: '+52 000 000 0000',
+          icon: FontAwesomeIcons.phone,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.done,
+          borderRadius: AppTheme.borderRadiusXXl,
+          showLabel: true,
         ),
       ],
     );
@@ -319,37 +221,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         ),
         const SizedBox(height: AppTheme.spacingLg),
         // Botón para agregar artículo
-        OutlinedButton(
-          onPressed: () {
-            _addNewItem();
-          },
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppTheme.secondary,
-            side: BorderSide(color: AppTheme.outlineVariant, width: 2),
-            minimumSize: const Size.fromHeight(56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.plusCircle,
-                size: 20,
-                color: AppTheme.secondary,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Text(
-                'Agregar Artículo',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeLabel,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.secondary,
-                ),
-              ),
-            ],
-          ),
+        CustomOutlinedButton(
+          text: 'Agregar Artículo',
+          onPressed: _addNewItem,
+          icon: FontAwesomeIcons.plusCircle,
+          textColor: AppTheme.secondary,
+          borderColor: AppTheme.outlineVariant,
+          borderRadius: AppTheme.borderRadiusXXlXl,
         ),
       ],
     );
@@ -557,59 +435,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildBottomBar() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingLg),
-          child: ElevatedButton(
-            onPressed: () {
-              _saveOrder();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.loginButtonColor,
-              foregroundColor: AppTheme.onPrimary,
-              minimumSize: const Size.fromHeight(56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-              ),
-              elevation: 8,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const FaIcon(
-                  FontAwesomeIcons.checkCircle,
-                  size: 20,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                const Text(
-                  'Guardar Pedido',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 

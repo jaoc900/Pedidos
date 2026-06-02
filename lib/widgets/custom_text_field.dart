@@ -53,11 +53,6 @@ class CustomTextField extends StatelessWidget {
         if (showLabel && label.isNotEmpty)
           Row(
             children: [
-              FaIcon(
-                icon,
-                size: 14,
-                color: _getIconColor(hasError),
-              ),
               const SizedBox(width: AppTheme.spacingSm),
               Text(
                 label,
@@ -136,7 +131,7 @@ class CustomTextField extends StatelessWidget {
                   fontSize: AppTheme.fontSizeBody,
                 ),
                 prefixIcon: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
                   child: FaIcon(
                     icon,
                     size: 20,

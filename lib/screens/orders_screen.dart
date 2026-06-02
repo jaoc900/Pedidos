@@ -126,12 +126,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return CustomTopAppBar(
       title: 'Órdenes',
       showBackButton: false,
-      profileImageUrl: null,
-      onProfileTap: null,
-      backgroundColor: Colors.white.withValues(alpha: 0.8),
-      titleColor: AppTheme.loginButtonColor,
-      iconColor: AppTheme.primary,
-      elevation: 0.5,
     );
   }
 
