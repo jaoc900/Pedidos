@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
 
 class PaymentCheckoutScreen extends StatefulWidget {
   final String planName;
@@ -97,8 +102,6 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
                       const SizedBox(height: AppTheme.spacingXl),
                       _buildCheckoutGrid(),
                       const SizedBox(height: AppTheme.spacingXl),
-                      _buildFooterPromotion(),
-                      const SizedBox(height: AppTheme.spacingXl * 2),
                     ],
                   ),
                 ),
@@ -111,62 +114,10 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Finalizar Pago',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Finalizar pago',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -175,68 +126,79 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth > 700;
 
-        return Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: AppTheme.spacingLg,
-          runSpacing: AppTheme.spacingMd,
-          children: [
-            SizedBox(
-              width: isDesktop ? 500 : double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Finalizar Pago de Membresía',
-                    style: TextStyle(
-                      fontSize: AppTheme.fontSizeHeadline,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.onBackground,
-                    ),
+        if (isDesktop) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Frase a la izquierda
+              Expanded(
+                child: Text(
+                  'Complete sus detalles de pago para activar los beneficios profesionales de su cuenta.',
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeBody,
+                    color: AppTheme.onSurfaceVariant,
                   ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    'Complete sus detalles de pago para activar los beneficios profesionales de su cuenta.',
-                    style: TextStyle(
-                      fontSize: AppTheme.fontSizeBody,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            if (isDesktop)
-              Container(
-                width: 160,
+              const SizedBox(width: AppTheme.spacingLg),
+              // Botón a la derecha
+              CustomOutlinedButton(
+                text: 'Pago Seguro',
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Información de pago seguro'),
+                      backgroundColor: AppTheme.primary,
+                    ),
+                  );
+                },
+                icon: FontAwesomeIcons.shield,
+                textColor: AppTheme.loginButtonColor,
+                borderColor: AppTheme.loginButtonColor,
+                borderRadius: AppTheme.borderRadiusXl,
+                fontSize: AppTheme.fontSizeLabel,
+                iconSize: 18,
                 height: 48,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppTheme.loginButtonColor, width: 1.5),
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.shield,
-                        size: 18,
-                        color: AppTheme.loginButtonColor,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Pago Seguro',
-                        style: TextStyle(
-                          fontSize: AppTheme.fontSizeLabel,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.loginButtonColor,
-                        ),
-                      ),
-                    ],
-                  ),
+                fullWidth: false,
+              ),
+            ],
+          );
+        } else {
+          // Versión móvil: frase arriba, botón abajo
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Complete sus detalles de pago para activar los beneficios profesionales de su cuenta.',
+                style: TextStyle(
+                  fontSize: AppTheme.fontSizeBody,
+                  color: AppTheme.onSurfaceVariant,
                 ),
               ),
-          ],
-        );
+              const SizedBox(height: AppTheme.spacingLg),
+              CustomOutlinedButton(
+                text: 'Pago Seguro',
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Información de pago seguro'),
+                      backgroundColor: AppTheme.primary,
+                    ),
+                  );
+                },
+                icon: FontAwesomeIcons.shield,
+                textColor: AppTheme.loginButtonColor,
+                borderColor: AppTheme.loginButtonColor,
+                borderRadius: AppTheme.borderRadiusXXl,
+                fontSize: AppTheme.fontSizeLabel,
+                iconSize: 18,
+                height: 48,
+                fullWidth: true, // Ancho completo en móvil
+              ),
+            ],
+          );
+        }
       },
     );
   }
@@ -323,12 +285,15 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
             key: _formKey,
             child: Column(
               children: [
-                _buildFormField(
+                // Número de Tarjeta
+                CustomTextField(
                   controller: _cardNumberController,
                   label: 'Número de Tarjeta',
                   hint: '0000 0000 0000 0000',
                   icon: FontAwesomeIcons.creditCard,
                   keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  borderRadius: AppTheme.borderRadiusXXl,
                   onChanged: (value) {
                     final formatted = _formatCardNumber(value);
                     _cardNumberController.value = TextEditingValue(
@@ -343,26 +308,34 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
                   },
                 ),
                 const SizedBox(height: AppTheme.spacingLg),
-                _buildFormField(
+
+                // Nombre del Titular
+                CustomTextField(
                   controller: _cardHolderController,
                   label: 'Nombre del Titular',
                   hint: 'Como aparece en la tarjeta',
                   icon: FontAwesomeIcons.user,
+                  textInputAction: TextInputAction.next,
+                  borderRadius: AppTheme.borderRadiusXXl,
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Ingrese el nombre del titular';
                     return null;
                   },
                 ),
                 const SizedBox(height: AppTheme.spacingLg),
+
+                // Fila: Vencimiento y CVC
                 Row(
                   children: [
                     Expanded(
-                      child: _buildFormField(
+                      child: CustomTextField(
                         controller: _expiryController,
                         label: 'Vencimiento (MM/AA)',
                         hint: 'MM/AA',
                         icon: FontAwesomeIcons.calendar,
                         keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        borderRadius: AppTheme.borderRadiusXXl,
                         onChanged: (value) {
                           final formatted = _formatExpiry(value);
                           _expiryController.value = TextEditingValue(
@@ -379,13 +352,15 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
                     ),
                     const SizedBox(width: AppTheme.spacingLg),
                     Expanded(
-                      child: _buildFormField(
+                      child: CustomTextField(
                         controller: _cvcController,
                         label: 'CVC',
                         hint: '•••',
                         icon: FontAwesomeIcons.lock,
                         obscureText: true,
                         keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        borderRadius: AppTheme.borderRadiusXXl,
                         validator: (value) {
                           if (value == null || value.isEmpty) return 'Requerido';
                           if (value.length < 3) return 'CVC inválido';
@@ -399,6 +374,8 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
             ),
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
+          // Información de seguridad
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingLg),
             decoration: BoxDecoration(
@@ -427,6 +404,8 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
             ),
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
+          // Checkbox y garantía
           Row(
             children: [
               Checkbox(
@@ -460,8 +439,12 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
+          // Términos y Condiciones
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              _showTermsDialog();
+            },
             style: TextButton.styleFrom(
               foregroundColor: AppTheme.primary,
               alignment: Alignment.centerLeft,
@@ -473,57 +456,25 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
     );
   }
 
-  Widget _buildFormField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-    void Function(String)? onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeLabel,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.onSurfaceVariant,
+// Método para mostrar diálogo de términos
+  void _showTermsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Términos y Condiciones'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Aquí irían los términos y condiciones completos del pago...\n\n'
+                'Este es un texto de ejemplo para mostrar cómo se vería el diálogo.',
           ),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          onChanged: onChanged,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            suffixIcon: FaIcon(
-              icon,
-              size: 18,
-              color: AppTheme.outline,
-            ),
-            filled: true,
-            fillColor: AppTheme.surfaceContainerLowest,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
-            ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -592,37 +543,21 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
           const SizedBox(height: AppTheme.spacingSm),
           _buildSummaryRow('Total', '\$${total.toStringAsFixed(2)}', isBold: true, isLarge: true),
           const SizedBox(height: AppTheme.spacingXl),
-          Container(
-            width: double.infinity,
+
+          // Botón de pago - Usando PrimaryButton
+          PrimaryButton(
+            text: 'Pagar Ahora',
+            onPressed: _isLoading ? null : _handlePayment,
+            state: _isLoading ? ButtonState.loading : ButtonState.active,
+            icon: FontAwesomeIcons.checkCircle,
+            activeColor: AppTheme.loginButtonColor,
+            textColor: Colors.white,
+            iconColor: Colors.white,
+            borderRadius: AppTheme.borderRadiusXXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 18,
             height: 56,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _handlePayment,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.loginButtonColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                ),
-                elevation: 2,
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-                  : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FaIcon(FontAwesomeIcons.checkCircle, size: 18),
-                  SizedBox(width: AppTheme.spacingSm),
-                  Text('Pagar Ahora'),
-                ],
-              ),
-            ),
+            fullWidth: true,
           ),
           const SizedBox(height: AppTheme.spacingMd),
           Text(
@@ -724,165 +659,6 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFooterPromotion() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingXl),
-      decoration: BoxDecoration(
-        color: AppTheme.inverseSurface,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 600;
-
-          if (isDesktop) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.tertiary,
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                        ),
-                        child: const Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.rocket,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingLg),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '¿Deseas facturación corporativa?',
-                              style: TextStyle(
-                                fontSize: AppTheme.fontSizeTitle,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Para cuentas Enterprise con múltiples usuarios, ofrecemos métodos de pago vía transferencia bancaria.',
-                              style: TextStyle(
-                                fontSize: AppTheme.fontSizeBody,
-                                color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Container(
-                  width: 200,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.tertiaryFixed,
-                      foregroundColor: AppTheme.onTertiaryFixed,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                      ),
-                    ),
-                    child: const Text('Hablar con Ventas'),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: AppTheme.tertiary,
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                      ),
-                      child: const Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.rocket,
-                          size: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacingLg),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '¿Deseas facturación corporativa?',
-                            style: TextStyle(
-                              fontSize: AppTheme.fontSizeTitle,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Para cuentas Enterprise con múltiples usuarios, ofrecemos métodos de pago vía transferencia bancaria.',
-                            style: TextStyle(
-                              fontSize: AppTheme.fontSizeSmall,
-                              color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spacingLg),
-                Container(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.tertiaryFixed,
-                      foregroundColor: AppTheme.onTertiaryFixed,
-                    ),
-                    child: const Text('Hablar con Ventas'),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  OutlineInputBorder _buildInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: BorderSide(color: AppTheme.outlineVariant, width: 1),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
 }

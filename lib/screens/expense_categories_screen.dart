@@ -5,6 +5,7 @@ import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/screens/add_expense_category_screen.dart';
 import 'package:pedidos/models/expense_category_model.dart';
 import 'package:pedidos/utils/icon_helper.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class ExpenseCategoriesScreen extends StatefulWidget {
   const ExpenseCategoriesScreen({super.key});
@@ -112,15 +113,9 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Visual Accent Card
-                  _buildAccentCard(),
-                  const SizedBox(height: AppTheme.spacingLg),
                   // Categories List
                   _buildCategoriesList(),
                   const SizedBox(height: AppTheme.spacingLg),
-                  // Summary Insight Card
-                  _buildSummaryCard(),
-                  const SizedBox(height: AppTheme.spacingXl * 2),
                 ],
               ),
             ),
@@ -144,108 +139,10 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Categorías de Gastos',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAccentCard() {
-    return Container(
-      width: double.infinity,
-      height: 120,
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.primary,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-      ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Administra tus Categorías',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeTitle,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Organiza y optimiza el flujo de tus gastos operativos.',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeBody,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            right: -30,
-            top: -30,
-            child: FaIcon(
-              FontAwesomeIcons.tags,
-              size: 100,
-              color: Colors.white.withValues(alpha: 0.15),
-            ),
-          ),
-        ],
-      ),
+    return CustomTopAppBar(
+      title: 'Categorías de gastos',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -419,115 +316,6 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryCard() {
-    final totalCategories = _categories.length;
-    final topCategory = _categories.isNotEmpty
-        ? _categories.reduce((a, b) => a.totalSpent > b.totalSpent ? a : b)
-        : null;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.secondaryFixed.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.secondaryFixed.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Análisis Mensual',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeLabel,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.onSecondaryContainer,
-                ),
-              ),
-              FaIcon(
-                FontAwesomeIcons.chartLine,
-                size: 20,
-                color: AppTheme.onSecondaryContainer,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingLg),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'MAYOR GASTO',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          color: AppTheme.outline,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        topCategory?.name ?? 'N/A',
-                        style: TextStyle(
-                          fontSize: AppTheme.fontSizeBody,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingLg),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'TOTAL CATEGORÍAS',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          color: AppTheme.outline,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${totalCategories} Activas',
-                        style: TextStyle(
-                          fontSize: AppTheme.fontSizeBody,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

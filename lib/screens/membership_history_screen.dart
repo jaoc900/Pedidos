@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_dropdown_field.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class MembershipHistoryScreen extends StatefulWidget {
   const MembershipHistoryScreen({super.key});
@@ -10,6 +13,7 @@ class MembershipHistoryScreen extends StatefulWidget {
 }
 
 class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'Todos';
   final List<String> _filters = ['Todos', 'Pagados', 'Pendientes', 'Fallidos'];
   String _searchQuery = '';
@@ -131,10 +135,7 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: Column(
+              child:  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header
@@ -151,8 +152,6 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
                       const SizedBox(height: AppTheme.spacingXl * 2),
                     ],
                   ),
-                ),
-              ),
             ),
           ),
         ],
@@ -160,17 +159,50 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+  Widget _buildTransactionsTable() {
+    if (_filteredTransactions.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+          border: Border.all(color: AppTheme.outlineVariant),
         ),
+        child: Column(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.receipt,
+              size: 64,
+              color: AppTheme.outline.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+            Text(
+              'No hay transacciones',
+              style: TextStyle(
+                fontSize: AppTheme.fontSizeBody,
+                color: AppTheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              'No se encontraron pagos para este período',
+              style: TextStyle(
+                fontSize: AppTheme.fontSizeSmall,
+                color: AppTheme.outline,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+        border: Border.all(color: AppTheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -179,63 +211,77 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
           ),
         ],
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width - (AppTheme.spacingXl * 2),
+            child: DataTable(
+              columnSpacing: 32,
+              headingRowColor: WidgetStateProperty.resolveWith(
+                    (states) => AppTheme.surfaceContainerLow,
+              ),
+              columns: const [
+                DataColumn(label: Text('Factura', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('Plan', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('Monto', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('Método', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('Estado', style: TextStyle(fontWeight: FontWeight.w600))),
+                DataColumn(label: Text('', style: TextStyle(fontWeight: FontWeight.w600))),
+              ],
+              rows: _filteredTransactions.map((transaction) {
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Text(
+                        transaction.id,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Historial de Membresía',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.fileExport,
-                    size: 20,
-                    color: AppTheme.primary,
-                  ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Exportando historial...'),
-                        backgroundColor: AppTheme.primary,
+                    DataCell(Text(_formatDate(transaction.date))),
+                    DataCell(Text(transaction.plan)),
+                    DataCell(
+                      Text(
+                        '\$${transaction.amount.toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                    );
-                  },
-                ),
-              ],
+                    ),
+                    DataCell(Text(transaction.paymentMethod)),
+                    DataCell(_buildStatusChip(transaction.status)),
+                    DataCell(
+                      IconButton(
+                        icon: FaIcon(
+                          FontAwesomeIcons.filePdf,
+                          size: 18,
+                          color: AppTheme.primary,
+                        ),
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Descargando factura ${transaction.id}'),
+                              backgroundColor: AppTheme.primary,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTopAppBar(BuildContext context) {
+    return CustomTopAppBar(
+      title: 'Historial de membresía',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -243,15 +289,6 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Historial de Pagos',
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeHeadline,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
         Text(
           'Consulta todas tus transacciones y facturas de membresía.',
           style: TextStyle(
@@ -364,176 +401,56 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
   Widget _buildFilters() {
     return Row(
       children: [
-        // Búsqueda
+        // Búsqueda - Usando CustomTextField
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-              border: Border.all(color: AppTheme.outlineVariant),
-            ),
-            child: TextField(
-              onChanged: (value) {
+          child: CustomTextField(
+            controller: _searchController,
+            label: '',
+            hint: 'Buscar por factura o plan...',
+            icon: FontAwesomeIcons.magnifyingGlass,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            borderRadius: AppTheme.borderRadiusXXl,
+            showLabel: false,
+            suffixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+              icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
+              onPressed: () {
                 setState(() {
-                  _searchQuery = value;
+                  _searchQuery = '';
+                  _searchController.clear();
                 });
               },
-              decoration: InputDecoration(
-                hintText: 'Buscar por factura o plan...',
-                hintStyle: TextStyle(color: AppTheme.outline),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  child: FaIcon(FontAwesomeIcons.magnifyingGlass, size: 20, color: AppTheme.outline),
-                ),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                  icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
-                  onPressed: () => setState(() => _searchQuery = ''),
-                )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-              ),
-            ),
+            )
+                : null,
           ),
         ),
         const SizedBox(width: AppTheme.spacingLg),
-        // Selector de año
-        Container(
-          height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: _selectedYear,
-              icon: FaIcon(FontAwesomeIcons.chevronDown, size: 14, color: AppTheme.primary),
-              items: _years.map((year) {
-                return DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString()),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _selectedYear = newValue;
-                  });
-                }
-              },
-            ),
+
+        // Selector de año - Usando CustomDropdownField
+        SizedBox(
+          width: 150,
+          child: CustomDropdownField(
+            value: _selectedYear.toString(),
+            label: '',
+            hint: 'Año',
+            items: _years.map((year) => year.toString()).toList(),
+            icon: FontAwesomeIcons.calendar,
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  _selectedYear = int.parse(value);
+                });
+              }
+            },
+            borderRadius: AppTheme.borderRadiusXXl,
+            showLabel: false,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTransactionsTable() {
-    if (_filteredTransactions.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-          border: Border.all(color: AppTheme.outlineVariant),
-        ),
-        child: Column(
-          children: [
-            FaIcon(FontAwesomeIcons.receipt, size: 64, color: AppTheme.outline.withValues(alpha: 0.5)),
-            const SizedBox(height: AppTheme.spacingLg),
-            Text(
-              'No hay transacciones',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeBody,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              'No se encontraron pagos para este período',
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeSmall,
-                color: AppTheme.outline,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columnSpacing: 32,
-          headingRowColor: WidgetStateProperty.resolveWith(
-                (states) => AppTheme.surfaceContainerLow,
-          ),
-          columns: const [
-            DataColumn(label: Text('Factura', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('Plan', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('Monto', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('Método', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('Estado', style: TextStyle(fontWeight: FontWeight.w600))),
-            DataColumn(label: Text('', style: TextStyle(fontWeight: FontWeight.w600))),
-          ],
-          rows: _filteredTransactions.map((transaction) {
-            return DataRow(
-              cells: [
-                DataCell(
-                  Text(
-                    transaction.id,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                DataCell(Text(_formatDate(transaction.date))),
-                DataCell(Text(transaction.plan)),
-                DataCell(
-                  Text(
-                    '\$${transaction.amount.toStringAsFixed(2)}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                DataCell(Text(transaction.paymentMethod)),
-                DataCell(_buildStatusChip(transaction.status)),
-                DataCell(
-                  IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.filePdf,
-                      size: 18,
-                      color: AppTheme.primary,
-                    ),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Descargando factura ${transaction.id}'),
-                          backgroundColor: AppTheme.primary,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
     );
   }
 

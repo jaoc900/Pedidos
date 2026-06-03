@@ -7,6 +7,10 @@ import 'package:pedidos/models/transaction_model.dart';
 import 'package:pedidos/screens/payment_checkout_screen.dart';
 import 'package:pedidos/screens/membership_history_screen.dart';
 import 'package:pedidos/screens/upgrade_flow_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
 
 class MembershipFlowScreen extends StatelessWidget {
   const MembershipFlowScreen({super.key});
@@ -33,9 +37,6 @@ class MembershipFlowScreen extends StatelessWidget {
                       // Bento Grid Dashboard
                       _buildBentoGrid(context),
                       const SizedBox(height: AppTheme.spacingXl),
-                      // Promotion / Action Section
-                      _buildPromotionSection(),
-                      const SizedBox(height: AppTheme.spacingXl * 2),
                     ],
                   ),
                 ),
@@ -48,62 +49,10 @@ class MembershipFlowScreen extends StatelessWidget {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Detalles de Membresía',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.loginButtonColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Detalle de membresía',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -114,46 +63,33 @@ class MembershipFlowScreen extends StatelessWidget {
 
         return Column(
           children: [
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: AppTheme.spacingLg,
-              runSpacing: AppTheme.spacingMd,
-              children: [
-                // Texto a la izquierda
-                SizedBox(
-                  width: isDesktop ? 400 : double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Detalles de Membresía',
-                        style: TextStyle(
-                          fontSize: AppTheme.fontSizeHeadline,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.onBackground,
-                        ),
+            if (isDesktop)
+            // Versión Desktop: Texto izquierda, Botones derecha
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Texto a la izquierda
+                  SizedBox(
+                    width: 400,
+                    child: Text(
+                      'Administra tu suscripción y consulta el uso de tus recursos en tiempo real.',
+                      style: TextStyle(
+                        fontSize: AppTheme.fontSizeBody,
+                        color: AppTheme.onSurfaceVariant,
                       ),
-                      const SizedBox(height: AppTheme.spacingSm),
-                      Text(
-                        'Administra tu suscripción y consulta el uso de tus recursos en tiempo real.',
-                        style: TextStyle(
-                          fontSize: AppTheme.fontSizeBody,
-                          color: AppTheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                // Botones a la derecha
-                if (isDesktop)
+                  // Botones a la derecha
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Botón Historial
                       SizedBox(
                         width: 140,
                         height: 48,
-                        child: OutlinedButton.icon(
+                        child: CustomOutlinedButton(
+                          text: 'Historial',
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -162,22 +98,21 @@ class MembershipFlowScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          icon: const FaIcon(FontAwesomeIcons.clock, size: 18),
-                          label: const Text('Historial'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.loginButtonColor,
-                            side: BorderSide(color: AppTheme.loginButtonColor, width: 1.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                            ),
-                          ),
+                          icon: FontAwesomeIcons.clock,
+                          textColor: AppTheme.loginButtonColor,
+                          borderColor: AppTheme.loginButtonColor,
+                          borderRadius: AppTheme.borderRadiusXXl,
+                          fontSize: AppTheme.fontSizeLabel,
+                          iconSize: 18,
                         ),
                       ),
                       const SizedBox(width: AppTheme.spacingMd),
+                      // Botón Upgrade
                       SizedBox(
                         width: 140,
                         height: 48,
-                        child: ElevatedButton.icon(
+                        child: PrimaryButton(
+                          text: 'Upgrade',
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -186,52 +121,84 @@ class MembershipFlowScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          icon: const FaIcon(FontAwesomeIcons.arrowUp, size: 18),
-                          label: const Text('Upgrade'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.loginButtonColor,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                            ),
-                            elevation: 4,
-                          ),
+                          icon: FontAwesomeIcons.arrowUp,
+                          activeColor: AppTheme.loginButtonColor,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
+                          borderRadius: AppTheme.borderRadiusXXl,
+                          fontSize: AppTheme.fontSizeLabel,
+                          iconSize: 18,
+                          state: ButtonState.active,
                         ),
                       ),
                     ],
                   ),
-              ],
-            ),
-            if (!isDesktop) ...[
-              const SizedBox(height: AppTheme.spacingLg),
-              Row(
+                ],
+              )
+            else
+            // Versión Móvil: Texto arriba, Botones abajo
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.clock, size: 18),
-                      label: const Text('Historial'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.loginButtonColor,
-                        side: BorderSide(color: AppTheme.loginButtonColor, width: 1.5),
-                      ),
+                  // Texto
+                  Text(
+                    'Administra tu suscripción y consulta el uso de tus recursos en tiempo real.',
+                    style: TextStyle(
+                      fontSize: AppTheme.fontSizeBody,
+                      color: AppTheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.arrowUp, size: 18),
-                      label: const Text('Upgrade'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.loginButtonColor,
-                        foregroundColor: Colors.white,
+                  const SizedBox(height: AppTheme.spacingLg),
+                  // Botones
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: 'Historial',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MembershipHistoryScreen(),
+                              ),
+                            );
+                          },
+                          icon: FontAwesomeIcons.clock,
+                          textColor: AppTheme.loginButtonColor,
+                          borderColor: AppTheme.loginButtonColor,
+                          borderRadius: AppTheme.borderRadiusXXl,
+                          fontSize: AppTheme.fontSizeLabel,
+                          iconSize: 18,
+                          height: 48,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: PrimaryButton(
+                          text: 'Upgrade',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UpgradeFlowScreen(),
+                              ),
+                            );
+                          },
+                          icon: FontAwesomeIcons.arrowUp,
+                          activeColor: AppTheme.loginButtonColor,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
+                          borderRadius: AppTheme.borderRadiusXXl,
+                          fontSize: AppTheme.fontSizeLabel,
+                          iconSize: 18,
+                          height: 48,
+                          state: ButtonState.active,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
           ],
         );
       },
@@ -407,24 +374,23 @@ class MembershipFlowScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // Botón Cambiar Plan - Usando PrimaryButton con borderRadiusXXl
                   SizedBox(
                     width: 140,
                     height: 48,
-                    child: ElevatedButton(
+                    child: PrimaryButton(
+                      text: 'Cambiar Plan',
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const UpgradeFlowScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.loginButtonColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                        ),
-                      ),
-                      child: const Text('Cambiar Plan'),
+                      activeColor: AppTheme.loginButtonColor,
+                      textColor: Colors.white,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      fontSize: AppTheme.fontSizeLabel,
+                      state: ButtonState.active,
                     ),
                   ),
                 ],
@@ -998,154 +964,6 @@ class MembershipFlowScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPromotionSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spacingXl),
-      decoration: BoxDecoration(
-        color: AppTheme.inverseSurface,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 600;
-
-          if (isDesktop) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Contenido izquierdo - ocupa todo el espacio disponible
-                Expanded(
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.tertiary,
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                        ),
-                        child: const Center(
-                          child: FaIcon(
-                            FontAwesomeIcons.rocket,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingLg),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '¿Necesitas más potencia?',
-                              style: TextStyle(
-                                fontSize: AppTheme.fontSizeTitle,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Desbloquea usuarios ilimitados y soporte prioritario 24/7 con el Plan Enterprise.',
-                              style: TextStyle(
-                                fontSize: AppTheme.fontSizeBody,
-                                color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                // Botón derecho - tamaño fijo
-                SizedBox(
-                  width: 220,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.tertiaryFixed,
-                      foregroundColor: AppTheme.onTertiaryFixed,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                      ),
-                    ),
-                    child: const Text('Solicitar Demo Enterprise'),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: AppTheme.tertiary,
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                      ),
-                      child: const Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.rocket,
-                          size: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacingLg),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '¿Necesitas más potencia?',
-                            style: TextStyle(
-                              fontSize: AppTheme.fontSizeTitle,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Desbloquea usuarios ilimitados y soporte prioritario 24/7.',
-                            style: TextStyle(
-                              fontSize: AppTheme.fontSizeSmall,
-                              color: AppTheme.onInverseSurface.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spacingLg),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.tertiaryFixed,
-                      foregroundColor: AppTheme.onTertiaryFixed,
-                    ),
-                    child: const Text('Solicitar Demo Enterprise'),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
       ),
     );
   }
