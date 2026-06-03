@@ -4,6 +4,12 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/backup_history_model.dart';
 import 'package:pedidos/enums/backup_status_enum.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -152,7 +158,7 @@ class _BackupScreenState extends State<BackupScreen> {
       backgroundColor: AppTheme.background,
       body: Column(
         children: [
-          _buildTopAppBar(context),
+          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -183,78 +189,24 @@ class _BackupScreenState extends State<BackupScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Copia de Seguridad',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.cloud,
-                size: 20,
-                color: AppTheme.primary,
+  Widget _buildTopAppBar() {
+    return CustomTopAppBar(
+      title: 'Copia de Seguridad',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+          icon: FontAwesomeIcons.cloud,
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Sincronizando con la nube...'),
+                backgroundColor: AppTheme.primary,
               ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Sincronizando con la nube...'),
-                    backgroundColor: AppTheme.primary,
-                  ),
-                );
-              },
-            ),
-          ],
+            );
+          },
         ),
-      ),
+      ],
     );
   }
 
@@ -262,69 +214,53 @@ class _BackupScreenState extends State<BackupScreen> {
     return Row(
       children: [
         Expanded(
-          child: _buildActionCard(
-            title: 'Crear Backup',
+          child: CustomOutlinedButton(
+            text: 'Crear Backup',
+            onPressed: _createBackup,
             icon: FontAwesomeIcons.cloudArrowUp,
-            color: AppTheme.primary,
-            onTap: _createBackup,
+            textColor: AppTheme.primary,
+            borderColor: AppTheme.primary,
+            iconColor: AppTheme.primary,
+            borderRadius: AppTheme.borderRadiusXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 28,
+            height: 100,
+            fullWidth: true,
           ),
         ),
         const SizedBox(width: AppTheme.spacingLg),
         Expanded(
-          child: _buildActionCard(
-            title: 'Exportar',
+          child: CustomOutlinedButton(
+            text: 'Exportar',
+            onPressed: _exportBackup,
             icon: FontAwesomeIcons.fileExport,
-            color: AppTheme.secondary,
-            onTap: _exportBackup,
+            textColor: AppTheme.secondary,
+            borderColor: AppTheme.secondary,
+            iconColor: AppTheme.secondary,
+            borderRadius: AppTheme.borderRadiusXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 28,
+            height: 100,
+            fullWidth: true,
           ),
         ),
         const SizedBox(width: AppTheme.spacingLg),
         Expanded(
-          child: _buildActionCard(
-            title: 'Importar',
+          child: CustomOutlinedButton(
+            text: 'Importar',
+            onPressed: _importBackup,
             icon: FontAwesomeIcons.fileImport,
-            color: AppTheme.tertiary,
-            onTap: _importBackup,
+            textColor: AppTheme.tertiary,
+            borderColor: AppTheme.tertiary,
+            iconColor: AppTheme.tertiary,
+            borderRadius: AppTheme.borderRadiusXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 28,
+            height: 100,
+            fullWidth: true,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildActionCard({
-    required String title,
-    required FaIconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          children: [
-            FaIcon(
-              icon,
-              size: 28,
-              color: color,
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -368,98 +304,179 @@ class _BackupScreenState extends State<BackupScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          SwitchListTile(
-            title: const Text('Copia automática'),
-            subtitle: const Text('Realizar backups automáticos periódicamente'),
+          _buildSwitchTile(
+            title: 'Copia automática',
+            subtitle: 'Realizar backups automáticos periódicamente',
             value: _autoBackup,
             onChanged: (value) {
               setState(() {
                 _autoBackup = value;
               });
             },
-            activeColor: AppTheme.primary,
-            contentPadding: EdgeInsets.zero,
+            icon: FontAwesomeIcons.cloud,
           ),
           if (_autoBackup) ...[
             const SizedBox(height: AppTheme.spacingSm),
-            ListTile(
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.clock,
-                    size: 18,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ),
-              title: const Text('Frecuencia'),
-              subtitle: Text('Backup $_backupFrequency'),
-              trailing: DropdownButton<String>(
-                value: _backupFrequency,
-                underline: const SizedBox(),
-                icon: FaIcon(
-                  FontAwesomeIcons.chevronDown,
-                  size: 14,
-                  color: AppTheme.primary,
-                ),
-                items: _frequencies.map((String frequency) {
-                  return DropdownMenuItem<String>(
-                    value: frequency,
-                    child: Text(frequency),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _backupFrequency = newValue;
-                    });
-                  }
-                },
-              ),
+            _buildDropdownTile(
+              title: 'Frecuencia',
+              subtitle: 'Backup $_backupFrequency',
+              value: _backupFrequency,
+              items: _frequencies,
+              icon: FontAwesomeIcons.clock,
+              onChanged: (value) {
+                setState(() {
+                  _backupFrequency = value;
+                });
+              },
             ),
           ],
           const Divider(),
-          SwitchListTile(
-            title: const Text('Solo WiFi'),
-            subtitle: const Text('Realizar backups solo cuando haya conexión WiFi'),
+          _buildSwitchTile(
+            title: 'Solo WiFi',
+            subtitle: 'Realizar backups solo cuando haya conexión WiFi',
             value: _backupOnWifiOnly,
             onChanged: (value) {
               setState(() {
                 _backupOnWifiOnly = value;
               });
             },
-            activeColor: AppTheme.primary,
-            contentPadding: EdgeInsets.zero,
+            icon: FontAwesomeIcons.wifi,
           ),
-          SwitchListTile(
-            title: const Text('Incluir multimedia'),
-            subtitle: const Text('Incluir imágenes y documentos en el backup'),
+          _buildSwitchTile(
+            title: 'Incluir multimedia',
+            subtitle: 'Incluir imágenes y documentos en el backup',
             value: _includeMedia,
             onChanged: (value) {
               setState(() {
                 _includeMedia = value;
               });
             },
-            activeColor: AppTheme.primary,
-            contentPadding: EdgeInsets.zero,
+            icon: FontAwesomeIcons.image,
           ),
-          SwitchListTile(
-            title: const Text('Incluir configuración'),
-            subtitle: const Text('Incluir preferencias y ajustes de la app'),
+          _buildSwitchTile(
+            title: 'Incluir configuración',
+            subtitle: 'Incluir preferencias y ajustes de la app',
             value: _includeSettings,
             onChanged: (value) {
               setState(() {
                 _includeSettings = value;
               });
             },
+            icon: FontAwesomeIcons.gear,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required Function(bool) onChanged,
+    required FaIconData icon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: FaIcon(icon, size: 18, color: AppTheme.primary),
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingLg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeBody,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeSmall,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
             activeColor: AppTheme.primary,
-            contentPadding: EdgeInsets.zero,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropdownTile({
+    required String title,
+    required String subtitle,
+    required String value,
+    required List<String> items,
+    required FaIconData icon,
+    required Function(String) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 56, bottom: AppTheme.spacingSm),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeSmall,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeSmall,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          DropdownButton<String>(
+            value: value,
+            underline: const SizedBox(),
+            icon: FaIcon(
+              FontAwesomeIcons.chevronDown,
+              size: 14,
+              color: AppTheme.primary,
+            ),
+            items: items.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              if (newValue != null) {
+                onChanged(newValue);
+              }
+            },
           ),
         ],
       ),

@@ -4,6 +4,11 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pedidos/models/help_article_model.dart';
 import 'package:pedidos/models/help_category_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({super.key});
@@ -356,71 +361,10 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Ayuda',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.questionCircle,
-                size: 20,
-                color: AppTheme.primary,
-              ),
-              onPressed: _openFAQ,
-              tooltip: 'Preguntas frecuentes',
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Ayuda',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -485,55 +429,17 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.outlineVariant),
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Buscar en la ayuda...',
-          hintStyle: TextStyle(
-            color: AppTheme.outline,
-            fontSize: AppTheme.fontSizeBody,
-          ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: FaIcon(
-              FontAwesomeIcons.magnifyingGlass,
-              size: 20,
-              color: AppTheme.outline,
-            ),
-          ),
-          suffixIcon: _searchQuery.isNotEmpty
-              ? IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.times,
-              size: 16,
-              color: AppTheme.outline,
-            ),
-            onPressed: () {
-              setState(() {
-                _searchQuery = '';
-                _searchController.clear();
-              });
-            },
-          )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingLg,
-            vertical: AppTheme.spacingLg,
-          ),
-        ),
-      ),
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar en la ayuda...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
     );
   }
 
@@ -694,27 +600,27 @@ class _HelpScreenState extends State<HelpScreen> {
           const SizedBox(height: AppTheme.spacingLg),
           Row(
             children: [
+              // Botón Email
               Expanded(
-                child: OutlinedButton.icon(
+                child: CustomOutlinedButton(
+                  text: 'Email',
                   onPressed: _contactSupport,
-                  icon: FaIcon(
-                    FontAwesomeIcons.envelope,
-                    size: 16,
-                    color: AppTheme.primary,
-                  ),
-                  label: const Text('Email'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                    ),
-                  ),
+                  icon: FontAwesomeIcons.envelope,
+                  textColor: AppTheme.primary,
+                  borderColor: AppTheme.primary,
+                  iconColor: AppTheme.primary,
+                  borderRadius: AppTheme.borderRadiusXl,
+                  fontSize: AppTheme.fontSizeLabel,
+                  iconSize: 16,
+                  height: 56,
+                  fullWidth: true,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingLg),
+              // Botón Chat
               Expanded(
-                child: OutlinedButton.icon(
+                child: CustomOutlinedButton(
+                  text: 'Chat',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -723,19 +629,15 @@ class _HelpScreenState extends State<HelpScreen> {
                       ),
                     );
                   },
-                  icon: FaIcon(
-                    FontAwesomeIcons.comment,
-                    size: 16,
-                    color: AppTheme.primary,
-                  ),
-                  label: const Text('Chat'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                    ),
-                  ),
+                  icon: FontAwesomeIcons.comment,
+                  textColor: AppTheme.primary,
+                  borderColor: AppTheme.primary,
+                  iconColor: AppTheme.primary,
+                  borderRadius: AppTheme.borderRadiusXl,
+                  fontSize: AppTheme.fontSizeLabel,
+                  iconSize: 16,
+                  height: 56,
+                  fullWidth: true,
                 ),
               ),
             ],
@@ -775,64 +677,36 @@ class _HelpScreenState extends State<HelpScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingMd),
-          TextField(
+
+          // Campo de texto con CustomTextField
+          CustomTextField(
             controller: _feedbackController,
+            label: '',
+            hint: 'Cuéntanos tu experiencia o sugiere mejoras...',
+            icon: FontAwesomeIcons.message,
             maxLines: 3,
-            decoration: InputDecoration(
-              hintText: 'Cuéntanos tu experiencia o sugiere mejoras...',
-              hintStyle: TextStyle(
-                color: AppTheme.outlineVariant,
-                fontSize: AppTheme.fontSizeSmall,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              border: _buildInputBorder(),
-              enabledBorder: _buildInputBorder(),
-              focusedBorder: _buildFocusedBorder(),
-              contentPadding: const EdgeInsets.all(AppTheme.spacingLg),
-            ),
+            borderRadius: AppTheme.borderRadiusXXl,
+            showLabel: false,
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          SizedBox(
-            width: double.infinity,
+
+          // Botón de enviar con PrimaryButton
+          PrimaryButton(
+            text: 'Enviar feedback',
+            onPressed: _sendFeedback,
+            state: _isLoading ? ButtonState.loading : ButtonState.active,
+            icon: FontAwesomeIcons.paperPlane,
+            activeColor: AppTheme.primary,
+            textColor: Colors.white,
+            iconColor: Colors.white,
+            borderRadius: AppTheme.borderRadiusXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 16,
             height: 44,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _sendFeedback,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                ),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-                  : const Text('Enviar feedback'),
-            ),
+            fullWidth: true,
           ),
         ],
       ),
-    );
-  }
-
-  OutlineInputBorder _buildInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: BorderSide(color: AppTheme.outlineVariant, width: 1),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
 }

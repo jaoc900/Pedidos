@@ -5,6 +5,9 @@ import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/employe_model.dart';
 import 'package:pedidos/enums/employee_status_enum.dart';
 import 'package:pedidos/screens/employee_detail_screen.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
 
 class EmployeesScreen extends StatefulWidget {
   const EmployeesScreen({super.key});
@@ -14,6 +17,7 @@ class EmployeesScreen extends StatefulWidget {
 }
 
 class _EmployeesScreenState extends State<EmployeesScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedFilter = 'Todos';
   final List<String> _filters = ['Todos', 'Activos', 'Inactivos', 'Administradores'];
@@ -185,8 +189,10 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                   // Resumen de empleados
                   _buildSummaryCards(),
                   const SizedBox(height: AppTheme.spacingLg),
-                  // Búsqueda y filtros
-                  _buildSearchAndFilters(),
+                  _buildSearchBar(),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  // Filtros
+                  _buildFilters(),
                   const SizedBox(height: AppTheme.spacingLg),
                   // Lista de empleados
                   _buildEmployeesList(),
@@ -209,45 +215,10 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: const Center(child: FaIcon(FontAwesomeIcons.arrowLeft, size: 20, color: AppTheme.primary)),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text('Empleados', style: TextStyle(fontSize: AppTheme.fontSizeTitle, fontWeight: FontWeight.w700, color: AppTheme.primary)),
-              ],
-            ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.fileExport, size: 20, color: AppTheme.primary),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Empleados',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
     );
   }
 
@@ -286,52 +257,37 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     );
   }
 
-  Widget _buildSearchAndFilters() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: TextField(
-            onChanged: (value) => setState(() => _searchQuery = value),
-            decoration: InputDecoration(
-              hintText: 'Buscar por nombre, email o rol...',
-              hintStyle: TextStyle(color: AppTheme.outline),
-              prefixIcon: Padding(padding: const EdgeInsets.all(AppTheme.spacingMd), child: FaIcon(FontAwesomeIcons.magnifyingGlass, size: 20, color: AppTheme.outline)),
-              suffixIcon: _searchQuery.isNotEmpty ? IconButton(icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline), onPressed: () => setState(() => _searchQuery = '')) : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingLg),
-        SizedBox(
-          height: 44,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _filters.length,
-            separatorBuilder: (_, __) => const SizedBox(width: AppTheme.spacingMd),
-            itemBuilder: (_, index) {
-              final filter = _filters[index];
-              final isSelected = _selectedFilter == filter;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedFilter = filter),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingSm),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primary : AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-                  ),
-                  child: Center(child: Text(filter, style: TextStyle(fontSize: AppTheme.fontSizeLabel, fontWeight: FontWeight.w600, color: isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant))),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+  Widget _buildSearchBar() {
+    return CustomTextField(
+      controller: _searchController, // Necesitas crear este controller
+      label: '', // Si no quieres label, puedes pasar una cadena vacía
+      hint: 'Buscar por nombre, email o rol...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
+    );
+  }
+
+  Widget _buildFilters() {
+    final filters = [
+      const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.users),
+      const FilterChipData(label: 'Activos', value: 'activos', icon: FontAwesomeIcons.userCheck),
+      const FilterChipData(label: 'Inactivos', value: 'inactivos', icon: FontAwesomeIcons.userSlash),
+      const FilterChipData(label: 'Administradores', value: 'administradores', icon: FontAwesomeIcons.userShield),
+    ];
+
+    return CustomFilterChipWithIcon(
+      filters: filters,
+      selectedFilter: _selectedFilter,
+      onFilterSelected: (filter) {
+        setState(() {
+          _selectedFilter = filter;
+        });
+      },
     );
   }
 

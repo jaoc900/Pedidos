@@ -3,6 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pedidos/models/faq_model.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_text_field.dart';
+import 'package:pedidos/widgets/custom_dropdown_field.dart';
+import 'package:pedidos/widgets/custom_chips.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/enums/botton_status_enum.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -176,7 +182,7 @@ class _SupportScreenState extends State<SupportScreen> {
       backgroundColor: AppTheme.background,
       body: Column(
         children: [
-          _buildTopAppBar(context),
+          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -203,85 +209,24 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Soporte',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+  Widget _buildTopAppBar() {
+    return CustomTopAppBar(
+      title: 'Soporte',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions: [
+        AppBarButton(
+          icon: FontAwesomeIcons.message,
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Chat en vivo - Próximamente'),
+                backgroundColor: AppTheme.primary,
               ),
-              child: IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.message,
-                  size: 20,
-                  color: AppTheme.primary,
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Chat en vivo - Próximamente'),
-                      backgroundColor: AppTheme.primary,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+            );
+          },
         ),
-      ),
+      ],
     );
   }
 
@@ -440,68 +385,40 @@ class _SupportScreenState extends State<SupportScreen> {
   }
 
   Widget _buildFaqSearch() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.outlineVariant),
-      ),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            _searchFaq = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Buscar en preguntas frecuentes...',
-          hintStyle: TextStyle(color: AppTheme.outline, fontSize: AppTheme.fontSizeBody),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: FaIcon(FontAwesomeIcons.magnifyingGlass, size: 20, color: AppTheme.outline),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-        ),
-      ),
+    return CustomTextField(
+      controller: TextEditingController(text: _searchFaq),
+      label: '',
+      hint: 'Buscar en preguntas frecuentes...',
+      icon: FontAwesomeIcons.magnifyingGlass,
+      onChanged: (value) {
+        setState(() {
+          _searchFaq = value;
+        });
+      },
+      borderRadius: AppTheme.borderRadiusXXl,
+      showLabel: false,
     );
   }
 
   Widget _buildFaqFilters() {
-    return SizedBox(
+    return CustomFilterChips(
+      filters: _faqCategories,
+      selectedFilter: _selectedFaqCategory,
+      onFilterSelected: (category) {
+        setState(() {
+          _selectedFaqCategory = category;
+        });
+      },
       height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _faqCategories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: AppTheme.spacingMd),
-        itemBuilder: (context, index) {
-          final category = _faqCategories[index];
-          final isSelected = _selectedFaqCategory == category;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedFaqCategory = category;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingSm),
-              decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primary : AppTheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
-              ),
-              child: Center(
-                child: Text(
-                  category,
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeSmall,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? AppTheme.onPrimary : AppTheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
+      itemPadding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingLg,
+        vertical: AppTheme.spacingSm,
       ),
+      borderRadius: AppTheme.borderRadiusFull,
+      selectedColor: AppTheme.primary,
+      unselectedColor: AppTheme.surfaceContainerHigh,
+      selectedTextColor: AppTheme.onPrimary,
+      unselectedTextColor: AppTheme.onSurfaceVariant,
     );
   }
 
@@ -593,48 +510,72 @@ class _SupportScreenState extends State<SupportScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          _buildFormField(
+
+          // Nombre completo
+          CustomTextField(
             controller: _nameController,
             label: 'Nombre completo',
             hint: 'Ej. Juan Pérez',
             icon: FontAwesomeIcons.user,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          _buildFormField(
+
+          // Correo electrónico
+          CustomTextField(
             controller: _emailController,
             label: 'Correo electrónico',
             hint: 'juan@ejemplo.com',
             icon: FontAwesomeIcons.envelope,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          _buildDropdownField(
-            label: 'Categoría',
+
+          // Categoría - CustomDropdownField
+          CustomDropdownField(
             value: _selectedCategory,
+            label: 'Categoría',
+            hint: 'Selecciona una categoría',
             items: _categories,
             icon: FontAwesomeIcons.tag,
             onChanged: (value) {
-              setState(() {
-                _selectedCategory = value!;
-              });
+              if (value != null) {
+                setState(() {
+                  _selectedCategory = value;
+                });
+              }
             },
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          _buildFormField(
+
+          // Asunto
+          CustomTextField(
             controller: _subjectController,
             label: 'Asunto',
             hint: 'Breve descripción del problema',
             icon: FontAwesomeIcons.heading,
+            textInputAction: TextInputAction.next,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          _buildFormField(
+
+          // Mensaje
+          CustomTextField(
             controller: _messageController,
             label: 'Mensaje',
             hint: 'Describe detalladamente tu problema o consulta...',
             icon: FontAwesomeIcons.message,
             maxLines: 5,
+            textInputAction: TextInputAction.done,
+            borderRadius: AppTheme.borderRadiusXXl,
           ),
           const SizedBox(height: AppTheme.spacingLg),
+
+          // Checkbox Adjutar logs
           Row(
             children: [
               Checkbox(
@@ -650,139 +591,24 @@ class _SupportScreenState extends State<SupportScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingLg),
-          SizedBox(
-            width: double.infinity,
+
+          // Botón Enviar - PrimaryButton
+          PrimaryButton(
+            text: 'Enviar mensaje',
+            onPressed: _sendSupportTicket,
+            state: _isLoading ? ButtonState.loading : ButtonState.active,
+            icon: FontAwesomeIcons.paperPlane,
+            activeColor: AppTheme.primary,
+            textColor: Colors.white,
+            iconColor: Colors.white,
+            borderRadius: AppTheme.borderRadiusXXl,
+            fontSize: AppTheme.fontSizeLabel,
+            iconSize: 16,
             height: 50,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _sendSupportTicket,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                ),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-                  : const Text('Enviar mensaje'),
-            ),
+            fullWidth: true,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFormField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(icon, size: 14, color: AppTheme.primary),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(color: AppTheme.outlineVariant, fontSize: AppTheme.fontSizeBody),
-            filled: true,
-            fillColor: Colors.white,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingLg),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required String value,
-    required List<String> items,
-    required FaIconData icon,
-    required void Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(icon, size: 14, color: AppTheme.primary),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-            border: Border.all(color: AppTheme.outlineVariant),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-            ),
-            icon: FaIcon(FontAwesomeIcons.chevronDown, size: 16, color: AppTheme.onSurfaceVariant),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(value: item, child: Text(item));
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  OutlineInputBorder _buildInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: BorderSide(color: AppTheme.outlineVariant, width: 1),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
-      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
     );
   }
 }
