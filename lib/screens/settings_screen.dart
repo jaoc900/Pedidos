@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -344,18 +346,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Botón de reset
                   Container(
                     margin: const EdgeInsets.only(bottom: AppTheme.spacingXl),
-                    child: OutlinedButton.icon(
+                    child: CustomOutlinedButton(
+                      text: 'Restablecer configuración',
                       onPressed: _resetSettings,
-                      icon: const FaIcon(FontAwesomeIcons.arrowRotateLeft, size: 18),
-                      label: const Text('Restablecer configuración'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.error,
-                        side: BorderSide(color: AppTheme.error, width: 1.5),
-                        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                        ),
-                      ),
+                      icon: FontAwesomeIcons.arrowRotateLeft,
+                      textColor: AppTheme.error,
+                      borderColor: AppTheme.error,
+                      iconColor: AppTheme.error,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      fontSize: AppTheme.fontSizeLabel,
+                      iconSize: 18,
+                      height: 56,
+                      fullWidth: true,
                     ),
                   ),
                 ],
@@ -368,77 +370,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildTopAppBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl, vertical: AppTheme.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        size: 20,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingLg),
-                Text(
-                  'Configuración',
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeTitle,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.check,
-                size: 20,
-                color: AppTheme.primary,
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Configuración guardada'),
-                    backgroundColor: AppTheme.primary,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+    return CustomTopAppBar(
+      title: 'Configuración',
+      showBackButton: true,
+      onBackPressed: () => Navigator.pop(context),
+      actions:[
+        AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: ()=>{})
+      ]
     );
   }
 
@@ -481,40 +421,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required FaIconData icon,
     bool compact = false,
   }) {
-    return SwitchListTile(
-      contentPadding: compact ? const EdgeInsets.only(left: 36) : EdgeInsets.zero,
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: AppTheme.fontSizeBody,
-          fontWeight: FontWeight.w600,
-          color: AppTheme.onSurface,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: AppTheme.fontSizeSmall,
-          color: AppTheme.onSurfaceVariant,
-        ),
-      ),
-      value: value,
-      onChanged: onChanged,
-      activeColor: AppTheme.primary,
-      secondary: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: AppTheme.primary.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: FaIcon(
-            icon,
-            size: 18,
-            color: AppTheme.primary,
+    return Padding(
+      padding: compact ? const EdgeInsets.only(left: 36) : EdgeInsets.zero,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icono
+          Container(
+            width: 40,
+            height: 40,
+            margin: const EdgeInsets.only(right: AppTheme.spacingMd),
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: 18,
+                color: AppTheme.primary,
+              ),
+            ),
           ),
-        ),
+          // Texto (expande para ocupar espacio)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeBody,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: AppTheme.fontSizeSmall,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Switch
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppTheme.primary,
+          ),
+        ],
       ),
     );
   }
