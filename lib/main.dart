@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pedidos/screens/login_screen.dart';
 import 'package:pedidos/theme/theme.dart';
+import 'package:pedidos/services/user_preferences.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const VerdantGrowthApp());
 }
 

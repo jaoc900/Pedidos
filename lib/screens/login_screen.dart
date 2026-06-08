@@ -9,9 +9,10 @@ import 'package:pedidos/screens/contact_screen.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 import 'package:pedidos/widgets/primary_button.dart';
 import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
-import 'package:pedidos/core/network/di/inejction.dart';
+import 'package:pedidos/core/network/http_client.dart';
 import 'package:pedidos/core/network/api_client.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pedidos/models/Response/login_response.dart';
+import 'package:pedidos/services/user_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,6 +26,45 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
+  bool _isLoading = false; // Agregar estado de carga
+
+  // Variables para errores de los campos
+  String? _emailError;
+  String? _passwordError;
+
+  // Variables para errores generales
+  String? _generalError;
+
+  // Clientes HTTP
+  late ApiClient _apiClient;
+  late UserPreferences _userPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      // Inicializar UserPreferences
+      final userPrefs = UserPreferences();
+      await userPrefs.init();
+
+      // Cargar credenciales guardadas
+      await _loadSavedCredentials(userPrefs);
+
+      // Inicializar API client
+      final httpClient = HttpClient();
+      _apiClient = ApiClient(httpClient);
+      _userPrefs = userPrefs;
+
+      print('✅ Inicialización completada');
+    } catch (e) {
+      print('Error en inicialización: $e');
+      rethrow;
+    }
+  }
 
   @override
   void dispose() {
@@ -33,20 +73,187 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Limpiar errores cuando el usuario empieza a escribir
+  void _clearEmailError() {
+    if (_emailError != null) {
+      setState(() {
+        _emailError = null;
+        _generalError = null;
+      });
+    }
+  }
+
+  void _clearPasswordError() {
+    if (_passwordError != null) {
+      setState(() {
+        _passwordError = null;
+        _generalError = null;
+      });
+    }
+  }
+
+  Future<void> _loadSavedCredentials(UserPreferences userPrefs) async {
+    try {
+      final rememberMe = userPrefs.getRememberMe();
+      final savedEmail = userPrefs.getSavedEmail();
+
+      if (rememberMe && savedEmail != null && savedEmail.isNotEmpty) {
+        setState(() {
+          _emailController.text = savedEmail;
+          _rememberMe = true;
+        });
+        print('✅ Credenciales cargadas para: $savedEmail');
+      }
+    } catch (e) {
+      print('Error al cargar credenciales: $e');
+    }
+  }
+
+  Future<void> _login() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+      _generalError = null;
+      _isLoading = true;
+    });
+
+    // Validar email
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      setState(() {
+        _emailError = 'Por favor ingresa tu correo electrónico';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validar contraseña
+    final password = _passwordController.text;
+    if (password.isEmpty) {
+      setState(() {
+        _passwordError = 'Por favor ingresa tu contraseña';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Mostrar loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final response = await _apiClient.login(email, password);
+      final loginResponse = LoginResponse.fromJson(response);
+
+      if (!loginResponse.success || loginResponse.data == null) {
+        throw Exception('Error en el login');
+      }
+
+      final userData = loginResponse.data!;
+
+      // Guardar toda la información usando UserPreferences
+      await _userPrefs.saveUserInfo(userData);
+      await _userPrefs.saveRememberMe(_rememberMe, email: email);
+
+      // Cerrar loading
+      if (context.mounted) Navigator.pop(context);
+
+      // Mostrar mensaje de bienvenida
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('¡Bienvenido ${userData.fullName}!'),
+            backgroundColor: AppTheme.primary,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Navegar al home
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Home()),
+          );
+        }
+      }
+    } on NetworkExceptions catch (e) {
+      if (context.mounted) Navigator.pop(context);
+      _processBackendError(e);
+    } catch (e) {
+      if (context.mounted) Navigator.pop(context);
+      setState(() {
+        _generalError = 'Error al iniciar sesión. Intenta nuevamente.';
+      });
+      print('Error en login: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // Método para procesar errores del backend
+  void _processBackendError(NetworkExceptions error) {
+    final errorMessage = error.message.toLowerCase();
+
+    // Error de credenciales inválidas
+    if (errorMessage.contains('credenciales') ||
+        errorMessage.contains('invalid') ||
+        (errorMessage.contains('email') && errorMessage.contains('password'))) {
+      setState(() {
+        _generalError = 'Correo o contraseña incorrectos';
+        _passwordError = 'Contraseña incorrecta';
+      });
+    }
+    // Error de email no registrado
+    else if (errorMessage.contains('email') &&
+        (errorMessage.contains('not found') || errorMessage.contains('no existe'))) {
+      setState(() {
+        _emailError = 'Este correo no está registrado';
+      });
+    }
+    // Error de cuenta inactiva
+    else if (errorMessage.contains('inactiva') || errorMessage.contains('inactive')) {
+      setState(() {
+        _generalError = 'Tu cuenta está inactiva. Contacta a soporte.';
+      });
+    }
+    // Error de usuario bloqueado
+    else if (errorMessage.contains('bloqueado') || errorMessage.contains('blocked')) {
+      setState(() {
+        _generalError = 'Tu cuenta ha sido bloqueada. Contacta a soporte.';
+      });
+    }
+    // Otros errores
+    else {
+      setState(() {
+        _generalError = error.message;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          // Determinar el ancho máximo según el tamaño de pantalla
           final maxWidth = constraints.maxWidth > 600 ? 480.0 : double.infinity;
 
           return Stack(
             children: [
-              // Decoración de fondo
               _buildBackgroundDecoration(),
-              // Contenido principal
               SafeArea(
                 child: Center(
                   child: SingleChildScrollView(
@@ -60,13 +267,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Logo y branding
                           _buildBranding(),
                           const SizedBox(height: 32),
-                          // Título y subtítulo
                           _buildHeader(),
                           const SizedBox(height: 32),
-                          // Formulario
                           _buildForm(),
                         ],
                       ),
@@ -170,6 +374,49 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Error general (si existe)
+        if (_generalError != null)
+          Container(
+            margin: const EdgeInsets.only(bottom: AppTheme.spacingLg),
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            decoration: BoxDecoration(
+              color: AppTheme.errorContainer,
+              borderRadius: BorderRadius.circular(AppTheme.borderRadiusMd),
+              border: Border.all(color: AppTheme.error, width: 1),
+            ),
+            child: Row(
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.circleExclamation,
+                  size: 18,
+                  color: AppTheme.error,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _generalError!,
+                    style: const TextStyle(
+                      color: AppTheme.error,
+                      fontSize: AppTheme.fontSizeSmall,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _generalError = null;
+                    });
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.xmark,
+                    size: 14,
+                    color: AppTheme.error,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         // Campo de email
         CustomTextField(
           controller: _emailController,
@@ -179,8 +426,11 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: AppTheme.borderRadiusXXl,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
+          errorText: _emailError,
+          onChanged: (value) => _clearEmailError(),
         ),
         const SizedBox(height: AppTheme.spacingLg),
+
         // Campo de contraseña
         CustomTextField(
           controller: _passwordController,
@@ -190,6 +440,8 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: AppTheme.borderRadiusXXl,
           obscureText: _obscurePassword,
           textInputAction: TextInputAction.done,
+          errorText: _passwordError,
+          onChanged: (value) => _clearPasswordError(),
           suffixIcon: IconButton(
             icon: FaIcon(
               _obscurePassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
@@ -204,11 +456,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: AppTheme.spacingSm),
+
         // Olvidaste contraseña
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-            onPressed: () {},
+            onPressed: _showForgotPasswordDialog,
             style: TextButton.styleFrom(
               foregroundColor: AppTheme.primary,
               minimumSize: Size.zero,
@@ -219,6 +472,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: AppTheme.spacingSm),
+
         // Recordarme
         Row(
           children: [
@@ -248,19 +502,18 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
+
+        const SizedBox(height: AppTheme.spacingLg),
+
+        // Botón de login
         PrimaryButton(
           text: 'Ingresar',
           borderRadius: AppTheme.borderRadiusXXl,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const Home(),
-              ),
-            );
-          },
+          onPressed: _isLoading ? null : _login, // Deshabilitar mientras carga
         ),
+
         const SizedBox(height: AppTheme.spacingXl),
+
         // Link de registro
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -293,7 +546,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
+
         const SizedBox(height: AppTheme.spacingXl),
+
         // Footer
         _buildFooter(),
       ],
@@ -303,8 +558,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildFooter() {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 8, // Space between items
-      runSpacing: 8, // Space between lines if they wrap
+      spacing: 8,
+      runSpacing: 8,
       children: [
         TextButton(
           onPressed: () {
@@ -352,56 +607,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _login() async {
-    try {
-      // Mostrar loading
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(child: CircularProgressIndicator()),
-      );
-
-      final apiClient = locator<ApiClient>();
-      final response = await apiClient.login(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-
-      // Guardar token si es necesario
-      final token = response['token'];
-      if (token != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('access_token', token);
-      }
-
-      // Cerrar loading
-      Navigator.pop(context);
-
-      // Navegar al home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Home()),
-      );
-    } on NetworkExceptions catch (e) {
-      // Cerrar loading si estaba abierto
-      Navigator.pop(context);
-
-      // Mostrar error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recuperar contraseña'),
+        content: const Text(
+          'Por favor contacta a soporte para recuperar tu contraseña.\n\n'
+              'Email: soporte@empresa.com\n'
+              'Tel: (55) 1234-5678',
         ),
-      );
-    } catch (e) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error inesperado. Intenta nuevamente.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
   }
 }

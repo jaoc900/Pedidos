@@ -127,6 +127,7 @@ class CustomTextField extends StatelessWidget {
               readOnly: readOnly,
               enabled: enabled,
               onChanged: onChanged,
+              enableInteractiveSelection: true,
               textAlign: textAlign,
               style: textStyle ??
                   TextStyle(
