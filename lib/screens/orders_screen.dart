@@ -73,8 +73,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
       backgroundColor: AppTheme.background,
       body: Column(
         children: [
-          // Header personalizado (reemplaza el AppBar)
-          //_buildCustomHeader(),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(

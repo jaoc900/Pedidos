@@ -86,10 +86,13 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
 
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Gestión Comercial',
+        showBackButton: false,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopAppBar(),
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -118,13 +121,6 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Gestión Comercial',
-      showBackButton: false,
     );
   }
 

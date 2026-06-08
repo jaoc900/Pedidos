@@ -20,10 +20,13 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Gastos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -51,14 +54,6 @@ class _ExpensesDashboardScreenState extends State<ExpensesDashboardScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Gastos',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

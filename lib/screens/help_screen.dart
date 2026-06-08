@@ -321,9 +321,13 @@ class _HelpScreenState extends State<HelpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Ayuda',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -357,14 +361,6 @@ class _HelpScreenState extends State<HelpScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Ayuda',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

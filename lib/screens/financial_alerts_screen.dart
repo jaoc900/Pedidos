@@ -177,9 +177,18 @@ class _FinancialAlertsScreenState extends State<FinancialAlertsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+          title: 'Alertas financieras',
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.save,
+                onPressed: () =>{})
+          ]
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -201,19 +210,6 @@ class _FinancialAlertsScreenState extends State<FinancialAlertsScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-        title: 'Alertas financieras',
-        showBackButton: true,
-        onBackPressed: () => Navigator.pop(context),
-        actions:[
-          AppBarButton(
-              icon: FontAwesomeIcons.save,
-              onPressed: () =>{})
-        ]
     );
   }
 

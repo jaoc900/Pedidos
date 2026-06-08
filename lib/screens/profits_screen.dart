@@ -14,10 +14,13 @@ class ProfitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Ganancias',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          // TopAppBar con backbutton y perfil
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -40,14 +43,6 @@ class ProfitsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Ganancias',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

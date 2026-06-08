@@ -18,9 +18,13 @@ class MembershipFlowScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar:  CustomTopAppBar(
+        title: 'Detalle de membresía',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -44,14 +48,6 @@ class MembershipFlowScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Detalle de membresía',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

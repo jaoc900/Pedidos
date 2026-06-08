@@ -119,9 +119,13 @@ class _PaymentCalendarScreenState extends State<PaymentCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Calendario de pagos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -140,14 +144,6 @@ class _PaymentCalendarScreenState extends State<PaymentCalendarScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-        title: 'Calendario de pagos',
-        showBackButton: true,
-        onBackPressed: () => Navigator.pop(context),
     );
   }
 

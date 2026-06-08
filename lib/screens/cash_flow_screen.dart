@@ -45,9 +45,18 @@ class _CashFlowScreenState extends State<CashFlowScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+          title: 'Flujo de caja',
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.save,
+                onPressed: () =>{})
+          ]
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -78,19 +87,6 @@ class _CashFlowScreenState extends State<CashFlowScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-        title: 'Flujo de caja',
-        showBackButton: true,
-        onBackPressed: () => Navigator.pop(context),
-        actions:[
-          AppBarButton(
-              icon: FontAwesomeIcons.save,
-              onPressed: () =>{})
-        ]
     );
   }
 

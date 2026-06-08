@@ -92,13 +92,16 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Catálogo de productos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Stack(
         children: [
           // Contenido principal
           Column(
             children: [
-              // TopAppBar
-              _buildTopAppBar(),
               // Contenido con scroll
               Expanded(
                 child: SingleChildScrollView(
@@ -128,14 +131,6 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
           if (_cartItemsCount > 0) _buildFloatingCart(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Catálogo de productos',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

@@ -81,9 +81,18 @@ class _PriceListScreenState extends State<PriceListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Lista de precios',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+              icon: FontAwesomeIcons.save,
+              onPressed: () => {})
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -122,19 +131,6 @@ class _PriceListScreenState extends State<PriceListScreen> {
         child: const FaIcon(FontAwesomeIcons.plus, size: 24, color: Colors.white,),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Lista de precios',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-            icon: FontAwesomeIcons.save,
-            onPressed: () => {})
-      ],
     );
   }
 

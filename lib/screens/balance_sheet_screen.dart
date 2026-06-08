@@ -74,9 +74,18 @@ class _BalanceSheetScreenState extends State<BalanceSheetScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+          title: 'Balance general',
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.save,
+                onPressed: () =>{})
+          ]
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -110,19 +119,6 @@ class _BalanceSheetScreenState extends State<BalanceSheetScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-        title: 'Balance general',
-        showBackButton: true,
-        onBackPressed: () => Navigator.pop(context),
-        actions:[
-          AppBarButton(
-              icon: FontAwesomeIcons.save,
-              onPressed: () =>{})
-        ]
     );
   }
 

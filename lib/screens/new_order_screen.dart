@@ -95,21 +95,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     );
   }
 
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Nueva Orden',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.solidFloppyDisk, // Icono de guardar
-          onPressed: () => _saveOrder(),
-          color: AppTheme.primary,
-        ),
-      ],
-    );
-  }
-
   Widget _buildCustomerSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

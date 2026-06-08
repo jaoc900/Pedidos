@@ -86,10 +86,40 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: widget.supplier == null ? 'Nuevo Proveedor' : 'Editar Proveedor',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          TextButton(
+            onPressed: _isLoading ? null : _saveSupplier,
+            style: TextButton.styleFrom(
+              foregroundColor: AppTheme.primary,
+              minimumSize: Size.zero,
+              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: _isLoading
+                ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
+              ),
+            )
+                : const Text(
+              'Guardar',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          // CustomTopAppBar
-          _buildTopAppBar(),
           // Formulario
           Expanded(
             child: SingleChildScrollView(
@@ -224,41 +254,6 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: widget.supplier == null ? 'Nuevo Proveedor' : 'Editar Proveedor',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : _saveSupplier,
-          style: TextButton.styleFrom(
-            foregroundColor: AppTheme.primary,
-            minimumSize: Size.zero,
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: _isLoading
-              ? const SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
-            ),
-          )
-              : const Text(
-            'Guardar',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

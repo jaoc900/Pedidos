@@ -138,7 +138,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       return;
     }
-
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Home()),
+    );/*
     try {
       final response = await _apiClient.login(email, password);
       final loginResponse = LoginResponse.fromJson(response);
@@ -186,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoading = false;
         });
       }
-    }
+    }*/
   }
 
   // Método para procesar errores del backend

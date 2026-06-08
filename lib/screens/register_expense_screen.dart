@@ -105,10 +105,18 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar:  CustomTopAppBar(
+          title: 'Registrar gasto',
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.save,
+                onPressed: () =>{})
+          ]
+      ),
       body: Column(
         children: [
-          // TopAppBar con botón de guardar
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -128,19 +136,6 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Registrar gasto',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions:[
-        AppBarButton(
-            icon: FontAwesomeIcons.save,
-            onPressed: () =>{})
-      ]
     );
   }
 

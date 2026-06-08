@@ -203,9 +203,13 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Proveedores',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -240,13 +244,6 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-        title: 'Proveedores',
-        showBackButton: true,
-        onBackPressed: () => Navigator.pop(context),
-    );
-  }
   Widget _buildSearchBar() {
     return CustomTextField(
       controller: _searchController, // Necesitas crear este controller

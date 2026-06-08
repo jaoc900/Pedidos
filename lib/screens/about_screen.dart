@@ -21,9 +21,26 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Acerca de',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.share,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Sincronizando con la nube...'),
+                  backgroundColor: AppTheme.primary,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -59,27 +76,6 @@ class AboutScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Acerca de',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.share,
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Sincronizando con la nube...'),
-                backgroundColor: AppTheme.primary,
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 

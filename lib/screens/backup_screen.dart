@@ -152,9 +152,26 @@ class _BackupScreenState extends State<BackupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Copia de Seguridad',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.cloud,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Sincronizando con la nube...'),
+                  backgroundColor: AppTheme.primary,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -182,27 +199,6 @@ class _BackupScreenState extends State<BackupScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Copia de Seguridad',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.cloud,
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Sincronizando con la nube...'),
-                backgroundColor: AppTheme.primary,
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 

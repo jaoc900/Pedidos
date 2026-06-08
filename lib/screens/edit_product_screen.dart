@@ -157,10 +157,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
+      appBar: CustomTopAppBar(
+          title: 'Artículos',
+          showBackButton: true,
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.trashCan,
+                color: AppTheme.error,
+                onPressed: _deleteProduct
+            ),
+            AppBarButton(
+              icon: FontAwesomeIcons.solidFloppyDisk,
+              onPressed: _saveProduct,
+            )
+          ]
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -186,24 +199,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Artículos',
-      showBackButton: true,
-      actions:[
-        AppBarButton(
-            icon: FontAwesomeIcons.trashCan,
-            color: AppTheme.error,
-            onPressed: _deleteProduct
-        ),
-        AppBarButton(
-          icon: FontAwesomeIcons.solidFloppyDisk,
-          onPressed: _saveProduct,
-        )
-      ]
     );
   }
 

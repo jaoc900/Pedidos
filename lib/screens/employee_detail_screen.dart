@@ -77,9 +77,20 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: widget.employee == null ? 'Nuevo Empleado' : 'Editar Empleado',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.save,
+            onPressed: _saveEmployee,
+            color: AppTheme.primary,
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -195,21 +206,6 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: widget.employee == null ? 'Nuevo Empleado' : 'Editar Empleado',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-         AppBarButton(
-           icon: FontAwesomeIcons.save,
-           onPressed: _saveEmployee,
-           color: AppTheme.primary,
-         ),
-       ],
     );
   }
 }

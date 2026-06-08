@@ -135,9 +135,25 @@ class _PointOfSaleScreenState extends State<PointOfSaleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar:  CustomTopAppBar(
+        title: 'Verdant POS',
+        showBackButton: false,
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.barcode,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const QuickScannerScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: Stack(
               children: [
@@ -158,26 +174,6 @@ class _PointOfSaleScreenState extends State<PointOfSaleScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Verdant POS',
-      showBackButton: false,
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.barcode,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const QuickScannerScreen(),
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 

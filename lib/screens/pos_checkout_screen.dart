@@ -109,10 +109,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Método de pago',
+        showBackButton: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopAppBar(),
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -195,13 +198,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           _buildConfirmButton(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Método de pago',
-      showBackButton: true,
     );
   }
 

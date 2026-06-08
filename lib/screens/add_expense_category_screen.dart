@@ -96,9 +96,18 @@ class _AddExpenseCategoryScreenState extends State<AddExpenseCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+          title: 'Agregar categoría',
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          actions:[
+            AppBarButton(
+                icon: FontAwesomeIcons.save,
+                onPressed: () => {} )
+          ]
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -117,19 +126,6 @@ class _AddExpenseCategoryScreenState extends State<AddExpenseCategoryScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Agregar categoría',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions:[
-        AppBarButton(
-            icon: FontAwesomeIcons.save,
-            onPressed: () => {} )
-      ]
     );
   }
 

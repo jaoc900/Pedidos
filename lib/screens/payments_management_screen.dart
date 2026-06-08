@@ -18,10 +18,13 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Pagos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -47,14 +50,6 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Pagos',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

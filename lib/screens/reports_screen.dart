@@ -15,10 +15,12 @@ class ReportsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
+      appBar: CustomTopAppBar(
+        title: 'Reportes',
+        showBackButton: false,
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -80,13 +82,6 @@ class ReportsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Reportes',
-      showBackButton: false,
     );
   }
 

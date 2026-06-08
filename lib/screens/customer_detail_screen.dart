@@ -123,10 +123,19 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Detalle de cliente',
+        showBackButton: true,
+        onBackPressed: _confirmCancel,
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.solidFloppyDisk,
+            onPressed: _saveCustomer,
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
@@ -151,20 +160,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Detalle de cliente',
-      showBackButton: true,
-      onBackPressed: _confirmCancel,
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.solidFloppyDisk,
-          onPressed: _saveCustomer,
-        ),
-      ],
     );
   }
 

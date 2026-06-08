@@ -11,11 +11,13 @@ class CustomerOrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
+      appBar: CustomTopAppBar(
+        title: 'Pedidos',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          // TopAppBar
-          _buildTopAppBar(context),
-          // Contenido principal - Ocupa todo el espacio disponible
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -35,14 +37,6 @@ class CustomerOrdersScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Pedidos',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

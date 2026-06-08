@@ -129,9 +129,13 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Historial de membresía',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -274,14 +278,6 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Historial de membresía',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
     );
   }
 

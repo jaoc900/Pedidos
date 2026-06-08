@@ -160,9 +160,18 @@ class _QuickScannerScreenState extends State<QuickScannerScreen>
 
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Verdant POS',
+        showBackButton: true,
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.barcode,
+            onPressed: () => _simulateScanFromCode(),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(),
           SizedBox(
             height: 150,
             child: Stack(
@@ -367,19 +376,6 @@ class _QuickScannerScreenState extends State<QuickScannerScreen>
           _buildPersistentCheckoutBar(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Verdant POS',
-      showBackButton: true,
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.barcode,
-          onPressed: () => _simulateScanFromCode(),
-        ),
-      ],
     );
   }
 

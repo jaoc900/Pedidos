@@ -180,9 +180,26 @@ class _SupportScreenState extends State<SupportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: CustomTopAppBar(
+        title: 'Soporte',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.message,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Chat en vivo - Próximamente'),
+                  backgroundColor: AppTheme.primary,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -206,27 +223,6 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Soporte',
-      showBackButton: true,
-      onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.message,
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Chat en vivo - Próximamente'),
-                backgroundColor: AppTheme.primary,
-              ),
-            );
-          },
-        ),
-      ],
     );
   }
 
