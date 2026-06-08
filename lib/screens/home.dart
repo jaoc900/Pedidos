@@ -1,3 +1,4 @@
+// home.dart (actualizado)
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
@@ -8,15 +9,16 @@ import 'package:pedidos/screens/customers_screen.dart';
 import 'package:pedidos/screens/inventory_screen.dart';
 import 'package:pedidos/screens/reports_screen.dart';
 import 'package:pedidos/screens/finances_screen.dart';
-import 'package:pedidos/screens/more_screen.dart';
 import 'package:pedidos/screens/profile_screen.dart';
 import 'package:pedidos/screens/deliveries_screen.dart';
 import 'package:pedidos/screens/payments_management_screen.dart';
 import 'package:pedidos/screens/invoices_screen.dart';
-import 'package:pedidos/screens/pos_movil_catalog_screen.dart'; // Scanner rápido
-import 'package:pedidos/screens/pos_quick_scanner_screen.dart'; // Error
-
+import 'package:pedidos/screens/pos_movil_catalog_screen.dart';
+import 'package:pedidos/screens/pos_quick_scanner_screen.dart';
 import 'package:pedidos/models/navItem_model.dart';
+import 'package:pedidos/services/user_preferences.dart';
+import 'package:pedidos/widgets/side_menu.dart';
+import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,61 +28,135 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // TODO: Obtener el rol del usuario logueado desde el sistema de autenticación
-  UserRole _currentUserRole = UserRole.admin;
+  UserRole _currentUserRole = UserRole.seller;
   int _currentIndex = 0;
+  bool _isLoading = true;
+  late UserPreferences _userPrefs;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Pantallas principales según rol
+  // Pantallas principales según rol (solo las más importantes)
   late List<Widget> _screens;
+  late List<NavItem> _navItems;
 
   @override
   void initState() {
     super.initState();
-    _updateScreensByRole();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      _userPrefs = UserPreferences();
+      await _userPrefs.init();
+
+      final userRole = _userPrefs.getUserRole();
+      _currentUserRole = _mapRoleToEnum(userRole);
+
+      _updateScreensByRole();
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  UserRole _mapRoleToEnum(int? role) {
+    switch (role) {
+      case 4:
+        return UserRole.admin;
+      case 3:
+        return UserRole.accountant;
+      case 2:
+        return UserRole.warehouse;
+      case 1:
+        return UserRole.seller;
+      default:
+        return UserRole.seller;
+    }
   }
 
   void _updateScreensByRole() {
     switch (_currentUserRole) {
       case UserRole.admin:
+      // Solo las pantallas más importantes para admin
         _screens = [
-          AdminDashboard(),
-          const PointOfSaleScreen(), // POS para admin
-          OrdersScreen(),
-          CustomersScreen(),
-          InventoryScreen(),
-          ReportsScreen(),
-          FinancesScreen(),
-          MoreScreen()
+          const AdminDashboard(),    // Dashboard principal
+          const OrdersScreen(),       // Órdenes
+          const CustomersScreen(),    // Clientes
+          const InventoryScreen(),    // Inventario
+          const ProfileScreen(),      // Perfil
+        ];
+        _navItems = [
+          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
+          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
+          NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
+          NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
+          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
+
       case UserRole.seller:
+      // Pantallas importantes para vendedor
         _screens = [
-          const PointOfSaleScreen(), // POS principal para vendedor
-          const QuickScannerScreen(), // Scanner rápido integrado
-          const OrdersScreen(),
-          const CustomersScreen(),
-          const ProfileScreen(),
+          const PointOfSaleScreen(),   // POS principal
+          const OrdersScreen(),         // Órdenes
+          const CustomersScreen(),      // Clientes
+          const QuickScannerScreen(),   // Scanner rápido
+          const ProfileScreen(),        // Perfil
+        ];
+        _navItems = [
+          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'),
+          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
+          NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
+          NavItem(icon: FontAwesomeIcons.qrcode, label: 'Escanear'),
+          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
+
       case UserRole.warehouse:
+      // Pantallas importantes para almacén
         _screens = [
-          const InventoryScreen(),
-          const OrdersScreen(),
-          const ProfileScreen(),
+          const InventoryScreen(),   // Inventario
+          const OrdersScreen(),       // Órdenes
+          const ProfileScreen(),      // Perfil
+        ];
+        _navItems = [
+          NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
+          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
+          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
+
       case UserRole.driver:
+      // Pantallas importantes para repartidor
         _screens = [
-          const DeliveriesScreen(),
-          const OrdersScreen(),
-          const ProfileScreen(),
+          const DeliveriesScreen(),   // Entregas
+          const OrdersScreen(),        // Órdenes
+          const ProfileScreen(),       // Perfil
+        ];
+        _navItems = [
+          NavItem(icon: FontAwesomeIcons.truck, label: 'Entregas'),
+          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
+          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
+
       case UserRole.accountant:
+      // Pantallas importantes para contador
         _screens = [
-          const PaymentsManagementScreen(),
-          const InvoicesScreen(),
-          const ProfileScreen(),
+          const PaymentsManagementScreen(),   // Pagos
+          const InvoicesScreen(),              // Facturas
+          const ProfileScreen(),               // Perfil
+        ];
+        _navItems = [
+          NavItem(icon: FontAwesomeIcons.moneyBill, label: 'Pagos'),
+          NavItem(icon: FontAwesomeIcons.fileInvoice, label: 'Facturas'),
+          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
     }
@@ -94,30 +170,61 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: AppTheme.background,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppTheme.background,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
+      drawer:  SideMenu(onClose: _onMenuClose),
+      body: Column(
+        children: [
+          CustomTopAppBar(
+            title: _navItems[_currentIndex].label,
+            profileImageUrl: null,
+            scaffoldKey: _scaffoldKey,
+            actions: [
+              AppBarButton(
+                icon: FontAwesomeIcons.bell,
+                onPressed: () {
+                  // Navegar a notificaciones
+                },
+                showBadge: true,
+                badgeCount: 3,
+              ),
+            ],
+          ),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: _screens,
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
-  // ========== BOTTOM NAVIGATION BAR ==========
+  void _onMenuClose() {
+    // Aquí puedes agregar lógica adicional si la necesitas
+    // Por ahora, solo cerramos el drawer
+    // El drawer se cierra automáticamente al navegar
+  }
 
   Widget _buildBottomNavBar() {
-    final items = _getNavItemsByRole();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 380;
 
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Colors.white,
         border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
+          top: BorderSide(color: Colors.grey.shade200, width: 1),
         ),
         boxShadow: [
           BoxShadow(
@@ -130,10 +237,13 @@ class _HomeState extends State<Home> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingSm),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 8 : AppTheme.spacingLg,
+            vertical: AppTheme.spacingSm,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: items.asMap().entries.map((entry) {
+            children: _navItems.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value;
               return _buildNavItem(
@@ -150,58 +260,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  List<NavItem> _getNavItemsByRole() {
-    switch (_currentUserRole) {
-      case UserRole.admin:
-        return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
-          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'), // POS
-          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
-          NavItem(icon: FontAwesomeIcons.box, label: 'Artículos'),
-          NavItem(icon: FontAwesomeIcons.fileAlt, label: 'Reportes'),
-          NavItem(icon: FontAwesomeIcons.moneyBill, label: 'Finanzas'),
-          NavItem(icon: FontAwesomeIcons.ellipsisH, label: 'Más'),
-        ];
-
-      case UserRole.seller:
-        return [
-          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'), // POS principal
-          NavItem(icon: FontAwesomeIcons.qrcode, label: 'Escanear'), // Scanner
-          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
-        ];
-
-      case UserRole.warehouse:
-        return [
-          NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
-          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
-        ];
-
-      case UserRole.driver:
-        return [
-          NavItem(icon: FontAwesomeIcons.truck, label: 'Entregas'),
-          NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
-        ];
-
-      case UserRole.accountant:
-        return [
-          NavItem(icon: FontAwesomeIcons.moneyBill, label: 'Pagos'),
-          NavItem(icon: FontAwesomeIcons.fileInvoice, label: 'Facturas'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
-        ];
-
-      default:
-        return [
-          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
-        ];
-    }
-  }
-
   Widget _buildNavItem({
     required int index,
     required FaIconData icon,
@@ -209,11 +267,17 @@ class _HomeState extends State<Home> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 380;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 8 : 12,
+          vertical: 6,
+        ),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primary.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
@@ -223,14 +287,14 @@ class _HomeState extends State<Home> {
           children: [
             FaIcon(
               icon,
-              size: 22,
+              size: isSmallScreen ? 20 : 22,
               color: isSelected ? AppTheme.loginButtonColor : Colors.grey.shade500,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: isSmallScreen ? 10 : 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? AppTheme.loginButtonColor : Colors.grey.shade500,
               ),
@@ -238,6 +302,60 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Widget auxiliar para botones en el AppBar
+class AppBarButton extends StatelessWidget {
+  final FaIconData icon;
+  final VoidCallback onPressed;
+  final bool showBadge;
+  final int badgeCount;
+
+  const AppBarButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+    this.showBadge = false,
+    this.badgeCount = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        IconButton(
+          icon: FaIcon(icon, size: 20),
+          onPressed: onPressed,
+          color: AppTheme.onSurfaceVariant,
+        ),
+        if (showBadge && badgeCount > 0)
+          Positioned(
+            right: 8,
+            top: 8,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                '$badgeCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

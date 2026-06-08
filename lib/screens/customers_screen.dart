@@ -164,7 +164,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
             Column(
               children: [
                 // TopAppBar
-                _buildTopAppBar(),
+                //_buildTopAppBar(),
                 // Contenido principal
                 Expanded(
                   child: SingleChildScrollView(

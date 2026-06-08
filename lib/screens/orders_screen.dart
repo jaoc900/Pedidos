@@ -74,7 +74,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       body: Column(
         children: [
           // Header personalizado (reemplaza el AppBar)
-          _buildCustomHeader(),
+          //_buildCustomHeader(),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(

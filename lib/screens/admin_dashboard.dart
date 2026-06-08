@@ -11,33 +11,42 @@ class AdminDashboard extends StatefulWidget {
   @override
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
+
 class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700; // iPhone SE, 8, etc.
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: Column(
         children: [
           // TopAppBar
-          _buildTopAppBar(context),
+         // _buildTopAppBar(context),
           // Contenido principal
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.all(
+                isSmallScreen ? AppTheme.spacingLg : AppTheme.spacingXl,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Welcome Section
                   _buildWelcomeSection(),
-                  const SizedBox(height: AppTheme.spacingXl),
+                  SizedBox(height: isSmallScreen ? AppTheme.spacingLg : AppTheme.spacingXl),
                   // Bento Metrics Grid
                   _buildBentoGrid(),
-                  const SizedBox(height: AppTheme.spacingXl),
+                  SizedBox(height: isSmallScreen ? AppTheme.spacingLg : AppTheme.spacingXl),
                   // Recent Activity Section
                   _buildRecentActivity(),
-                  const SizedBox(height: AppTheme.spacingXl),
+                  SizedBox(height: isSmallScreen ? AppTheme.spacingLg : AppTheme.spacingXl),
                   // Quick Actions Banner (Reporte Semanal)
                   _buildWeeklyReportBanner(),
+                  // Espacio extra al final para evitar overflow
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -51,7 +60,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return CustomTopAppBar(
       title: 'Home',
       profileImageUrl: 'https://lh3.googleusercont1ent.com/aida-public/AB6AXuDY8qEs_fHpWSUS07h2xPpseJpoGAcVIAe46Q6nEkgvxuZKxxq5IUG7m3pkj3NxJdA3F7oqxeJd5e-NN2hfLzXXavdIfYZAEYEf12xopfzI-_plbRSeP6p-rbeoPeQbMBL69AfgJJWlrIThrCfz7cyXt3L1U9zqJ3xnyTRu_G7fAslgzht7KCAHTAV6oyoHEr-oo1KulVGEie7MW7S4diypaZcO4ZCveY_Ids7i735YwnodrAuS88rB4aPM8pmyQP1hhTSUTFwuJbU7',
-      onProfileTap: () { },
+      onProfileTap: () {},
       actions: [
         AppBarButton(
           icon: FontAwesomeIcons.bell,
@@ -69,13 +78,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildWelcomeSection() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Hola de nuevo, Admin',
           style: TextStyle(
-            fontSize: AppTheme.fontSizeTitle,
+            fontSize: isSmallScreen ? 20 : AppTheme.fontSizeTitle,
             fontWeight: FontWeight.w600,
             color: AppTheme.onSurface,
           ),
@@ -84,7 +96,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         Text(
           'Aquí tienes el resumen de hoy.',
           style: TextStyle(
-            fontSize: AppTheme.fontSizeBody,
+            fontSize: isSmallScreen ? 14 : AppTheme.fontSizeBody,
             color: AppTheme.onSurfaceVariant,
           ),
         ),
@@ -93,31 +105,52 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildBentoGrid() {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 360;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isLarge = constraints.maxWidth > 500;
+        int crossAxisCount = constraints.maxWidth < 400 ? 1 : 2;
 
-        return GridView.count(
+        double aspectRatio;
+
+        if (constraints.maxWidth < 360) {
+          aspectRatio = 2.4; // 🔥 más aire en teléfonos pequeños
+        } else if (constraints.maxWidth < 600) {
+          aspectRatio = 2.0;
+        } else {
+          aspectRatio = 2.2;
+        }
+
+        return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: AppTheme.spacingLg,
-          crossAxisSpacing: AppTheme.spacingLg,
-          childAspectRatio: isLarge ? 2.2 : 1.8,
-          children: [
-            // Major Card: Ventas de hoy
-            _buildSalesCard(),
-            // Card: Pedidos pendientes
-            _buildPendingOrdersCard(),
-            // Card: Nuevos Clientes
-            _buildNewClientsCard(),
-          ],
+          itemCount: 3,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: isSmallScreen ? 12 : 16,
+            mainAxisSpacing: isSmallScreen ? 12 : 16,
+            childAspectRatio: aspectRatio,
+          ),
+          itemBuilder: (context, index) {
+            switch (index) {
+              case 0:
+                return _buildSalesCard();
+              case 1:
+                return _buildPendingOrdersCard();
+              default:
+                return _buildNewClientsCard();
+            }
+          },
         );
       },
     );
   }
 
   Widget _buildSalesCard() {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 360;
+
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
@@ -131,58 +164,71 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(AppTheme.spacingXl),
+      padding: EdgeInsets.all(
+        isSmallScreen ? AppTheme.spacingMd : AppTheme.spacingXl,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Ventas de hoy',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeLabel,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.onSurfaceVariant,
+              Flexible(
+                child: Text(
+                  'Ventas de hoy',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 11 : AppTheme.fontSizeLabel,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               FaIcon(
                 FontAwesomeIcons.chartLine,
-                size: 20,
+                size: isSmallScreen ? 16 : 20,
                 color: AppTheme.primary,
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+
+          // 🔥 REDUCIDO: Espacio entre header y monto
+          SizedBox(height: isSmallScreen ? 6 : 12),
+
+          // Amount
+          Text(
+            '\$12,450.00',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 26 : AppTheme.fontSizeDisplay,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.primary,
+            ),
+          ),
+
+          // 🔥 REDUCIDO: Espacio entre monto y porcentaje
+          SizedBox(height: isSmallScreen ? 2 : 6),
+
+          // Percentage row
+          Row(
             children: [
-              Text(
-                '\$12,450.00',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeDisplay,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.primary,
-                ),
+              FaIcon(
+                FontAwesomeIcons.arrowUp,
+                size: 10,
+                color: AppTheme.secondary,
               ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.arrowUp,
-                    size: 12,
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  '+12% vs ayer',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 10 : AppTheme.fontSizeSmall,
+                    fontWeight: FontWeight.w500,
                     color: AppTheme.secondary,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '+12% vs ayer',
-                    style: TextStyle(
-                      fontSize: AppTheme.fontSizeSmall,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
@@ -192,52 +238,57 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildPendingOrdersCard() {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 360;
+
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.primaryContainer,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
       ),
-      padding: const EdgeInsets.all(AppTheme.spacingXl),
+      padding: EdgeInsets.all(
+        isSmallScreen ? AppTheme.spacingMd : AppTheme.spacingXl,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: isSmallScreen ? 32 : 40,
+            height: isSmallScreen ? 32 : 40,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
             ),
-            child: const Center(
+            child: Center(
               child: FaIcon(
                 FontAwesomeIcons.receipt,
-                size: 20,
+                size: isSmallScreen ? 16 : 20,
                 color: Colors.white,
               ),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '24',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeTitle,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.onPrimaryContainer,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Pedidos pendientes',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeSmall,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.onPrimaryContainer.withValues(alpha: 0.9),
-                ),
-              ),
-            ],
+
+          const SizedBox(height: 12),
+
+          Text(
+            '24',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 20 : AppTheme.fontSizeTitle,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.onPrimaryContainer,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            'Pedidos pendientes',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 10 : AppTheme.fontSizeSmall,
+              fontWeight: FontWeight.w500,
+              color: AppTheme.onPrimaryContainer.withValues(alpha: 0.9),
+            ),
           ),
         ],
       ),
@@ -245,6 +296,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildNewClientsCard() {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 360;
+
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
@@ -258,46 +312,48 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(AppTheme.spacingXl),
+      padding: EdgeInsets.all(
+        isSmallScreen ? AppTheme.spacingMd : AppTheme.spacingXl,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: isSmallScreen ? 32 : 40,
+            height: isSmallScreen ? 32 : 40,
             decoration: BoxDecoration(
               color: AppTheme.secondaryContainer,
               borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
             ),
-            child: const Center(
+            child: Center(
               child: FaIcon(
                 FontAwesomeIcons.users,
-                size: 20,
+                size: isSmallScreen ? 16 : 20,
                 color: AppTheme.secondary,
               ),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '18',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeTitle,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Clientes nuevos',
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizeSmall,
-                  color: AppTheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+
+          const SizedBox(height: 12),
+
+          Text(
+            '18',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 20 : AppTheme.fontSizeTitle,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.onSurface,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            'Clientes nuevos',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 10 : AppTheme.fontSizeSmall,
+              color: AppTheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -305,6 +361,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildRecentActivity() {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 360;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -314,7 +373,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Text(
               'Actividad Reciente',
               style: TextStyle(
-                fontSize: AppTheme.fontSizeTitle,
+                fontSize: isSmallScreen ? 18 : AppTheme.fontSizeTitle,
                 fontWeight: FontWeight.w600,
                 color: AppTheme.onSurface,
               ),
@@ -323,6 +382,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               onPressed: () {},
               style: TextButton.styleFrom(
                 foregroundColor: AppTheme.primary,
+                padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8) : null,
               ),
               child: const Text('Ver todo'),
             ),
@@ -359,8 +419,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
     required Color iconColor,
     required Color iconBgColor,
   }) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700;
+
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      padding: EdgeInsets.all(isSmallScreen ? AppTheme.spacingMd : AppTheme.spacingLg),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainer,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
@@ -368,8 +431,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: isSmallScreen ? 40 : 48,
+            height: isSmallScreen ? 40 : 48,
             decoration: BoxDecoration(
               color: iconBgColor,
               shape: BoxShape.circle,
@@ -377,7 +440,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             child: Center(
               child: FaIcon(
                 icon,
-                size: 20,
+                size: isSmallScreen ? 16 : 20,
                 color: iconColor,
               ),
             ),
@@ -390,7 +453,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: AppTheme.fontSizeLabel,
+                    fontSize: isSmallScreen ? 13 : AppTheme.fontSizeLabel,
                     fontWeight: FontWeight.w600,
                     color: AppTheme.onSurface,
                   ),
@@ -399,7 +462,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: AppTheme.fontSizeSmall,
+                    fontSize: isSmallScreen ? 11 : AppTheme.fontSizeSmall,
                     color: AppTheme.onSurfaceVariant,
                   ),
                 ),
@@ -408,7 +471,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
           FaIcon(
             FontAwesomeIcons.chevronRight,
-            size: 16,
+            size: isSmallScreen ? 12 : 16,
             color: AppTheme.outline,
           ),
         ],
@@ -417,8 +480,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildWeeklyReportBanner() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700;
+    final bannerHeight = isSmallScreen ? 120.0 : 160.0;
+
     return Container(
-      height: 160,
+      height: bannerHeight,
       decoration: BoxDecoration(
         color: AppTheme.primary,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
@@ -437,13 +504,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
             // Imagen de fondo
             Image.network(
               'https://lh3.googleusercontent.com/aida-public/AB6AXuD80QwJyvQKfByMsTCU8iVy81k8GZYUjrAOv8oDB4Jmcy03qvjAvCZqKZbnCgNfxrI_GaYJsiG3KkX8HewCzra3aXxHFj9civrhkrBOnSgK3OIpl7dpzOGNvprK2oCxcAOjWyfdVaXoiM1QzVuIJ2avsitcUmK4sNd01knazB50RsTiGcbUWpHUPinpq-qTOtnSWFLtUT3XB5P9OIkvC8itjeWPtutMaZa99tXMa1d9-rC7my1VLyfDPzcJQWXbBuRHhgZTVQAJOOoE',
-              height: 160,
+              height: bannerHeight,
               width: double.infinity,
               fit: BoxFit.cover,
               opacity: const AlwaysStoppedAnimation(0.3),
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  height: 160,
+                  height: bannerHeight,
                   color: AppTheme.primary,
                 );
               },
@@ -451,7 +518,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             // Contenido
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingXl),
+                padding: EdgeInsets.all(isSmallScreen ? AppTheme.spacingLg : AppTheme.spacingXl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -459,145 +526,34 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     Text(
                       'Reporte Semanal',
                       style: TextStyle(
-                        fontSize: AppTheme.fontSizeTitle,
+                        fontSize: isSmallScreen ? 18 : AppTheme.fontSizeTitle,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
                     SizedBox(
-                      width: 150,
+                      width: isSmallScreen ? 120 : 150,
+                      height: isSmallScreen ? 32 : 40,
                       child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.secondaryFixed,
                           foregroundColor: AppTheme.onSecondaryFixed,
+                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 12) : null,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
                           ),
                         ),
-                        child: const Text('Descargar PDF'),
+                        child: Text(
+                          'Descargar PDF',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 12 : 14,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade100,
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingSm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                icon: FontAwesomeIcons.chartPie,
-                label: 'Dashboard',
-                isSelected: true,
-                onTap: () {},
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.receipt,
-                label: 'Órdenes',
-                isSelected: false,
-                onTap: () {
-                  // En tu bottom navigation o sidebar
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const OrdersScreen())
-                  );
-                },
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.users,
-                label: 'Clientes',
-                isSelected: false,
-                onTap: () {},
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.box,
-                label: 'Artículos',
-                isSelected: false,
-                onTap: () {},
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.fileAlt,
-                label: 'Reportes',
-                isSelected: false,
-                onTap: () {},
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.moneyBill,
-                label: 'Pagos',
-                isSelected: false,
-                onTap: () {},
-              ),
-              _buildNavItem(
-                icon: FontAwesomeIcons.ellipsisH,
-                label: 'Más',
-                isSelected: false,
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required FaIconData icon,
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary.withValues(alpha: 0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(
-              icon,
-              size: 22,
-              color: isSelected ? AppTheme.primary : Colors.grey.shade400,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? AppTheme.primary : Colors.grey.shade400,
               ),
             ),
           ],

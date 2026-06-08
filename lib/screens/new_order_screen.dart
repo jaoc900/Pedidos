@@ -65,32 +65,32 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
-      body: Column(
-        children: [
-          // TopAppBar
-          _buildTopAppBar(),
-          // Contenido principal con scroll
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppTheme.spacingXl),
-                  // Información del Cliente
-                  _buildCustomerSection(),
-                  const SizedBox(height: AppTheme.spacingXl),
-                  // Artículos
-                  _buildItemsSection(),
-                  const SizedBox(height: AppTheme.spacingXl),
-                  // Resumen del Pedido
-                  _buildOrderSummary(),
-                  const SizedBox(height: AppTheme.spacingXl * 2),
-                ],
-              ),
-            ),
+      appBar: CustomTopAppBar(
+        title: 'Nueva Orden',
+        showBackButton: true,
+        onBackPressed: () => Navigator.pop(context),
+        actions: [
+          AppBarButton(
+            icon: FontAwesomeIcons.solidFloppyDisk,
+            onPressed: _saveOrder,
+            color: AppTheme.primary,
           ),
         ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: AppTheme.spacingXl),
+            _buildCustomerSection(),
+            const SizedBox(height: AppTheme.spacingXl),
+            _buildItemsSection(),
+            const SizedBox(height: AppTheme.spacingXl),
+            _buildOrderSummary(),
+            const SizedBox(height: AppTheme.spacingXl * 2),
+          ],
+        ),
       ),
     );
   }
