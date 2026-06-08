@@ -89,14 +89,12 @@ class _HomeState extends State<Home> {
           const OrdersScreen(),       // Órdenes
           const CustomersScreen(),    // Clientes
           const InventoryScreen(),    // Inventario
-          const ProfileScreen(),      // Perfil
         ];
         _navItems = [
           NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
           NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
 
@@ -107,14 +105,12 @@ class _HomeState extends State<Home> {
           const OrdersScreen(),         // Órdenes
           const CustomersScreen(),      // Clientes
           const QuickScannerScreen(),   // Scanner rápido
-          const ProfileScreen(),        // Perfil
         ];
         _navItems = [
           NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
           NavItem(icon: FontAwesomeIcons.qrcode, label: 'Escanear'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
 
@@ -123,12 +119,10 @@ class _HomeState extends State<Home> {
         _screens = [
           const InventoryScreen(),   // Inventario
           const OrdersScreen(),       // Órdenes
-          const ProfileScreen(),      // Perfil
         ];
         _navItems = [
           NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
 
@@ -142,7 +136,6 @@ class _HomeState extends State<Home> {
         _navItems = [
           NavItem(icon: FontAwesomeIcons.truck, label: 'Entregas'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
 
@@ -151,12 +144,10 @@ class _HomeState extends State<Home> {
         _screens = [
           const PaymentsManagementScreen(),   // Pagos
           const InvoicesScreen(),              // Facturas
-          const ProfileScreen(),               // Perfil
         ];
         _navItems = [
           NavItem(icon: FontAwesomeIcons.moneyBill, label: 'Pagos'),
           NavItem(icon: FontAwesomeIcons.fileInvoice, label: 'Facturas'),
-          NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
         break;
     }

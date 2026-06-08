@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoading = false; // Agregar estado de carga
+  bool _isLoading = false;
 
   // Variables para errores de los campos
   String? _emailError;
@@ -139,15 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Mostrar loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-
     try {
       final response = await _apiClient.login(email, password);
       final loginResponse = LoginResponse.fromJson(response);
@@ -161,9 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // Guardar toda la información usando UserPreferences
       await _userPrefs.saveUserInfo(userData);
       await _userPrefs.saveRememberMe(_rememberMe, email: email);
-
-      // Cerrar loading
-      if (context.mounted) Navigator.pop(context);
 
       // Mostrar mensaje de bienvenida
       if (context.mounted) {
@@ -186,10 +174,8 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } on NetworkExceptions catch (e) {
-      if (context.mounted) Navigator.pop(context);
       _processBackendError(e);
     } catch (e) {
-      if (context.mounted) Navigator.pop(context);
       setState(() {
         _generalError = 'Error al iniciar sesión. Intenta nuevamente.';
       });
@@ -505,12 +491,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         const SizedBox(height: AppTheme.spacingLg),
 
-        // Botón de login
-        PrimaryButton(
-          text: 'Ingresar',
-          borderRadius: AppTheme.borderRadiusXXl,
-          onPressed: _isLoading ? null : _login, // Deshabilitar mientras carga
-        ),
+        // Botón de login con loading integrado
+        _buildLoginButton(),
 
         const SizedBox(height: AppTheme.spacingXl),
 
@@ -525,7 +507,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: _isLoading
+                  ? null
+                  : () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -555,6 +539,42 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Nuevo widget para el botón con loading
+  Widget _buildLoginButton() {
+    return SizedBox(
+      height: 52,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.borderRadiusXXl),
+          ),
+          disabledBackgroundColor: AppTheme.primary.withOpacity(0.6),
+        ),
+        child: _isLoading
+            ? const SizedBox(
+          height: 24,
+          width: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        )
+            : const Text(
+          'Ingresar',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFooter() {
     return Wrap(
       alignment: WrapAlignment.center,
@@ -562,7 +582,9 @@ class _LoginScreenState extends State<LoginScreen> {
       runSpacing: 8,
       children: [
         TextButton(
-          onPressed: () {
+          onPressed: _isLoading
+              ? null
+              : () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const TermsConditionsScreen()),
@@ -576,7 +598,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const Text('Términos de servicio'),
         ),
         TextButton(
-          onPressed: () {
+          onPressed: _isLoading
+              ? null
+              : () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
@@ -590,7 +614,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const Text('Política de privacidad'),
         ),
         TextButton(
-          onPressed: () {
+          onPressed: _isLoading
+              ? null
+              : () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ContactScreen()),
