@@ -6,7 +6,6 @@ import 'package:pedidos/enums/view_model_enum.dart';
 import 'package:pedidos/models/product_item_model.dart';
 import 'package:pedidos/enums/stock_status_enum.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
-import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_chips.dart';
 
 class InventoryScreen extends StatefulWidget {

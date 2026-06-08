@@ -18,8 +18,11 @@ class CustomTextField extends StatelessWidget {
   final bool readOnly;
   final bool enabled;
   final VoidCallback? onTap;
-  final ValueChanged<String>? onChanged; // Nuevo: callback para cambios de texto
-  final bool showLabel; // Nuevo: controlar si mostrar el label
+  final ValueChanged<String>? onChanged;
+  final bool showLabel;
+  final TextAlign textAlign;
+  final Widget? customPrefix;
+  final TextStyle? textStyle;
 
   const CustomTextField({
     super.key,
@@ -38,8 +41,11 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.onTap,
     this.onChanged,
-    this.borderRadius = AppTheme.borderRadiusLg,
+    this.borderRadius = AppTheme.borderRadiusXXl,
     this.showLabel = true,
+    this.textAlign = TextAlign.left,
+    this.customPrefix,
+    this.textStyle,
   });
 
   @override
@@ -49,10 +55,15 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label - solo mostrar si showLabel es true y label no está vacío
+        // Label
         if (showLabel && label.isNotEmpty)
           Row(
             children: [
+              FaIcon(
+                icon,
+                size: 14,
+                color: _getIconColor(hasError),
+              ),
               const SizedBox(width: AppTheme.spacingSm),
               Text(
                 label,
@@ -120,18 +131,23 @@ class CustomTextField extends StatelessWidget {
               textInputAction: textInputAction,
               readOnly: readOnly,
               enabled: enabled,
-              onChanged: onChanged, // Agregar callback onChanged
-              style: TextStyle(
-                color: enabled ? AppTheme.onSurface : AppTheme.outline,
-              ),
+              onChanged: onChanged,
+              textAlign: textAlign,
+              style: textStyle ??
+                  TextStyle(
+                    color: enabled ? AppTheme.onSurface : AppTheme.outline,
+                    fontSize: AppTheme.fontSizeBody,
+                  ),
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: TextStyle(
                   color: AppTheme.outlineVariant,
                   fontSize: AppTheme.fontSizeBody,
                 ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                prefixIcon: customPrefix != null
+                    ? customPrefix
+                    : Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
                   child: FaIcon(
                     icon,
                     size: 20,

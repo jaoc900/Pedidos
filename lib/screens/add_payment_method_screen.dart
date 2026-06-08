@@ -3,8 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
-import 'package:pedidos/widgets/primary_button.dart';
-import 'package:pedidos/enums/botton_status_enum.dart';
 import 'package:pedidos/widgets/custom_dropdown_field.dart';
 
 class AddPaymentMethodScreen extends StatefulWidget {

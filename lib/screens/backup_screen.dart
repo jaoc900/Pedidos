@@ -5,11 +5,7 @@ import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/models/backup_history_model.dart';
 import 'package:pedidos/enums/backup_status_enum.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
-import 'package:pedidos/widgets/custom_text_field.dart';
-import 'package:pedidos/widgets/custom_chips.dart';
-import 'package:pedidos/widgets/primary_button.dart';
 import 'package:pedidos/widgets/custom_outlined_button.dart';
-import 'package:pedidos/enums/botton_status_enum.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});

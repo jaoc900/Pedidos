@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
-import 'package:pedidos/utils/icon_helper.dart';
-import 'package:pedidos/models/price_list_model.dart';
 import 'package:pedidos/models/product_price_model.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';

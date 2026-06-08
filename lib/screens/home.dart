@@ -9,16 +9,14 @@ import 'package:pedidos/screens/inventory_screen.dart';
 import 'package:pedidos/screens/reports_screen.dart';
 import 'package:pedidos/screens/finances_screen.dart';
 import 'package:pedidos/screens/more_screen.dart';
-import 'package:pedidos/screens/notifications_screen.dart';
 import 'package:pedidos/screens/profile_screen.dart';
 import 'package:pedidos/screens/deliveries_screen.dart';
 import 'package:pedidos/screens/payments_management_screen.dart';
 import 'package:pedidos/screens/invoices_screen.dart';
+import 'package:pedidos/screens/pos_movil_catalog_screen.dart'; // Scanner rápido
+import 'package:pedidos/screens/pos_quick_scanner_screen.dart'; // Error
 
-import 'package:pedidos/models/order_data_model.dart';
 import 'package:pedidos/models/navItem_model.dart';
-import 'package:pedidos/models/payment_data_model.dart';
-import 'package:pedidos/models/inventory_alert_model.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -35,12 +33,6 @@ class _HomeState extends State<Home> {
   // Pantallas principales según rol
   late List<Widget> _screens;
 
-  // Datos de ejemplo para el dashboard
-  final Map<String, dynamic> _userData = {
-    'name': 'Alejandro',
-    'avatar': 'https://lh3.googleusercontent.com/aida-public/AB6AXuCM7u9-vwKpMXZJUw_Aod3sFx-7w3XNwXcHt_kkTqJJ1W38_2aX9PXoPcg8H06f5-ncpCwFQaYjh2RRarnHpnE5Oe7UieKAwNVHYrHSwtMosSyMmlh-t8SeHekzmBOuaj_A1H_dQoDPKs0J-qzx87UuwkJKp9fHacRpP6Au0tztdxpz4oz7uU_uJMuLnUtFrDRF5kKhOGiqLSsPupf-jskp_jXTGD2xQ-FSlpG4j7lonOmNdrRD9bwt_aBXmpIA5vX7qVwKc5L1G7DX',
-  };
-
   @override
   void initState() {
     super.initState();
@@ -52,6 +44,7 @@ class _HomeState extends State<Home> {
       case UserRole.admin:
         _screens = [
           AdminDashboard(),
+          const PointOfSaleScreen(), // POS para admin
           OrdersScreen(),
           CustomersScreen(),
           InventoryScreen(),
@@ -62,6 +55,8 @@ class _HomeState extends State<Home> {
         break;
       case UserRole.seller:
         _screens = [
+          const PointOfSaleScreen(), // POS principal para vendedor
+          const QuickScannerScreen(), // Scanner rápido integrado
           const OrdersScreen(),
           const CustomersScreen(),
           const ProfileScreen(),
@@ -160,6 +155,7 @@ class _HomeState extends State<Home> {
       case UserRole.admin:
         return [
           NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
+          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'), // POS
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
           NavItem(icon: FontAwesomeIcons.box, label: 'Artículos'),
@@ -170,7 +166,8 @@ class _HomeState extends State<Home> {
 
       case UserRole.seller:
         return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
+          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'), // POS principal
+          NavItem(icon: FontAwesomeIcons.qrcode, label: 'Escanear'), // Scanner
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.users, label: 'Clientes'),
           NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
@@ -178,7 +175,6 @@ class _HomeState extends State<Home> {
 
       case UserRole.warehouse:
         return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
           NavItem(icon: FontAwesomeIcons.box, label: 'Inventario'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
@@ -186,7 +182,6 @@ class _HomeState extends State<Home> {
 
       case UserRole.driver:
         return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
           NavItem(icon: FontAwesomeIcons.truck, label: 'Entregas'),
           NavItem(icon: FontAwesomeIcons.receipt, label: 'Órdenes'),
           NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
@@ -194,7 +189,6 @@ class _HomeState extends State<Home> {
 
       case UserRole.accountant:
         return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
           NavItem(icon: FontAwesomeIcons.moneyBill, label: 'Pagos'),
           NavItem(icon: FontAwesomeIcons.fileInvoice, label: 'Facturas'),
           NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
@@ -202,7 +196,7 @@ class _HomeState extends State<Home> {
 
       default:
         return [
-          NavItem(icon: FontAwesomeIcons.chartPie, label: 'Dashboard'),
+          NavItem(icon: FontAwesomeIcons.cashRegister, label: 'POS'),
           NavItem(icon: FontAwesomeIcons.user, label: 'Perfil'),
         ];
     }

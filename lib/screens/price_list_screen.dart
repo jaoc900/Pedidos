@@ -4,7 +4,6 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/models/price_list_model.dart';
 import 'package:pedidos/enums/price_list_enum.dart';
 import 'package:pedidos/screens/price_list_detail_screen.dart';
-import 'package:pedidos/models/product_price_model.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 

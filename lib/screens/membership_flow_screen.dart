@@ -6,7 +6,6 @@ import 'package:pedidos/screens/painters/donut_chart_painter.dart';
 import 'package:pedidos/models/transaction_model.dart';
 import 'package:pedidos/screens/payment_checkout_screen.dart';
 import 'package:pedidos/screens/membership_history_screen.dart';
-import 'package:pedidos/screens/upgrade_flow_screen.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/primary_button.dart';
 import 'package:pedidos/widgets/custom_outlined_button.dart';

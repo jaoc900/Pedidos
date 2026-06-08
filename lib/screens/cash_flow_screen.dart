@@ -4,7 +4,6 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pedidos/models/cashflow_model.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
-import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class CashFlowScreen extends StatefulWidget {
   const CashFlowScreen({super.key});
