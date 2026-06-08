@@ -8,6 +8,10 @@ import 'package:pedidos/screens/privacy_policy_screen.dart';
 import 'package:pedidos/screens/contact_screen.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
+import 'package:pedidos/core/network/di/inejction.dart';
+import 'package:pedidos/core/network/api_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -297,8 +301,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildFooter() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8, // Space between items
+      runSpacing: 8, // Space between lines if they wrap
       children: [
         TextButton(
           onPressed: () {
@@ -314,7 +320,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           child: const Text('Términos de servicio'),
         ),
-        const SizedBox(width: 16),
         TextButton(
           onPressed: () {
             Navigator.push(
@@ -329,7 +334,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           child: const Text('Política de privacidad'),
         ),
-        const SizedBox(width: 16),
         TextButton(
           onPressed: () {
             Navigator.push(
@@ -346,5 +350,58 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _login() async {
+    try {
+      // Mostrar loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final apiClient = locator<ApiClient>();
+      final response = await apiClient.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+
+      // Guardar token si es necesario
+      final token = response['token'];
+      if (token != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('access_token', token);
+      }
+
+      // Cerrar loading
+      Navigator.pop(context);
+
+      // Navegar al home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Home()),
+      );
+    } on NetworkExceptions catch (e) {
+      // Cerrar loading si estaba abierto
+      Navigator.pop(context);
+
+      // Mostrar error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error inesperado. Intenta nuevamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

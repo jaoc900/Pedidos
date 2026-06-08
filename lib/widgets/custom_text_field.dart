@@ -59,11 +59,6 @@ class CustomTextField extends StatelessWidget {
         if (showLabel && label.isNotEmpty)
           Row(
             children: [
-              FaIcon(
-                icon,
-                size: 14,
-                color: _getIconColor(hasError),
-              ),
               const SizedBox(width: AppTheme.spacingSm),
               Text(
                 label,

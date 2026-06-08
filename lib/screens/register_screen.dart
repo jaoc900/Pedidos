@@ -5,6 +5,9 @@ import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 import 'package:pedidos/widgets/primary_button.dart';
 import 'package:pedidos/enums/botton_status_enum.dart';
+import 'package:pedidos/core/network/api_client.dart';
+import 'package:pedidos/core/network/http_client.dart';
+import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,7 +18,8 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -25,9 +29,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _acceptTerms = false;
   ButtonState _buttonState = ButtonState.active;
 
+  // Map para almacenar errores del backend
+  final Map<String, String?> _backendErrors = {
+    'firstName': null,
+    'lastName': null,
+    'email': null,
+    'password': null,
+    'confirmPassword': null,
+  };
+
+// Método para validar la fortaleza de la contraseña en tiempo real
+  void _validatePasswordStrength(String? password) {
+    if (password == null || password.isEmpty) return;
+
+    final hasMinLength = password.length >= 8;
+    final hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
+    final hasLowercase = RegExp(r'[a-z]').hasMatch(password);
+    final hasNumber = RegExp(r'[0-9]').hasMatch(password);
+    final hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password);
+
+    if (!hasMinLength || !hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+      // Opcional: Mostrar un indicador visual de la fortaleza de la contraseña
+      print('Contraseña débil - Requisitos faltantes:');
+      if (!hasMinLength) print('- Mínimo 8 caracteres');
+      if (!hasUppercase) print('- Una mayúscula');
+      if (!hasLowercase) print('- Una minúscula');
+      if (!hasNumber) print('- Un número');
+      if (!hasSpecialChar) print('- Un carácter especial');
+    }
+  }
+
+  // Clientes HTTP
+  late ApiClient _apiClient;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar los clientes manualmente
+    final httpClient = HttpClient();
+    _apiClient = ApiClient(httpClient);
+  }
+
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -52,25 +98,120 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _buttonState = ButtonState.loading;
     });
 
-    // Simular llamada a API
-    await Future.delayed(const Duration(seconds: 2));
+    final userData = {
+      'firstName': _firstNameController.text.trim(),
+      'lastName': _lastNameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'password': _passwordController.text,
+    };
 
-    if (mounted) {
-      setState(() {
-        _buttonState = ButtonState.active;
-      });
+    try {
+      final response = await _apiClient.register(userData);
 
+      if (mounted) {
+        setState(() {
+          _buttonState = ButtonState.active;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('¡Registro exitoso! Por favor inicia sesión.'),
+            backgroundColor: AppTheme.primary,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _buttonState = ButtonState.active;
+        });
+
+        _processBackendError(e);
+      }
+    }
+  }
+
+// Procesar errores del backend
+  void _processBackendError(dynamic error) {
+    print('🔍 Procesando error: $error');
+
+    try {
+      final errorStr = error.toString();
+
+      // Error de contraseña
+      if (errorStr.contains('La contraseña debe tener al menos 8 caracteres')) {
+        setState(() {
+          _backendErrors['password'] = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial';
+        });
+        _formKey.currentState?.validate();
+
+        // Mostrar diálogo con requisitos
+        _showPasswordRequirementsDialog();
+      }
+      // Error de email duplicado
+      else if (errorStr.contains('email') && errorStr.contains('already')) {
+        setState(() {
+          _backendErrors['email'] = 'Este correo electrónico ya está registrado';
+        });
+        _formKey.currentState?.validate();
+      }
+      // Error general
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorStr.replaceFirst('Exception: ', '')),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (parseError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('¡Registro exitoso!'),
-          backgroundColor: AppTheme.primary,
+          content: Text('Error al registrar: ${error.toString()}'),
+          backgroundColor: AppTheme.error,
           behavior: SnackBarBehavior.floating,
         ),
       );
-
-      // Aquí navegarías a la pantalla principal o login
-      // Navigator.pushReplacement(context, route);
     }
+  }
+
+// Mostrar diálogo con requisitos de contraseña
+  void _showPasswordRequirementsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Requisitos de contraseña'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('La contraseña debe cumplir con:'),
+            SizedBox(height: 12),
+            Text('• Mínimo 8 caracteres'),
+            SizedBox(height: 4),
+            Text('• Al menos una mayúscula (A-Z)'),
+            SizedBox(height: 4),
+            Text('• Al menos una minúscula (a-z)'),
+            SizedBox(height: 4),
+            Text('• Al menos un número (0-9)'),
+            SizedBox(height: 4),
+            Text('• Al menos un carácter especial (!@#%^&*)'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendido'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -184,7 +325,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 'Crea tu cuenta',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontSize: 32,
-                  color: AppTheme.onPrimaryFixed,
+                  color: AppTheme.primaryFixed,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -192,7 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Text(
                 'Únete a la gestión comercial eficiente',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.onSurfaceVariant,
+                  color: AppTheme.primaryFixed,
                 ),
               ),
             ],
@@ -210,20 +351,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Nombre Completo
+            // Nombres
             CustomTextField(
-              controller: _nameController,
-              label: 'Nombre completo',
-              hint: 'Ej. Juan Pérez',
+              controller: _firstNameController,
+              label: 'Nombres',
+              hint: 'Ej. Juan Carlos',
               icon: FontAwesomeIcons.user,
               textInputAction: TextInputAction.next,
               borderRadius: AppTheme.borderRadiusXXl,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa tu nombre completo';
+              onChanged: (value) {
+                // Limpiar error del backend cuando el usuario escribe
+                if (_backendErrors['firstName'] != null) {
+                  setState(() {
+                    _backendErrors['firstName'] = null;
+                  });
                 }
-                if (value.length < 3) {
-                  return 'El nombre debe tener al menos 3 caracteres';
+              },
+              validator: (value) {
+                if (_backendErrors['firstName'] != null) {
+                  return _backendErrors['firstName'];
+                }
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tus nombres';
+                }
+                if (value.length < 2) {
+                  return 'Los nombres deben tener al menos 2 caracteres';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Apellidos
+            CustomTextField(
+              controller: _lastNameController,
+              label: 'Apellidos',
+              hint: 'Ej. Pérez González',
+              icon: FontAwesomeIcons.userGroup,
+              textInputAction: TextInputAction.next,
+              borderRadius: AppTheme.borderRadiusXXl,
+              onChanged: (value) {
+                if (_backendErrors['lastName'] != null) {
+                  setState(() {
+                    _backendErrors['lastName'] = null;
+                  });
+                }
+              },
+              validator: (value) {
+                if (_backendErrors['lastName'] != null) {
+                  return _backendErrors['lastName'];
+                }
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tus apellidos';
+                }
+                if (value.length < 2) {
+                  return 'Los apellidos deben tener al menos 2 caracteres';
                 }
                 return null;
               },
@@ -239,7 +421,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               borderRadius: AppTheme.borderRadiusXXl,
+              onChanged: (value) {
+                if (_backendErrors['email'] != null) {
+                  setState(() {
+                    _backendErrors['email'] = null;
+                  });
+                }
+              },
               validator: (value) {
+                if (_backendErrors['email'] != null) {
+                  return _backendErrors['email'];
+                }
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa tu correo electrónico';
                 }
@@ -252,7 +444,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Contraseña
+            // Contraseña con validador mejorado
             CustomTextField(
               controller: _passwordController,
               label: 'Contraseña',
@@ -261,6 +453,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.next,
               borderRadius: AppTheme.borderRadiusXXl,
+              onChanged: (value) {
+                if (_backendErrors['password'] != null) {
+                  setState(() {
+                    _backendErrors['password'] = null;
+                  });
+                }
+                // Validar contraseña en tiempo real
+                _validatePasswordStrength(value);
+              },
               suffixIcon: IconButton(
                 icon: FaIcon(
                   _obscurePassword
@@ -275,11 +476,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               validator: (value) {
+                if (_backendErrors['password'] != null) {
+                  return _backendErrors['password'];
+                }
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa una contraseña';
                 }
-                if (value.length < 6) {
-                  return 'La contraseña debe tener al menos 6 caracteres';
+                if (value.length < 8) {
+                  return 'La contraseña debe tener al menos 8 caracteres';
+                }
+                if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                  return 'La contraseña debe tener al menos una mayúscula';
+                }
+                if (!RegExp(r'[a-z]').hasMatch(value)) {
+                  return 'La contraseña debe tener al menos una minúscula';
+                }
+                if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  return 'La contraseña debe tener al menos un número';
+                }
+                if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                  return 'La contraseña debe tener al menos un carácter especial';
                 }
                 return null;
               },
@@ -295,6 +511,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               obscureText: _obscureConfirmPassword,
               textInputAction: TextInputAction.done,
               borderRadius: AppTheme.borderRadiusXXl,
+              onChanged: (value) {
+                if (_backendErrors['confirmPassword'] != null) {
+                  setState(() {
+                    _backendErrors['confirmPassword'] = null;
+                  });
+                }
+              },
               suffixIcon: IconButton(
                 icon: FaIcon(
                   _obscureConfirmPassword
@@ -309,6 +532,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               validator: (value) {
+                if (_backendErrors['confirmPassword'] != null) {
+                  return _backendErrors['confirmPassword'];
+                }
                 if (value == null || value.isEmpty) {
                   return 'Por favor confirma tu contraseña';
                 }
@@ -379,7 +605,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: AppTheme.spacingXl),
 
-            // Botón de Registro usando PrimaryButton
+            // Botón de Registro
             PrimaryButton(
               text: 'Registrarse',
               state: _buttonState,

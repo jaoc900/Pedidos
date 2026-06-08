@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/models/expense_category_model.dart';
-import 'package:pedidos/utils/icon_helper.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class AddExpenseCategoryScreen extends StatefulWidget {

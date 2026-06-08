@@ -41,6 +41,13 @@ dependencies:
   google_maps_flutter: ^2.5.0
   camera: ^0.10.5+9
   mobile_scanner: ^4.0.1
+  http: ^1.2.0
+  get_it: ^7.6.7
+  dio: ^5.4.0
+  retrofit: ^4.0.1
+  logger: ^2.0.2
+  internet_connection_checker: ^1.0.0+1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
