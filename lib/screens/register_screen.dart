@@ -272,74 +272,117 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildHeroSection() {
-    return Stack(
-      children: [
-        // Imagen de fondo
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppTheme.borderRadiusXXl),
-            topRight: Radius.circular(AppTheme.borderRadiusXXl),
-          ),
-          child: Image.network(
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuARvxFc5GXD6UP8Q62oATNpGZYFEzyyUYCri0JHLgiAwzZcF04zLfJlKTxb6U5pU0_b5uBZ-WLfFHf4SdYBpXFjUISAnsKVAFDSeDbaGHiIMMjmyq-rofvNB_gsMAHBmyHEvbSc83qRRhUDO9y_y3GiBnmB7XdcVq-flYkdhAlVbyp1bxTKu2JEt1wp__9uZxKikJZRqFO0biv-mRtv4nQT6OZSPDjRdOJJ0WfdI0S765n80-XaanDjg9me84vkJM6TAjoXwTbGs_yF',
-            height: 192,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 192,
-                color: AppTheme.primaryContainer,
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.building,
-                    size: 64,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              );
-            },
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppTheme.borderRadiusXXl),
+          topRight: Radius.circular(AppTheme.borderRadiusXXl),
         ),
-        // Gradiente overlay
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [AppTheme.surfaceContainerLowest, Colors.transparent],
-                stops: const [0.0, 0.6],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primary,
+            AppTheme.primaryContainer,
+            AppTheme.secondary,
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Patrón de fondo decorativo
+          Positioned(
+            top: -30,
+            right: -30,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.onPrimary.withValues(alpha: 0.1),
               ),
             ),
           ),
-        ),
-        // Texto overlay
-        Positioned(
-          bottom: AppTheme.spacingXl,
-          left: AppTheme.spacingXl,
-          right: AppTheme.spacingXl,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Crea tu cuenta',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontSize: 32,
-                  color: AppTheme.primaryFixed,
-                  fontWeight: FontWeight.bold,
-                ),
+          Positioned(
+            bottom: -40,
+            left: -40,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.onPrimary.withValues(alpha: 0.05),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Únete a la gestión comercial eficiente',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.primaryFixed,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+          Positioned(
+            top: 50,
+            left: 20,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.onPrimary.withValues(alpha: 0.08),
+              ),
+            ),
+          ),
+          // Icono decorativo
+          Positioned(
+            top: 40,
+            right: 40,
+            child: FaIcon(
+              FontAwesomeIcons.userPlus,
+              size: 50,
+              color: AppTheme.onPrimary.withValues(alpha: 0.2),
+            ),
+          ),
+          // Contenido principal
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingXl),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Icono principal
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppTheme.onPrimary.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
+                  ),
+                  child: const Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.userPlus,
+                      size: 30,
+                      color: AppTheme.onPrimary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingXl),
+                // Título
+                Text(
+                  'Crea tu cuenta',
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    fontSize: 32,
+                    color: AppTheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                // Subtítulo
+                Text(
+                  'Únete a la gestión comercial eficiente',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.onPrimary.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
