@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
@@ -22,10 +24,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _positionController;
   late TextEditingController _bioController;
 
+  // Variable para almacenar la imagen de perfil
+  File? _profileImage;
+  String _currentImageUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBv_6iZ29fNDT9qzWxDsmKL2dSfXzmNo85liJ-wV1CW46883sjJQuX3X8aGsUhAVXzWS5AYwbj34abpIVpbyp5eCmgHyMy6pBNZE6AQq5GVxBaKg3fCyVan7njjhkxfr--2xeOca6agoJ0C4TZtG5gjs2nOuw0PO1_miNOOt2H6piXw5LcfRZCcZjCAn6LgE2UjCVwBS9q58jPHjko4L9MEZJZLlYpZIbKSpfzomNeKBL-xaV4AAvCxceRExeU_xnc8m0arrCqrhdsX';
+
   bool _isEditing = false;
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
   bool _twoFactorEnabled = false;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -71,6 +79,186 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // Método para tomar foto con la cámara
+  Future<void> _takePhoto() async {
+    try {
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 85,
+      );
+
+      if (photo != null) {
+        setState(() {
+          _profileImage = File(photo.path);
+          _currentImageUrl = ''; // Limpiar la URL cuando usamos imagen local
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Foto tomada exitosamente'),
+            backgroundColor: AppTheme.primary,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Aquí puedes agregar la lógica para subir la imagen a tu servidor
+        // await _uploadProfileImage(_profileImage!);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al tomar la foto: $e'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+    }
+  }
+
+  // Método para seleccionar imagen de la galería
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _profileImage = File(image.path);
+          _currentImageUrl = ''; // Limpiar la URL cuando usamos imagen local
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Imagen seleccionada exitosamente'),
+            backgroundColor: AppTheme.primary,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Aquí puedes agregar la lógica para subir la imagen a tu servidor
+        // await _uploadProfileImage(_profileImage!);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al seleccionar la imagen: $e'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+    }
+  }
+
+  // Método para eliminar la foto de perfil
+  Future<void> _deleteProfileImage() async {
+    // Mostrar confirmación antes de eliminar
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar foto de perfil'),
+        content: const Text('¿Estás seguro de que deseas eliminar tu foto de perfil?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppTheme.error,
+            ),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _profileImage = null;
+        // Restaurar a la imagen por defecto o a una URL predeterminada
+        _currentImageUrl = 'https://ui-avatars.com/api/?background=4CAF50&color=fff&size=120&name=${Uri.encodeComponent(_nameController.text)}';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Foto de perfil eliminada'),
+          backgroundColor: AppTheme.error,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Aquí puedes agregar la lógica para eliminar la imagen del servidor
+      // await _removeProfileImage();
+    }
+  }
+
+  // Método para obtener el widget de imagen actual
+  Widget _getProfileImageWidget() {
+    if (_profileImage != null) {
+      // Mostrar imagen seleccionada/local
+      return ClipOval(
+        child: Image.file(
+          _profileImage!,
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (_currentImageUrl.isNotEmpty) {
+      // Mostrar imagen desde URL
+      return ClipOval(
+        child: Image.network(
+          _currentImageUrl,
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: AppTheme.primaryContainer,
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.user,
+                  size: 48,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      // Mostrar avatar por defecto con iniciales
+      return Container(
+        color: AppTheme.primaryContainer,
+        child: Center(
+          child: Text(
+            _getInitials(_nameController.text),
+            style: const TextStyle(
+              fontSize: 40,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  // Método para obtener iniciales del nombre
+  String _getInitials(String fullName) {
+    if (fullName.isEmpty) return 'U';
+    final names = fullName.split(' ');
+    if (names.length >= 2) {
+      return '${names[0][0]}${names[1][0]}'.toUpperCase();
+    }
+    return names[0][0].toUpperCase();
+  }
+
   void _changeProfileImage() {
     showModalBottomSheet(
       context: context,
@@ -81,45 +269,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(height: AppTheme.spacingSm),
+            // Opción 1: Tomar foto
             ListTile(
-              leading: const FaIcon(FontAwesomeIcons.camera, size: 24),
-              title: const Text('Tomar foto'),
+              leading: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusMd),
+                ),
+                child: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.camera,
+                    size: 22,
+                    color: AppTheme.primary,
+                  ),
+                ),
+              ),
+              title: const Text(
+                'Tomar foto',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text('Usar la cámara para tomar una foto'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Funcionalidad: Tomar foto'),
-                    backgroundColor: AppTheme.primary,
-                  ),
-                );
+                _takePhoto();
               },
             ),
+            const Divider(height: 0),
+
+            // Opción 2: Seleccionar de galería
             ListTile(
-              leading: const FaIcon(FontAwesomeIcons.image, size: 24),
-              title: const Text('Seleccionar de galería'),
+              leading: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusMd),
+                ),
+                child: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.image,
+                    size: 22,
+                    color: AppTheme.primary,
+                  ),
+                ),
+              ),
+              title: const Text(
+                'Seleccionar de galería',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text('Elegir una imagen de tu galería'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Funcionalidad: Seleccionar imagen'),
-                    backgroundColor: AppTheme.primary,
-                  ),
-                );
+                _pickImageFromGallery();
               },
             ),
-            ListTile(
-              leading: const FaIcon(FontAwesomeIcons.trashCan, size: 24, color: AppTheme.error),
-              title: const Text('Eliminar foto', style: TextStyle(color: AppTheme.error)),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Foto de perfil eliminada'),
-                    backgroundColor: AppTheme.error,
+            const Divider(height: 0),
+
+            // Opción 3: Eliminar foto (solo mostrar si hay imagen)
+            if (_profileImage != null || _currentImageUrl.isNotEmpty)
+              ListTile(
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppTheme.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusMd),
                   ),
-                );
-              },
-            ),
+                  child: const Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.trashCan,
+                      size: 22,
+                      color: AppTheme.error,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  'Eliminar foto',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.error,
+                  ),
+                ),
+                subtitle: const Text('Eliminar tu foto de perfil actual'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _deleteProfileImage();
+                },
+              ),
+
             const SizedBox(height: AppTheme.spacingMd),
           ],
         ),
@@ -214,9 +454,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      appBar: _buildTopAppBar(),
       body: Column(
         children: [
-          _buildTopAppBar(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -244,7 +484,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildTopAppBar() {
+  PreferredSizeWidget _buildTopAppBar() {
     // Construir acciones según modo edición
     List<Widget> actions = [];
 
@@ -285,11 +525,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Mi Perfil',
       showBackButton: true,
       onBackPressed: () => Navigator.pop(context),
-      actions: [
-        AppBarButton(
-            icon: FontAwesomeIcons.save,
-            onPressed: () => {})
-      ],
+      actions: actions,
     );
   }
 
@@ -311,26 +547,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            child: ClipOval(
-              child: Image.network(
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuBv_6iZ29fNDT9qzWxDsmKL2dSfXzmNo85liJ-wV1CW46883sjJQuX3X8aGsUhAVXzWS5AYwbj34abpIVpbyp5eCmgHyMy6pBNZE6AQq5GVxBaKg3fCyVan7njjhkxfr--2xeOca6agoJ0C4TZtG5gjs2nOuw0PO1_miNOOt2H6piXw5LcfRZCcZjCAn6LgE2UjCVwBS9q58jPHjko4L9MEZJZLlYpZIbKSpfzomNeKBL-xaV4AAvCxceRExeU_xnc8m0arrCqrhdsX',
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: AppTheme.primaryContainer,
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.user,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            child: _getProfileImageWidget(),
           ),
           Positioned(
             bottom: 0,

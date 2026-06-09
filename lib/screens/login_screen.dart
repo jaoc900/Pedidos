@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _generalError = null;
       _isLoading = true;
     });
-
+/*
     // Validar email
     final email = _emailController.text.trim();
     if (email.isEmpty) {
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
       return;
-    }
+    }*/
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const Home()),
