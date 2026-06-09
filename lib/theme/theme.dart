@@ -47,6 +47,7 @@ class AppTheme {
   // Colores adicionales para botones específicos
   static const Color loginButtonColor = Color(0xFF1B5E20);
 
+  static const Color success = Color(0xFF4CAF50);
   static const Color warning = Color(0xFFFF9800);
   static const Color warningContainer = Color(0xFFFFF3E0); 
   static const Color info = Color(0xFF2196F3);

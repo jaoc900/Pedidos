@@ -1,5 +1,6 @@
 import 'http_client.dart';
 import 'api_endpoints.dart';
+import 'dart:io';
 
 class ApiClient {
   final HttpClient _httpClient;
@@ -35,6 +36,19 @@ class ApiClient {
 
   Future<dynamic> updateProfile(Map<String, dynamic> data) async {
     return await _httpClient.put(ApiEndpoints.updateProfile, data: data);
+  }
+
+  Future<dynamic> changePassword(Map<String, dynamic> data)async {
+    return await _httpClient.post(ApiEndpoints.changePassword, data: data);
+  }
+
+  Future<dynamic> uploadProfilePhoto(File imageFile) async {
+    // Si tu API espera multipart/form-data
+    return await _httpClient.uploadFile(ApiEndpoints.uploadProfilePhoto, imageFile, 'photo');
+  }
+
+  Future<dynamic> deleteProfilePhoto() async {
+  return await _httpClient.put(ApiEndpoints.deleteProfilePhoto);
   }
 
   // Orders methods
