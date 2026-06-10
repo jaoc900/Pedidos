@@ -44,11 +44,11 @@ class ApiClient {
 
   Future<dynamic> uploadProfilePhoto(File imageFile) async {
     // Si tu API espera multipart/form-data
-    return await _httpClient.uploadFile(ApiEndpoints.uploadProfilePhoto, imageFile, 'photo');
+    return await _httpClient.uploadFile(ApiEndpoints.uploadProfilePhoto, imageFile, 'file');
   }
 
   Future<dynamic> deleteProfilePhoto() async {
-  return await _httpClient.put(ApiEndpoints.deleteProfilePhoto);
+  return await _httpClient.delete(ApiEndpoints.deleteProfilePhoto);
   }
 
   // Orders methods

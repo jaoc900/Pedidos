@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Variables para la imagen
   File? _profileImage;
   String? _profileImageUrl;
+  String? _profileImageBase64;
 
   // Estados
   bool _isEditing = false;
@@ -84,6 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final user = UserModel.fromJson(response);
 
       print('Usuario cargado: ${user.firstName} ${user.lastName}');
+      print('Tiene foto en base64: ${user.profilePictureBase64 != null}');
 
       setState(() {
         // Actualizar textos de los controladores
@@ -93,7 +96,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _phoneController.text = user.phone ?? '';
         _addressController.text = user.address ?? '';
         _roleController.text = _getRoleName(user.role);
-        _profileImageUrl = user.profilePictureUrl;
+
+        // Priorizar base64 sobre URL
+        if (user.profilePictureBase64 != null && user.profilePictureBase64!.isNotEmpty) {
+          _profileImageBase64 = user.profilePictureBase64;
+          _profileImageUrl = null;
+        } else {
+          _profileImageUrl = user.profilePictureUrl;
+          _profileImageBase64 = null;
+        }
+
         _isLoading = false;
       });
     } catch (e) {
@@ -207,15 +219,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final response = await _apiClient.uploadProfilePhoto(imageFile);
+
+      // Dependiendo de cómo tu API responda después de subir la foto
       final photoUrl = response['data']['photoUrl'] ?? response['photoUrl'];
+      final photoBase64 = response['data']['profilePictureBase64'] ?? response['profilePictureBase64'];
 
       setState(() {
         _profileImage = null;
-        _profileImageUrl = photoUrl;
+        if (photoBase64 != null) {
+          _profileImageBase64 = photoBase64;
+          _profileImageUrl = null;
+        } else {
+          _profileImageUrl = photoUrl;
+          _profileImageBase64 = null;
+        }
         _isLoading = false;
       });
 
       _showSuccess('Foto de perfil actualizada');
+
+      // Recargar el perfil para obtener los datos actualizados
+      await _loadProfile();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -257,10 +281,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _profileImage = null;
           _profileImageUrl = null;
+          _profileImageBase64 = null;
           _isLoading = false;
         });
 
         _showSuccess('Foto de perfil eliminada');
+
+        // Recargar el perfil para actualizar los datos
+        await _loadProfile();
       } catch (e) {
         setState(() {
           _isLoading = false;
@@ -626,48 +654,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final String fullName = '${_firstNameController.text} ${_lastNameController.text}';
     final String initials = _getInitials(fullName);
 
-    // Determinar qué imagen mostrar
-    ImageProvider? imageProvider;
-
+    // Si hay imagen local (desde cámara/galería)
     if (_profileImage != null) {
-      imageProvider = FileImage(_profileImage!);
-    } else if (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) {
-      imageProvider = NetworkImage(_profileImageUrl!);
-    }
-
-    // Si hay imagen, mostrarla
-    if (imageProvider != null) {
       return ClipOval(
-        child: Image(
-          image: imageProvider,
+        child: Image.file(
+          _profileImage!,
           width: 120,
           height: 120,
           fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    // Si hay imagen en base64
+    if (_profileImageBase64 != null && _profileImageBase64!.isNotEmpty) {
+      try {
+        // Asegurarse de que el base64 está limpio
+        String cleanBase64 = _profileImageBase64!;
+
+        // Si aún tiene el prefijo, lo removemos
+        if (cleanBase64.contains(',')) {
+          cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(',') + 1);
+        }
+
+        final bytes = base64Decode(cleanBase64);
+        print('Base64 decodificado correctamente, tamaño: ${bytes.length} bytes');
+
+        return ClipOval(
+          child: Image.memory(
+            bytes,
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              print('Error al cargar imagen base64: $error');
+              return _buildInitialsWidget(initials);
+            },
+          ),
+        );
+      } catch (e) {
+        print('Error decodificando base64: $e');
+        print('Base64 string (primeros 100 chars): ${_profileImageBase64!.substring(0, _profileImageBase64!.length > 100 ? 100 : _profileImageBase64!.length)}');
+        return _buildInitialsWidget(initials);
+      }
+    }
+
+    // Si hay URL de imagen
+    if (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          _profileImageUrl!,
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return _buildInitialsWidget(initials);
+          },
           errorBuilder: (context, error, stackTrace) {
-            // Si hay error al cargar la imagen, mostrar iniciales
-            return ClipOval(
-              child: Container(
-                width: 120,
-                height: 120,
-                color: AppTheme.primaryContainer,
-                child: Center(
-                  child: Text(
-                    initials,
-                    style: const TextStyle(
-                      fontSize: 40,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            );
+            print('Error al cargar imagen URL: $error');
+            return _buildInitialsWidget(initials);
           },
         ),
       );
     }
 
     // Si no hay imagen, mostrar iniciales
+    return _buildInitialsWidget(initials);
+  }
+
+// Widget helper para iniciales
+  Widget _buildInitialsWidget(String initials) {
     return ClipOval(
       child: Container(
         width: 120,
@@ -830,6 +887,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: AppTheme.spacingSm),
+
+            // Opción 1: Tomar foto
             ListTile(
               leading: Container(
                 width: 44,
@@ -856,7 +915,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _takePhoto();
               },
             ),
+
             const Divider(height: 0),
+
+            // Opción 2: Seleccionar de galería
             ListTile(
               leading: Container(
                 width: 44,
@@ -883,9 +945,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _pickImageFromGallery();
               },
             ),
-            if (_profileImage != null || (_profileImageUrl != null && _profileImageUrl!.isNotEmpty))
+
+            // Opción 3: Eliminar foto (solo visible si hay una foto)
+            // Verificar si hay foto (local, URL o base64)
+            if (_hasProfileImage())
               const Divider(height: 0),
-            if (_profileImage != null || (_profileImageUrl != null && _profileImageUrl!.isNotEmpty))
+            if (_hasProfileImage())
               ListTile(
                 leading: Container(
                   width: 44,
@@ -915,11 +980,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _deleteProfileImage();
                 },
               ),
+
             const SizedBox(height: AppTheme.spacingMd),
           ],
         ),
       ),
     );
+  }
+
+// Método helper para verificar si hay una foto de perfil
+  bool _hasProfileImage() {
+    return _profileImage != null ||
+        (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) ||
+        (_profileImageBase64 != null && _profileImageBase64!.isNotEmpty);
   }
 
   Widget _buildProfileForm() {
