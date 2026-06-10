@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
-import 'package:pedidos/widgets/custom_text_field.dart';
-import 'package:pedidos/widgets/custom_dropdown_field.dart';
+import 'package:pedidos/models/payment_method_model.dart';
+import 'package:pedidos/core/network/http_client.dart';
+import 'package:pedidos/core/network/api_client.dart';
 
 class AddPaymentMethodScreen extends StatefulWidget {
-  const AddPaymentMethodScreen({super.key});
+  final PaymentMethod? paymentMethod;
+
+  const AddPaymentMethodScreen({super.key, this.paymentMethod});
 
   @override
   State<AddPaymentMethodScreen> createState() => _AddPaymentMethodScreenState();
@@ -15,73 +18,136 @@ class AddPaymentMethodScreen extends StatefulWidget {
 class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _detailsController = TextEditingController();
 
-  String _selectedType = '';
+  int _selectedIconIndex = 0;
+  Color _selectedColor = AppTheme.primary;
+  bool _isActive = true;
   bool _isLoading = false;
 
-  final List<String> _paymentTypes = [
-    'Transferencia',
-    'Efectivo',
-    'Tarjeta',
-    'Pago QR',
-    'PayPal',
-    'Otro',
+  late ApiClient _apiClient;
+
+  final List<Map<String, dynamic>> _icons = [
+    {'icon': FontAwesomeIcons.moneyBill, 'name': 'moneyBill', 'label': 'Efectivo'},
+    {'icon': FontAwesomeIcons.buildingColumns, 'name': 'buildingColumns', 'label': 'Banco'},
+    {'icon': FontAwesomeIcons.creditCard, 'name': 'creditCard', 'label': 'Tarjeta'},
+    {'icon': FontAwesomeIcons.qrcode, 'name': 'qrcode', 'label': 'Código QR'},
+    {'icon': FontAwesomeIcons.paypal, 'name': 'paypal', 'label': 'PayPal'},
+    {'icon': FontAwesomeIcons.mobileAlt, 'name': 'mobile', 'label': 'Móvil'},
+    {'icon': FontAwesomeIcons.wallet, 'name': 'wallet', 'label': 'Cartera'},
+    {'icon': FontAwesomeIcons.bitcoin, 'name': 'bitcoin', 'label': 'Bitcoin'},
+    {'icon': FontAwesomeIcons.applePay, 'name': 'applePay', 'label': 'Apple Pay'},
+    {'icon': FontAwesomeIcons.googlePay, 'name': 'googlePay', 'label': 'Google Pay'},
   ];
 
-  final List<Map<String, dynamic>> _suggestedMethods = [
-    {'icon': FontAwesomeIcons.buildingColumns, 'name': 'Banco Local', 'type': 'Transferencia'},
-    {'icon': FontAwesomeIcons.qrcode, 'name': 'Pago QR', 'type': 'Pago QR'},
-    {'icon': FontAwesomeIcons.creditCard, 'name': 'Tarjeta de Crédito', 'type': 'Tarjeta'},
-    {'icon': FontAwesomeIcons.paypal, 'name': 'PayPal', 'type': 'PayPal'},
+  final List<Color> _colorOptions = [
+    AppTheme.primary,
+    AppTheme.secondary,
+    AppTheme.tertiary,
+    AppTheme.error,
+    const Color(0xFF9C27B0), // Morado
+    const Color(0xFF2196F3), // Azul
+    const Color(0xFF009688), // Teal
+    const Color(0xFFFF9800), // Naranja
+    const Color(0xFF795548), // Marrón
+    const Color(0xFF607D8B), // Gris azulado
+    const Color(0xFFE91E63), // Rosa
+    const Color(0xFF00BCD4), // Cian
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+    if (widget.paymentMethod != null) {
+      _loadPaymentMethodData();
+    }
+  }
+
+  Future<void> _initialize() async {
+    final httpClient = HttpClient();
+    _apiClient = ApiClient(httpClient);
+  }
+
+  void _loadPaymentMethodData() {
+    final method = widget.paymentMethod!;
+    _nameController.text = method.name;
+    _isActive = method.isActive;
+
+    // Buscar el índice del icono existente
+    final iconIndex = _icons.indexWhere((i) => i['name'] == method.icon);
+    if (iconIndex != -1) _selectedIconIndex = iconIndex;
+
+    // Buscar el color existente
+    if (method.color != null) {
+      try {
+        final hexColor = method.color!;
+        if (hexColor.startsWith('#')) {
+          final color = Color(int.parse('0xFF${hexColor.substring(1)}'));
+          if (_colorOptions.contains(color)) {
+            _selectedColor = color;
+          }
+        }
+      } catch (e) {
+        _selectedColor = AppTheme.primary;
+      }
+    }
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _detailsController.dispose();
     super.dispose();
   }
 
-  void _savePaymentMethod() {
+  Future<void> _savePaymentMethod() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedType.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Por favor selecciona un tipo de pago'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
-        return;
-      }
-
       setState(() {
         _isLoading = true;
       });
 
-      // Simular guardado
-      Future.delayed(const Duration(seconds: 1), () {
+      try {
+        final selectedIcon = _icons[_selectedIconIndex];
+        final colorHex = '#${_selectedColor.value.toRadixString(16).substring(2)}';
+
+        final data = {
+          'name': _nameController.text.trim(),
+          'icon': selectedIcon['name'],
+          'color': colorHex,
+          'isActive': _isActive,
+        };
+
+        if (widget.paymentMethod == null) {
+          await _apiClient.createPaymentMethod(data);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Método de pago creado exitosamente'),
+              backgroundColor: AppTheme.primary,
+            ),
+          );
+        } else {
+          await _apiClient.updatePaymentMethod(widget.paymentMethod!.id.toString(), data);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Método de pago actualizado exitosamente'),
+              backgroundColor: AppTheme.primary,
+            ),
+          );
+        }
+
+        Navigator.pop(context, true);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      } finally {
         setState(() {
           _isLoading = false;
         });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Método de pago guardado exitosamente'),
-            backgroundColor: AppTheme.primary,
-          ),
-        );
-
-        Navigator.pop(context);
-      });
+      }
     }
-  }
-
-  void _useSuggestedMethod(String name, String type) {
-    setState(() {
-      _nameController.text = name;
-      _selectedType = type;
-    });
   }
 
   @override
@@ -89,36 +155,91 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: CustomTopAppBar(
-        title: 'Registrar métodos',
+        title: widget.paymentMethod == null ? 'Agregar método de pago' : 'Editar método de pago',
         showBackButton: true,
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-              icon: FontAwesomeIcons.save,
-              onPressed: () => {})
+            icon: FontAwesomeIcons.save,
+            onPressed: _savePaymentMethod,
+          )
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Form Container
-                  _buildForm(),
-                  const SizedBox(height: AppTheme.spacingLg),
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: AppTheme.spacingLg),
+            _buildBentoGrid(),
+            const SizedBox(height: AppTheme.spacingXl),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Métodos de Pago',
+          style: TextStyle(
+            fontSize: AppTheme.fontSizeTitle,
+            fontWeight: FontWeight.w700,
+            color: AppTheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        Text(
+          'Configura los métodos de pago que estarán disponibles para tus clientes. Asigna un nombre, icono y color representativo.',
+          style: TextStyle(
+            fontSize: AppTheme.fontSizeBody,
+            color: AppTheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBentoGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth > 700;
+
+        if (isDesktop) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 7,
+                child: _buildFormArea(),
+              ),
+              const SizedBox(width: AppTheme.spacingLg),
+              Expanded(
+                flex: 5,
+                child: _buildVisualCard(),
+              ),
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              _buildFormArea(),
+              const SizedBox(height: AppTheme.spacingLg),
+              _buildVisualCard(),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildFormArea() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -140,46 +261,198 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Nombre del Método
-            CustomTextField(
-              controller: _nameController,
-              label: 'Nombre del Método',
-              hint: 'Ej: Banco Nacional o Stripe',
-              icon: FontAwesomeIcons.tag,
-              textInputAction: TextInputAction.next,
-              borderRadius: AppTheme.borderRadiusXXl,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa el nombre';
-                }
-                return null;
-              },
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.tag,
+                      size: 14,
+                      color: AppTheme.primary,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      'Nombre del Método',
+                      style: TextStyle(
+                        fontSize: AppTheme.fontSizeLabel,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                TextFormField(
+                  controller: _nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa el nombre';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Ej. Transferencia Bancaria, Tarjeta de Crédito...',
+                    hintStyle: TextStyle(
+                      color: AppTheme.outlineVariant,
+                      fontSize: AppTheme.fontSizeBody,
+                    ),
+                    filled: true,
+                    fillColor: AppTheme.surface,
+                    border: _buildInputBorder(),
+                    enabledBorder: _buildInputBorder(),
+                    focusedBorder: _buildFocusedBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingLg,
+                      vertical: AppTheme.spacingLg,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Tipo de Pago
-            _buildDropdownField(
-              label: 'Tipo de Pago',
-              value: _selectedType,
-              items: _paymentTypes,
-              icon: FontAwesomeIcons.moneyBill,
-              hint: 'Seleccione una opción',
-              onChanged: (value) {
-                setState(() {
-                  _selectedType = value ?? '';
-                });
-              },
+            // Selector de Icono
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.icons,
+                      size: 14,
+                      color: AppTheme.primary,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      'Seleccionar Icono',
+                      style: TextStyle(
+                        fontSize: AppTheme.fontSizeLabel,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    crossAxisSpacing: AppTheme.spacingMd,
+                    mainAxisSpacing: AppTheme.spacingMd,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: _icons.length,
+                  itemBuilder: (context, index) {
+                    final isSelected = _selectedIconIndex == index;
+                    final iconData = _icons[index]['icon'] as FaIconData;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedIconIndex = index;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? _selectedColor
+                              : AppTheme.surface,
+                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+                          border: Border.all(
+                            color: isSelected
+                                ? _selectedColor
+                                : AppTheme.outlineVariant,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Center(
+                          child: FaIcon(
+                            iconData,
+                            size: 22,
+                            color: isSelected
+                                ? Colors.white
+                                : AppTheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Detalles/Instrucciones
-            CustomTextField(
-              controller: _detailsController,
-              label: 'Detalles/Instrucciones',
-              hint: 'Ingrese números de cuenta, CLABE o instrucciones para el cliente...',
-              icon: FontAwesomeIcons.fileLines,
-              maxLines: 4,
-              textInputAction: TextInputAction.done,
-              borderRadius: AppTheme.borderRadiusXXl,
+            // Selector de Color
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.palette,
+                      size: 14,
+                      color: AppTheme.primary,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      'Seleccionar Color',
+                      style: TextStyle(
+                        fontSize: AppTheme.fontSizeLabel,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                Wrap(
+                  spacing: AppTheme.spacingMd,
+                  runSpacing: AppTheme.spacingMd,
+                  children: _colorOptions.map((color) {
+                    final isSelected = _selectedColor == color;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedColor = color;
+                        });
+                      },
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? Colors.white : Colors.transparent,
+                            width: 3,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                            BoxShadow(
+                              color: color.withValues(alpha: 0.4),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                              : null,
+                        ),
+                        child: isSelected
+                            ? const Center(
+                          child: FaIcon(
+                            FontAwesomeIcons.check,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                            : null,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
           ],
@@ -188,156 +461,92 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String? value,
-    required List<String> items,
-    required FaIconData icon,
-    required String hint,
-    required Function(String?) onChanged,
-  }) {
-    return CustomDropdownField(
-      value: items.contains(value) ? value : null,
-      label: label,
-      hint: hint,
-      items: items,
-      icon: icon,
-      onChanged: onChanged,
-      enabled: true,
-      showLabel: true,
-      borderRadius: AppTheme.borderRadiusXXl,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Seleccione una opción';
-        }
-        return null;
-      },
-    );
-  }
+  Widget _buildVisualCard() {
+    final selectedIcon = _icons[_selectedIconIndex]['icon'] as FaIconData;
+    final color = _selectedColor;
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required FaIconData icon,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(
-              icon,
-              size: 14,
-              color: AppTheme.primary,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+        image: DecorationImage(
+          image: const NetworkImage(
+            'https://lh3.googleusercontent.com/aida-public/AB6AXuCibnU-a4dNd5b16ENMmnq72FKxbUpwIgDsE9Mh27pr5-_UQlUgKTnGd15xBebiLxnka4nDjTClHtK4jB9ZhNavicG6MQPee6a6xrtpGgdYjiresiHqp1jdFO26Ux005nIbMDbEUTxBzhqusvFc_jWC07Hi9DpCDAm1WNUdB3cR5r7QDjwQmX6PM-LFgTRoSK0DCuVc-niJKSeNyOVj5wjodH_dmcWGU6CX_lMejbfNUbbF9kxO4t5djRPVN3nwdarijfuOy-JCFmkG',
+          ),
+          fit: BoxFit.cover,
+          opacity: 0.15,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icono de vista previa
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(AppTheme.borderRadiusLg),
             ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTheme.fontSizeLabel,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceVariant,
+            child: Center(
+              child: FaIcon(
+                selectedIcon,
+                size: 32,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppTheme.outlineVariant,
-              fontSize: AppTheme.fontSizeBody,
-            ),
-            filled: true,
-            fillColor: AppTheme.surfaceBright,
-            border: _buildInputBorder(),
-            enabledBorder: _buildInputBorder(),
-            focusedBorder: _buildFocusedBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingLg,
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          Text(
+            _nameController.text.isEmpty ? 'Nuevo Método de Pago' : _nameController.text,
+            style: TextStyle(
+              fontSize: AppTheme.fontSizeTitle,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSuggestedMethods() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Métodos Sugeridos',
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeLabel,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.onSurface,
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            'Los métodos de pago permiten a tus clientes realizar transacciones de forma rápida y segura.',
+            style: TextStyle(
+              fontSize: AppTheme.fontSizeSmall,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
           ),
-        ),
-        const SizedBox(height: AppTheme.spacingMd),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: AppTheme.spacingLg,
-            mainAxisSpacing: AppTheme.spacingLg,
-            childAspectRatio: 1.2,
-          ),
-          itemCount: _suggestedMethods.length,
-          itemBuilder: (context, index) {
-            final method = _suggestedMethods[index];
-            return GestureDetector(
-              onTap: () => _useSuggestedMethod(method['name'] as String, method['type'] as String),
-              child: Container(
-                padding: const EdgeInsets.all(AppTheme.spacingLg),
+          const SizedBox(height: AppTheme.spacingLg),
+          // Estado
+          Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-                  border: Border.all(color: AppTheme.outlineVariant),
+                  color: _isActive ? Colors.green : Colors.red,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          method['icon'] as FaIconData,
-                          size: 24,
-                          color: AppTheme.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      method['name'] as String,
-                      style: TextStyle(
-                        fontSize: AppTheme.fontSizeSmall,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.onSurface,
-                      ),
-                    ),
-                  ],
+                child: Center(
+                  child: FaIcon(
+                    _isActive ? FontAwesomeIcons.check : FontAwesomeIcons.times,
+                    size: 12,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            );
-          },
-        ),
-      ],
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                _isActive ? 'Método Activo' : 'Método Inactivo',
+                style: TextStyle(
+                  fontSize: AppTheme.fontSizeSmall,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

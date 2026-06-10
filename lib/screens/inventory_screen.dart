@@ -103,7 +103,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
       backgroundColor: AppTheme.surface,
       body: Column(
         children: [
-          _buildTopAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -111,7 +110,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildCategoryFilter(),
-                  _buildSearchInfoBar(),// Contenido según el modo seleccionado
+                  const SizedBox(height: AppTheme.spacingSm),
+                  _buildSearchInfoBar(),
                   LayoutBuilder(
                     builder: (context, constraints) {
                       return _buildContent(constraints.maxWidth);
@@ -227,7 +227,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildTopAppBar(BuildContext context) {
+  PreferredSizeWidget _buildTopAppBar(BuildContext context) {
     return CustomTopAppBar(
       title: 'Artículos',
       showBackButton: false,

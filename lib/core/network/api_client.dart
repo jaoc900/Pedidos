@@ -71,4 +71,41 @@ class ApiClient {
     );
   }
 
+  // Payment Methods methods
+  Future<dynamic> getPaymentMethods() async {
+    return await _httpClient.get(ApiEndpoints.paymentMethods);
+  }
+
+  Future<dynamic> getPaymentMethodById(String id) async {
+    final endpoint = ApiEndpoints.paymentMethodById.replaceAll('{id}', id);
+    return await _httpClient.get(endpoint);
+  }
+
+  Future<dynamic> createPaymentMethod(Map<String, dynamic> data) async {
+    return await _httpClient.post(ApiEndpoints.paymentMethods, data: data);
+  }
+
+  Future<dynamic> updatePaymentMethod(String id, Map<String, dynamic> data) async {
+    final endpoint = ApiEndpoints.paymentMethodById.replaceAll('{id}', id);
+    return await _httpClient.put(endpoint, data: data);
+  }
+
+  Future<dynamic> deletePaymentMethod(String id) async {
+    final endpoint = ApiEndpoints.paymentMethodById.replaceAll('{id}', id);
+    return await _httpClient.delete(endpoint);
+  }
+
+  Future<dynamic> togglePaymentMethodStatus(String id) async {
+    final endpoint = ApiEndpoints.togglePaymentMethodStatus.replaceAll('{id}', id);
+    return await _httpClient.patch(endpoint);
+  }
+
+  Future<dynamic> getActivePaymentMethods() async {
+    return await _httpClient.get(ApiEndpoints.activePaymentMethods);
+  }
+
+  Future<dynamic> seedDefaultPaymentMethods() async {
+    return await _httpClient.post(ApiEndpoints.seedPaymentMethods);
+  }
+
 }

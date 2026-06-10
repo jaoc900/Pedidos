@@ -1,3 +1,4 @@
+// confirmation_modal.dart
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
@@ -20,7 +21,6 @@ class ConfirmationConfig {
   final VoidCallback onConfirm;
   final VoidCallback? onCancel;
   final FaIconData? customIcon;
-  final BuildContext context; // Agregar context a la configuración
 
   const ConfirmationConfig({
     required this.title,
@@ -31,7 +31,6 @@ class ConfirmationConfig {
     required this.onConfirm,
     this.onCancel,
     this.customIcon,
-    required this.context, // Requerir context
   });
 }
 
@@ -70,7 +69,6 @@ class ConfirmationModal extends StatelessWidget {
           onConfirm: onConfirm,
           onCancel: onCancel,
           customIcon: customIcon,
-          context: dialogContext, // Pasar el context del diálogo
         ),
       ),
     );
@@ -124,7 +122,7 @@ class ConfirmationModal extends StatelessWidget {
               ),
               const SizedBox(height: AppTheme.spacingXl),
               // Botones
-              _buildButtons(),
+              _buildButtons(context),
             ],
           ),
         ),
@@ -183,7 +181,7 @@ class ConfirmationModal extends StatelessWidget {
     );
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(BuildContext dialogContext) {
     return Column(
       children: [
         // Botón Confirmar
@@ -192,6 +190,9 @@ class ConfirmationModal extends StatelessWidget {
           height: 56,
           child: ElevatedButton(
             onPressed: () {
+              // Cerrar el modal primero
+              Navigator.pop(dialogContext);
+              // Luego ejecutar la acción
               config.onConfirm();
             },
             style: ElevatedButton.styleFrom(
@@ -218,10 +219,11 @@ class ConfirmationModal extends StatelessWidget {
           height: 56,
           child: OutlinedButton(
             onPressed: () {
+              // Cerrar el modal
+              Navigator.pop(dialogContext);
+              // Ejecutar onCancel si existe
               if (config.onCancel != null) {
                 config.onCancel!();
-              } else {
-                Navigator.pop(config.context);
               }
             },
             style: OutlinedButton.styleFrom(
