@@ -108,4 +108,31 @@ class ApiClient {
     return await _httpClient.post(ApiEndpoints.seedPaymentMethods);
   }
 
+  Future<dynamic> getExpenseCategories() async {
+    return await _httpClient.get(ApiEndpoints.expenseCategories);
+  }
+
+  Future<dynamic> getExpenseCategoryById(String id) async {
+    final endpoint = ApiEndpoints.expenseCategoryById.replaceAll('{id}', id);
+    return await _httpClient.get(endpoint);
+  }
+
+  Future<dynamic> createExpenseCategory(Map<String, dynamic> data) async {
+    return await _httpClient.post(ApiEndpoints.expenseCategories, data: data);
+  }
+
+  Future<dynamic> updateExpenseCategory(String id, Map<String, dynamic> data) async {
+    final endpoint = ApiEndpoints.expenseCategoryById.replaceAll('{id}', id);
+    return await _httpClient.put(endpoint, data: data);
+  }
+
+  Future<void> deleteExpenseCategory(String id) async {
+    final endpoint = ApiEndpoints.expenseCategoryById.replaceAll('{id}', id);
+    await _httpClient.delete(endpoint);
+  }
+
+  Future<dynamic> getActiveExpenseCategories() async {
+    return await _httpClient.get(ApiEndpoints.activeExpenseCategories);
+  }
+
 }
