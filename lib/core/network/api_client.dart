@@ -38,17 +38,18 @@ class ApiClient {
     return await _httpClient.put(ApiEndpoints.updateProfile, data: data);
   }
 
-  Future<dynamic> changePassword(Map<String, dynamic> data)async {
+  Future<dynamic> changePassword(Map<String, dynamic> data) async {
     return await _httpClient.post(ApiEndpoints.changePassword, data: data);
   }
 
   Future<dynamic> uploadProfilePhoto(File imageFile) async {
     // Si tu API espera multipart/form-data
-    return await _httpClient.uploadFile(ApiEndpoints.uploadProfilePhoto, imageFile, 'file');
+    return await _httpClient.uploadFile(
+        ApiEndpoints.uploadProfilePhoto, imageFile, 'file');
   }
 
   Future<dynamic> deleteProfilePhoto() async {
-  return await _httpClient.delete(ApiEndpoints.deleteProfilePhoto);
+    return await _httpClient.delete(ApiEndpoints.deleteProfilePhoto);
   }
 
   // Orders methods
@@ -85,7 +86,8 @@ class ApiClient {
     return await _httpClient.post(ApiEndpoints.paymentMethods, data: data);
   }
 
-  Future<dynamic> updatePaymentMethod(String id, Map<String, dynamic> data) async {
+  Future<dynamic> updatePaymentMethod(String id,
+      Map<String, dynamic> data) async {
     final endpoint = ApiEndpoints.paymentMethodById.replaceAll('{id}', id);
     return await _httpClient.put(endpoint, data: data);
   }
@@ -96,7 +98,8 @@ class ApiClient {
   }
 
   Future<dynamic> togglePaymentMethodStatus(String id) async {
-    final endpoint = ApiEndpoints.togglePaymentMethodStatus.replaceAll('{id}', id);
+    final endpoint = ApiEndpoints.togglePaymentMethodStatus.replaceAll(
+        '{id}', id);
     return await _httpClient.patch(endpoint);
   }
 
@@ -121,7 +124,8 @@ class ApiClient {
     return await _httpClient.post(ApiEndpoints.expenseCategories, data: data);
   }
 
-  Future<dynamic> updateExpenseCategory(String id, Map<String, dynamic> data) async {
+  Future<dynamic> updateExpenseCategory(String id,
+      Map<String, dynamic> data) async {
     final endpoint = ApiEndpoints.expenseCategoryById.replaceAll('{id}', id);
     return await _httpClient.put(endpoint, data: data);
   }
@@ -135,4 +139,103 @@ class ApiClient {
     return await _httpClient.get(ApiEndpoints.activeExpenseCategories);
   }
 
+  // Obtener todos los empleados
+  Future<dynamic> getEmployees() async {
+    return await _httpClient.get(ApiEndpoints.employees);
+  }
+
+// Obtener empleado por ID
+  Future<dynamic> getEmployeeById(String id) async {
+    final endpoint = ApiEndpoints.employeeById.replaceAll('{id}', id);
+    return await _httpClient.get(endpoint);
+  }
+
+// Obtener estadísticas de empleados
+  Future<dynamic> getEmployeeStats() async {
+    return await _httpClient.get(ApiEndpoints.employeeStats);
+  }
+
+// Obtener ventas por empleado
+  Future<dynamic> getEmployeeSales() async {
+    return await _httpClient.get(ApiEndpoints.employeeSales);
+  }
+
+// Obtener empleados activos
+  Future<dynamic> getActiveEmployees() async {
+    return await _httpClient.get(ApiEndpoints.activeEmployees);
+  }
+
+// Crear empleado
+  Future<dynamic> createEmployee(Map<String, dynamic> data) async {
+    return await _httpClient.post(ApiEndpoints.employees, data: data);
+  }
+
+// Actualizar empleado
+  Future<dynamic> updateEmployee(String id, Map<String, dynamic> data) async {
+    final endpoint = ApiEndpoints.employeeById.replaceAll('{id}', id);
+    return await _httpClient.put(endpoint, data: data);
+  }
+
+// Eliminar empleado
+  Future<void> deleteEmployee(String id) async {
+    final endpoint = ApiEndpoints.employeeById.replaceAll('{id}', id);
+    await _httpClient.delete(endpoint);
+  }
+
+// Cambiar estado del empleado (activar/desactivar)
+  Future<dynamic> toggleEmployeeStatus(String id, bool isActive) async {
+    final endpoint = ApiEndpoints.employeeById.replaceAll('{id}', id);
+    return await _httpClient.patch(endpoint, data: {'isActive': isActive});
+  }
+
+// Restablecer contraseña
+  Future<void> resetEmployeePassword(String id) async {
+    final endpoint = ApiEndpoints.resetEmployeePassword.replaceAll('{id}', id);
+    await _httpClient.post(endpoint);
+  }
+
+  /// Obtener todos los roles de empleados
+  /// GET /api/employee-roles
+  Future<dynamic> getEmployeeRoles() async {
+    return await _httpClient.get(ApiEndpoints.employeeRoles);
+  }
+
+  /// Obtener un rol por ID
+  /// GET /api/employee-roles/{id}
+  Future<dynamic> getEmployeeRoleById(String id) async {
+    final endpoint = ApiEndpoints.employeeRoleById.replaceAll('{id}', id);
+    return await _httpClient.get(endpoint);
+  }
+
+  /// Crear un nuevo rol de empleado
+  /// POST /api/employee-roles
+  Future<dynamic> createEmployeeRole(Map<String, dynamic> data) async {
+    return await _httpClient.post(ApiEndpoints.employeeRoles, data: data);
+  }
+
+  /// Actualizar un rol de empleado existente
+  /// PUT /api/employee-roles/{id}
+  Future<dynamic> updateEmployeeRole(String id, Map<String, dynamic> data) async {
+    final endpoint = ApiEndpoints.employeeRoleById.replaceAll('{id}', id);
+    return await _httpClient.put(endpoint, data: data);
+  }
+
+  /// Eliminar un rol de empleado
+  /// DELETE /api/employee-roles/{id}
+  Future<void> deleteEmployeeRole(String id) async {
+    final endpoint = ApiEndpoints.employeeRoleById.replaceAll('{id}', id);
+    await _httpClient.delete(endpoint);
+  }
+
+  /// Asignar un rol a un empleado
+  /// POST /api/employee-roles/assign
+  Future<dynamic> assignRoleToEmployee(Map<String, dynamic> data) async {
+    return await _httpClient.post(ApiEndpoints.employeeRoleAssign, data: data);
+  }
+
+  /// Obtener lista simple de roles (para dropdowns)
+  /// GET /api/employee-roles/simple-list
+  Future<dynamic> getEmployeeRolesSimpleList() async {
+    return await _httpClient.get(ApiEndpoints.employeeRolesSimpleList);
+  }
 }

@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = "http://192.168.0.104:5184";
+  static const String baseUrl = "http://192.168.0.105:5184";
 
   // =========================
   // PRODUCTS (Articles)
@@ -34,6 +34,12 @@ class ApiEndpoints {
   static const String employeeSales = "/api/employees/sales";
   static const String activeEmployees = "/api/employees/active";
   static const String resetEmployeePassword = "/api/employees/{id}/reset-password";
+
+  // Employee Roles endpoints
+  static const String employeeRoles = "/api/employee-roles";
+  static const String employeeRoleById = "/api/employee-roles/{id}";
+  static const String employeeRoleAssign = "/api/employee-roles/assign";
+  static const String employeeRolesSimpleList = "/api/employee-roles/simple-list";
 
   // =========================
   // EXPENSES

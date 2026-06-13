@@ -23,6 +23,7 @@ import 'package:pedidos/screens/expense_categories_screen.dart';
 import 'package:pedidos/screens/price_list_screen.dart';
 import 'package:pedidos/screens/reports_screen.dart';
 import 'package:pedidos/screens/finances_screen.dart';
+import 'package:pedidos/screens/employee_roles_screen.dart'; // Importar pantalla de roles
 
 class SideMenu extends StatefulWidget {
   final VoidCallback onClose;
@@ -285,6 +286,19 @@ class _SideMenuState extends State<SideMenu> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const EmployeesScreen()),
+                        );
+                      },
+                    ),
+                    // Nuevo menú para Roles de Empleados
+                    _buildMenuItem(
+                      icon: FontAwesomeIcons.userShield,
+                      title: 'Roles de Empleados',
+                      subtitle: 'Gestiona los roles y permisos',
+                      onTap: () {
+                        widget.onClose();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EmployeeRolesScreen()),
                         );
                       },
                     ),

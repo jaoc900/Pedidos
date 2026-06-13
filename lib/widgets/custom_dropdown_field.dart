@@ -6,7 +6,7 @@ class CustomDropdownField extends StatelessWidget {
   final String? value;
   final String label;
   final String hint;
-  final List<String> items;
+  final List<dynamic> items;
   final FaIconData icon;
   final ValueChanged<String?>? onChanged;
   final String? Function(String?)? validator;
@@ -161,15 +161,35 @@ class CustomDropdownField extends StatelessWidget {
 
             dropdownColor: AppTheme.surfaceContainerLowest,
 
-            items: items.map((item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList(),
+              items: items
+                  .map<DropdownMenuItem<String>?>((item) {
+                if (item is String) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: AppTheme.onSurface,
+                        fontSize: AppTheme.fontSizeBody,
+                      ),
+                    ),
+                  );
+                }
+
+                if (item is DropdownItem) {
+                  return DropdownMenuItem<String>(
+                    value: item.value,
+                    child: Text(
+                      item.label,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }
+
+                return null;
+              })
+                  .whereType<DropdownMenuItem<String>>()
+                  .toList(),
           ),
         ),
 
@@ -265,4 +285,11 @@ class CustomDropdownField extends StatelessWidget {
       ),
     );
   }
+}
+
+class DropdownItem {
+  final String value;
+  final String label;
+
+  DropdownItem({required this.value, required this.label});
 }
