@@ -189,9 +189,10 @@ class ApiClient {
   }
 
 // Restablecer contraseña
-  Future<void> resetEmployeePassword(String id) async {
+  Future<void> resetEmployeePassword(String id, String newPassword) async {
     final endpoint = ApiEndpoints.resetEmployeePassword.replaceAll('{id}', id);
-    await _httpClient.post(endpoint);
+    final data = newPassword;
+    await _httpClient.post(endpoint, data: data);
   }
 
   /// Obtener todos los roles de empleados

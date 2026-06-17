@@ -15,6 +15,8 @@ class Employee {
   final DateTime createdAt;
   final int roleId;
   final int? parentUserId;
+  final bool? active;
+  final String? password;
 
   Employee({
     required this.id,
@@ -30,6 +32,8 @@ class Employee {
     required this.createdAt,
     required this.roleId,
     this.parentUserId,
+    this.active,
+    this.password
   });
 
   /// Nombre completo
@@ -55,22 +59,6 @@ class Employee {
   /// Avatar generado automáticamente
   String get avatarUrl {
     return 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(fullName)}&background=4CAF50&color=fff';
-  }
-
-  /// Departamento derivado del rol
-  String get department {
-    switch (roleId) {
-      case 1:
-        return 'Administración';
-      case 2:
-        return 'Ventas';
-      case 3:
-        return 'Supervisión';
-      case 4:
-        return 'Gerencia';
-      default:
-        return 'General';
-    }
   }
 
   /// Fecha de ingreso
@@ -102,6 +90,8 @@ class Employee {
           DateTime.now(),
       roleId: data['roleId'] ?? 0,
       parentUserId: data['parentUserId'],
+      active: data['active'],
+      password: data['password'] ?? ''
     );
   }
 
@@ -120,79 +110,7 @@ class Employee {
       'createdAt': createdAt.toIso8601String(),
       'roleId': roleId,
       'parentUserId': parentUserId,
-    };
-  }
-}
-
-// DTO para crear/actualizar empleados
-class CreateEmployeeRequest {
-  final String firstName;
-  final String? middleName;
-  final String paternalSurname;
-  final String maternalSurname;
-  final String phone;
-  final String email;
-  final String password;
-  final int roleId;
-  final double salary;
-  final int? parentUserId;
-
-  const CreateEmployeeRequest({
-    required this.firstName,
-    this.middleName,
-    required this.paternalSurname,
-    required this.maternalSurname,
-    required this.phone,
-    required this.email,
-    required this.password,
-    required this.roleId,
-    required this.salary,
-    this.parentUserId,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'firstName': firstName,
-    'middleName': middleName,
-    'paternalSurname': paternalSurname,
-    'maternalSurname': maternalSurname,
-    'phone': phone,
-    'email': email,
-    'password': password,
-    'roleId': roleId,
-    'salary': salary,
-    'parentUserId': parentUserId,
-  };
-}
-
-// DTO para actualizar empleado
-class UpdateEmployeeRequest {
-  final String firstName;
-  final String? middleName;
-  final String paternalSurname;
-  final String maternalSurname;
-  final String phone;
-  final double salary;
-  final int? parentUserId;
-
-  UpdateEmployeeRequest({
-    required this.firstName,
-    this.middleName,
-    required this.paternalSurname,
-    required this.maternalSurname,
-    required this.phone,
-    required this.salary,
-    this.parentUserId,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'firstName': firstName,
-      'middleName': middleName,
-      'paternalSurname': paternalSurname,
-      'maternalSurname': maternalSurname,
-      'phone': phone,
-      'salary': salary,
-      'parentUserId': parentUserId,
+      'password': password
     };
   }
 }

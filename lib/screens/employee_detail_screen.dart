@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
@@ -6,9 +7,11 @@ import 'package:pedidos/models/employee_role_simple_model.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 import 'package:pedidos/widgets/custom_dropdown_field.dart';
+import 'package:pedidos/widgets/primary_button.dart';
+import 'package:pedidos/widgets/custom_outlined_button.dart';
 import 'package:pedidos/core/network/http_client.dart';
 import 'package:pedidos/core/network/api_client.dart';
-import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
+import 'package:pedidos/screens/modals/confirmation_modal.dart';
 
 class EmployeeDetailScreen extends StatefulWidget {
   final Employee? employee;
@@ -31,7 +34,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
   late TextEditingController _salaryController;
   late TextEditingController _passwordController;
 
-  String _selectedRoleId = '';
+  int _selectedRoleId = 0;
   int? _selectedParentUserId;
   bool _isLoading = false;
 
@@ -64,7 +67,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       _emailController = TextEditingController(text: widget.employee!.userEmail);
       _phoneController = TextEditingController(text: widget.employee!.phone);
       _salaryController = TextEditingController(text: widget.employee!.salary.toString());
-      _selectedRoleId = widget.employee!.userRole;
+      _selectedRoleId = widget.employee!.roleId;
       _selectedParentUserId = widget.employee!.parentUserId;
       _passwordController = TextEditingController();
     } else {
@@ -77,7 +80,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       _phoneController = TextEditingController();
       _salaryController = TextEditingController();
       _passwordController = TextEditingController();
-      _selectedRoleId = '';
+      _selectedRoleId = 0;
       _selectedParentUserId = null;
     }
   }
@@ -107,10 +110,11 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       setState(() {
         _availableRoles = roles;
         _isLoadingRoles = false;
+        debugPrint("Roles: ${_availableRoles.length}");
 
         // Si es un empleado existente y tiene un rol, seleccionarlo
-        if (widget.employee != null && _selectedRoleId.isNotEmpty) {
-          _selectedRoleId = widget.employee!.userRole;
+        if (widget.employee != null && _selectedRoleId > 0) {
+          _selectedRoleId = widget.employee!.roleId;
         }
       });
     } catch (e) {
@@ -120,15 +124,6 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       });
       _showError('Error al cargar los roles disponibles');
     }
-  }
-
-  String _getSelectedRoleName() {
-    if (_selectedRoleId.isEmpty) return '';
-    final role = _availableRoles.firstWhere(
-          (r) => r.id.toString() == _selectedRoleId,
-      orElse: () => EmployeeRoleSimple(id: 0, name: ''),
-    );
-    return role.name;
   }
 
   @override
@@ -144,6 +139,171 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
     super.dispose();
   }
 
+  Future<void> _resetPassword(Employee employee) async {
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool obscureNewPassword = true;
+    bool obscureConfirmPassword = true;
+
+    // Mostrar diálogo para ingresar nueva contraseña
+    final shouldReset = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateModal) {
+          return AlertDialog(
+            title: const Text('Restablecer Contraseña'),
+            content: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Ingresa la nueva contraseña para "${employee.fullName}"',
+                    style: TextStyle(
+                      fontSize: AppTheme.fontSizeBody,
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  // Nueva contraseña
+                  CustomTextField(
+                    controller: newPasswordController,
+                    label: 'Nueva contraseña',
+                    hint: 'Mínimo 6 caracteres',
+                    icon: FontAwesomeIcons.lock,
+                    obscureText: obscureNewPassword,
+                    suffixIcon: IconButton(
+                      icon: FaIcon(
+                        obscureNewPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
+                        size: 18,
+                        color: AppTheme.outline,
+                      ),
+                      onPressed: () {
+                        setStateModal(() {
+                          obscureNewPassword = !obscureNewPassword;
+                        });
+                      },
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa la nueva contraseña';
+                      }
+                      if (value.length < 6) {
+                        return 'La contraseña debe tener al menos 6 caracteres';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  // Confirmar contraseña
+                  CustomTextField(
+                    controller: confirmPasswordController,
+                    label: 'Confirmar contraseña',
+                    hint: 'Repite la nueva contraseña',
+                    icon: FontAwesomeIcons.lock,
+                    obscureText: obscureConfirmPassword,
+                    suffixIcon: IconButton(
+                      icon: FaIcon(
+                        obscureConfirmPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
+                        size: 18,
+                        color: AppTheme.outline,
+                      ),
+                      onPressed: () {
+                        setStateModal(() {
+                          obscureConfirmPassword = !obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirma la contraseña';
+                      }
+                      if (value != newPasswordController.text) {
+                        return 'Las contraseñas no coinciden';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Botón Cancelar (Outlined)
+                    CustomOutlinedButton(
+                      text: 'Cancelar',
+                      onPressed: () => Navigator.pop(context, false),
+                      icon: FontAwesomeIcons.times,
+                      height: 45,
+                      fontSize: 14,
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      fullWidth: false,
+                    ),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    // Botón Restablecer (Primary)
+                    PrimaryButton(
+                      text: 'Restablecer',
+                      icon: FontAwesomeIcons.key,
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          Navigator.pop(context, true);
+                        }
+                      },
+                      borderRadius: AppTheme.borderRadiusXXl,
+                      height: 45,
+                      fontSize: 14,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      fullWidth: false,
+                    ),
+                  ],
+                ),
+              ],
+            actionsPadding: const EdgeInsets.all(AppTheme.spacingMd),
+            contentPadding: const EdgeInsets.all(AppTheme.spacingLg),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+            ),
+          );
+        },
+      ),
+    );
+
+    if (shouldReset != true) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Llamar al API con la nueva contraseña
+      await _apiClient.resetEmployeePassword(
+        employee.id.toString(),
+        newPasswordController.text.trim(),
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Contraseña actualizada para ${employee.fullName}'),
+          backgroundColor: AppTheme.primary,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showError('Error al restablecer la contraseña');
+    }
+  }
+
   Future<void> _saveEmployee() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -152,37 +312,29 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
     });
 
     try {
+      final employee = Employee(
+        id: widget.employee?.id ?? 0,
+        firstName: _firstNameController.text.trim(),
+        middleName: _middleNameController.text.trim().isEmpty ? null : _middleNameController.text.trim(),
+        paternalSurname: _paternalSurnameController.text.trim(),
+        maternalSurname: _maternalSurnameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        userId: widget.employee?.userId ?? 0,  // Si es null, usar 0
+        userEmail: _emailController.text.trim(),
+        userRole: widget.employee?.userRole ?? '',  // Si es null, usar string vacío
+        salary: double.parse(_salaryController.text.trim()),
+        createdAt: widget.employee?.createdAt ?? DateTime.now(),  // Si es null, usar fecha actual
+        roleId: _selectedRoleId,
+        parentUserId: _selectedParentUserId,
+        password: _passwordController.text.trim()
+      );
+      jsonEncode(employee.toJson());
       if (widget.employee == null) {
-        // Crear nuevo empleado
-        final request = CreateEmployeeRequest(
-          firstName: _firstNameController.text.trim(),
-          middleName: _middleNameController.text.trim().isEmpty ? null : _middleNameController.text.trim(),
-          paternalSurname: _paternalSurnameController.text.trim(),
-          maternalSurname: _maternalSurnameController.text.trim(),
-          phone: _phoneController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-          roleId: int.tryParse(_selectedRoleId ?? '') ?? 0,
-          salary: double.parse(_salaryController.text.trim()),
-          parentUserId: _selectedParentUserId,
-        );
-
-        await _apiClient.createEmployee(request.toJson());
+        await _apiClient.createEmployee(employee.toJson());
         _showSuccess('Empleado creado exitosamente');
         Navigator.pop(context, true);
       } else {
-        // Actualizar empleado existente
-        final request = UpdateEmployeeRequest(
-          firstName: _firstNameController.text.trim(),
-          middleName: _middleNameController.text.trim().isEmpty ? null : _middleNameController.text.trim(),
-          paternalSurname: _paternalSurnameController.text.trim(),
-          maternalSurname: _maternalSurnameController.text.trim(),
-          phone: _phoneController.text.trim(),
-          salary: double.parse(_salaryController.text.trim()),
-          parentUserId: _selectedParentUserId,
-        );
-
-        await _apiClient.updateEmployee(widget.employee!.id.toString(), request.toJson());
+        await _apiClient.updateEmployee(widget.employee!.id.toString(), employee.toJson());
         _showSuccess('Empleado actualizado exitosamente');
         Navigator.pop(context, true);
       }
@@ -223,6 +375,15 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         showBackButton: true,
         onBackPressed: () => Navigator.pop(context),
         actions: [
+          if (widget.employee != null)
+          AppBarButton(
+            icon: FontAwesomeIcons.key,
+            onPressed: () {
+              if (widget.employee != null) {
+                _resetPassword(widget.employee!);
+              }
+            },
+          ),
           AppBarButton(
             icon: FontAwesomeIcons.save,
             onPressed: _saveEmployee,
@@ -349,7 +510,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
 
               // Rol - Cargado desde API
               CustomDropdownField(
-                value: _selectedRoleId.isNotEmpty ? _selectedRoleId : null,
+                value: _selectedRoleId > 0 ? _selectedRoleId.toString() : null,
                 label: 'Rol',
                 hint: 'Selecciona un rol',
                 items: _availableRoles.map((role) => DropdownItem(
@@ -360,7 +521,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                 onChanged: (value) {
                   if (value != null) {
                     setState(() {
-                      _selectedRoleId = value;
+                      _selectedRoleId = int.parse(value);
                     });
                   }
                 },
