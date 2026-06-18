@@ -9,7 +9,6 @@ import 'package:pedidos/screens/profile_screen.dart';
 import 'package:pedidos/screens/settings_screen.dart';
 import 'package:pedidos/screens/notifications_screen.dart';
 import 'package:pedidos/screens/about_screen.dart';
-import 'package:pedidos/screens/security_screen.dart';
 import 'package:pedidos/screens/payment_calendar_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
 import 'package:pedidos/screens/budget_comparison_screen.dart';
@@ -134,18 +133,6 @@ class _SideMenuState extends State<SideMenu> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const NotificationsScreen()),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: FontAwesomeIcons.shield,
-                    title: 'Seguridad',
-                    subtitle: 'Contraseña y autenticación',
-                    onTap: () {
-                      widget.onClose();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SecurityScreen()),
                       );
                     },
                   ),
