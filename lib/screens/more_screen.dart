@@ -201,42 +201,42 @@ class MoreScreen extends StatelessWidget {
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Soporte
-                  _buildSectionHeader('Soporte', FontAwesomeIcons.headset),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  _buildMenuItem(
-                    icon: FontAwesomeIcons.questionCircle,
-                    title: 'Ayuda',
-                    subtitle: 'Preguntas frecuentes y tutoriales',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HelpScreen()),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: FontAwesomeIcons.message,
-                    title: 'Soporte Técnico',
-                    subtitle: 'Contacta con nosotros',
-                    badge: '2',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SupportScreen()),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: FontAwesomeIcons.cloudUpload,
-                    title: 'Copia de Seguridad',
-                    subtitle: 'Respaldar y restaurar datos',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const BackupScreen()),
-                      );
-                    },
-                  ),
+                  // _buildSectionHeader('Soporte', FontAwesomeIcons.headset),
+                  // const SizedBox(height: AppTheme.spacingMd),
+                  // _buildMenuItem(
+                  //   icon: FontAwesomeIcons.questionCircle,
+                  //   title: 'Ayuda',
+                  //   subtitle: 'Preguntas frecuentes y tutoriales',
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const HelpScreen()),
+                  //     );
+                  //   },
+                  // ),
+                  // _buildMenuItem(
+                  //   icon: FontAwesomeIcons.message,
+                  //   title: 'Soporte Técnico',
+                  //   subtitle: 'Contacta con nosotros',
+                  //   badge: '2',
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const SupportScreen()),
+                  //     );
+                  //   },
+                  // ),
+                  // _buildMenuItem(
+                  //   icon: FontAwesomeIcons.cloudUpload,
+                  //   title: 'Copia de Seguridad',
+                  //   subtitle: 'Respaldar y restaurar datos',
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const BackupScreen()),
+                  //     );
+                  //   },
+                  // ),
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Información

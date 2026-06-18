@@ -324,7 +324,7 @@ class _SideMenuState extends State<SideMenu> {
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Soporte (todos)
-                  _buildSectionHeader('Soporte', FontAwesomeIcons.headset),
+               /*   _buildSectionHeader('Soporte', FontAwesomeIcons.headset),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(
                     icon: FontAwesomeIcons.questionCircle,
@@ -337,8 +337,8 @@ class _SideMenuState extends State<SideMenu> {
                         MaterialPageRoute(builder: (context) => const HelpScreen()),
                       );
                     },
-                  ),
-                  _buildMenuItem(
+                  ),*/
+                  /*_buildMenuItem(
                     icon: FontAwesomeIcons.message,
                     title: 'Soporte Técnico',
                     subtitle: 'Contacta con nosotros',
@@ -350,8 +350,8 @@ class _SideMenuState extends State<SideMenu> {
                         MaterialPageRoute(builder: (context) => const SupportScreen()),
                       );
                     },
-                  ),
-                  if (_userRole == UserRole.admin) ...[
+                  ),*/
+                 /* if (_userRole == UserRole.admin) ...[
                     _buildMenuItem(
                       icon: FontAwesomeIcons.cloudUpload,
                       title: 'Copia de Seguridad',
@@ -364,8 +364,8 @@ class _SideMenuState extends State<SideMenu> {
                         );
                       },
                     ),
-                  ],
-                  const SizedBox(height: AppTheme.spacingXl),
+                  ],*/
+                 // const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Información (todos)
                   _buildSectionHeader('Información', FontAwesomeIcons.infoCircle),
