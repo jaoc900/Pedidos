@@ -7,7 +7,6 @@ import 'package:pedidos/screens/terms_conditions_screen.dart';
 import 'package:pedidos/screens/privacy_policy_screen.dart';
 import 'package:pedidos/screens/contact_screen.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
-import 'package:pedidos/widgets/primary_button.dart';
 import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
 import 'package:pedidos/core/network/http_client.dart';
 import 'package:pedidos/core/network/api_client.dart';

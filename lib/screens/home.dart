@@ -7,8 +7,6 @@ import 'package:pedidos/screens/admin_dashboard.dart';
 import 'package:pedidos/screens/orders_screen.dart';
 import 'package:pedidos/screens/customers_screen.dart';
 import 'package:pedidos/screens/inventory_screen.dart';
-import 'package:pedidos/screens/reports_screen.dart';
-import 'package:pedidos/screens/finances_screen.dart';
 import 'package:pedidos/screens/profile_screen.dart';
 import 'package:pedidos/screens/deliveries_screen.dart';
 import 'package:pedidos/screens/payments_management_screen.dart';

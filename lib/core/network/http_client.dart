@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'exceptions/network_exceptions.dart';
@@ -34,9 +35,9 @@ class HttpClient {
     if (_isDebugMode) {
       final timestamp = DateTime.now().toString().substring(11, 23);
       if (isError) {
-        print('🔴 [HttpClient][$timestamp] ERROR: $message');
+        debugPrint('🔴 [HttpClient][$timestamp] ERROR: $message');
       } else {
-        print('🟢 [HttpClient][$timestamp] $message');
+        debugPrint('🟢 [HttpClient][$timestamp] $message');
       }
     }
   }
@@ -54,7 +55,7 @@ class HttpClient {
     };
 
     try {
-      if (_userPrefs != null && _userPrefs.isLoggedIn()) {
+      if (_userPrefs.isLoggedIn()) {
         final token = _userPrefs.getToken();
         if (token != null && token.isNotEmpty) {
           headers['Authorization'] = 'Bearer $token';

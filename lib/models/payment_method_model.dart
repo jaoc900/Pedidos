@@ -1,5 +1,4 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pedidos/enums/payment_method_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:pedidos/theme/theme.dart';
 

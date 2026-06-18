@@ -227,13 +227,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  PreferredSizeWidget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Artículos',
-      showBackButton: false,
-    );
-  }
-
   Widget _buildCategoryFilter() {
     return CustomFilterChips(
       filters: _categories,

@@ -5,7 +5,6 @@ import 'package:pedidos/screens/modals/confirmation_modal.dart';
 import 'package:pedidos/screens/customer_detail_screen.dart';
 import 'package:pedidos/models/customer_model.dart';
 import 'package:pedidos/enums/customer_type_enum.dart';
-import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_text_field.dart';
 
 class CustomersScreen extends StatefulWidget {
@@ -200,13 +199,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  Widget _buildTopAppBar() {
-    return CustomTopAppBar(
-      title: 'Clientes',
-      showBackButton: false,
     );
   }
 
@@ -426,47 +418,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required FaIconData icon,
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary.withValues(alpha: 0.1) : Colors
-              .transparent,
-          borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(
-              icon,
-              size: 22,
-              color: isSelected ? AppTheme.loginButtonColor : Colors.grey
-                  .shade500,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? AppTheme.loginButtonColor : Colors.grey
-                    .shade500,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

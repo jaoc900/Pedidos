@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedidos/theme/theme.dart';
-import 'package:pedidos/screens/orders_screen.dart';
-import 'package:pedidos/screens/notifications_screen.dart';
-import 'package:pedidos/widgets/custom_top_app_bar.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -53,27 +50,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTopAppBar(BuildContext context) {
-    return CustomTopAppBar(
-      title: 'Home',
-      profileImageUrl: 'https://lh3.googleusercont1ent.com/aida-public/AB6AXuDY8qEs_fHpWSUS07h2xPpseJpoGAcVIAe46Q6nEkgvxuZKxxq5IUG7m3pkj3NxJdA3F7oqxeJd5e-NN2hfLzXXavdIfYZAEYEf12xopfzI-_plbRSeP6p-rbeoPeQbMBL69AfgJJWlrIThrCfz7cyXt3L1U9zqJ3xnyTRu_G7fAslgzht7KCAHTAV6oyoHEr-oo1KulVGEie7MW7S4diypaZcO4ZCveY_Ids7i735YwnodrAuS88rB4aPM8pmyQP1hhTSUTFwuJbU7',
-      onProfileTap: () {},
-      actions: [
-        AppBarButton(
-          icon: FontAwesomeIcons.bell,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const NotificationsScreen()),
-            );
-          },
-          showBadge: true,
-          badgeCount: 3,
-        ),
-      ],
     );
   }
 

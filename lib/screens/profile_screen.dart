@@ -11,9 +11,7 @@ import 'package:pedidos/models/user_model.dart';
 import 'package:pedidos/core/network/http_client.dart';
 import 'package:pedidos/core/network/api_client.dart';
 import 'package:pedidos/core/network/exceptions/network_exceptions.dart';
-import 'package:pedidos/models/user_model.dart';
 import 'package:pedidos/widgets/primary_button.dart';
-import 'package:pedidos/widgets/custom_text_field.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

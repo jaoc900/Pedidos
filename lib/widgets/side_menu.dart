@@ -8,11 +8,8 @@ import 'package:pedidos/screens/login_screen.dart';
 import 'package:pedidos/screens/profile_screen.dart';
 import 'package:pedidos/screens/settings_screen.dart';
 import 'package:pedidos/screens/notifications_screen.dart';
-import 'package:pedidos/screens/help_screen.dart';
 import 'package:pedidos/screens/about_screen.dart';
-import 'package:pedidos/screens/backup_screen.dart';
 import 'package:pedidos/screens/security_screen.dart';
-import 'package:pedidos/screens/support_screen.dart';
 import 'package:pedidos/screens/payment_calendar_screen.dart';
 import 'package:pedidos/screens/taxes_screen.dart';
 import 'package:pedidos/screens/budget_comparison_screen.dart';
@@ -22,7 +19,6 @@ import 'package:pedidos/screens/payment_methods_screen.dart';
 import 'package:pedidos/screens/expense_categories_screen.dart';
 import 'package:pedidos/screens/price_list_screen.dart';
 import 'package:pedidos/screens/reports_screen.dart';
-import 'package:pedidos/screens/finances_screen.dart';
 import 'package:pedidos/screens/employee_roles_screen.dart'; // Importar pantalla de roles
 
 class SideMenu extends StatefulWidget {
