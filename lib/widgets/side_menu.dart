@@ -206,7 +206,7 @@ class _SideMenuState extends State<SideMenu> {
                   _buildMenuItem(
                     icon: FontAwesomeIcons.sliders,
                     title: 'Preferencias',
-                    subtitle: 'Idioma, tema y unidades',
+                    subtitle: 'Notificaciones y apariencia',
                     onTap: () {
                       widget.onClose();
                       Navigator.push(

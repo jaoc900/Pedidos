@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = "http://192.168.0.104:5184";
+  static const String baseUrl = "http://192.168.0.103:5184";
 
   // =========================
   // PRODUCTS (Articles)
@@ -123,4 +123,13 @@ class ApiEndpoints {
   static const String activeSuppliers = "/api/suppliers/active";
   static const String supplierBalance = "/api/suppliers/{id}/balance";
   static const String suppliersByCategory = "/api/suppliers/category/{category}";
+
+  // =========================
+  // USER PREFERENCES
+  // =========================
+  static const String userPreferences = "/api/user-preferences";
+  static const String userPreferencesByUser = "/api/user-preferences/{userId}";
+  static const String userPreferencesSendSms = "/api/user-preferences/sendsms";
+  static const String userPreferencesSendPush = "/api/user-preferences/sendpush";
+  static const String userPreferencesReset = "/api/user-preferences/reset";
 }

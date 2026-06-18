@@ -20,6 +20,11 @@ class UserPreferences {
   static const String _keyRememberMe = 'remember_me';
   static const String _keySavedEmail = 'saved_email';
 
+  // ==================== NUEVAS KEYS PARA PREFERENCIAS ====================
+  static const String _keyDarkMode = 'dark_mode';
+  static const String _keySendSms = 'send_sms';
+  static const String _keySendPush = 'send_push';
+
   factory UserPreferences() {
     return _instance;
   }
@@ -200,6 +205,32 @@ class UserPreferences {
     return _prefs.getString(_keySavedEmail);
   }
 
+  // ==================== DARK MODE METHODS ====================
+
+  /// Guardar preferencia de modo oscuro
+  Future<void> saveDarkMode(bool isDark) async {
+    _checkInitialized();
+    await _prefs.setBool(_keyDarkMode, isDark);
+    debugPrint('✅ Modo oscuro guardado: $isDark');
+  }
+
+  /// Obtener preferencia de modo oscuro
+  bool getDarkMode() {
+    _checkInitialized();
+    return _prefs.getBool(_keyDarkMode) ?? false;
+  }
+
+  // ==================== RESET PREFERENCES ====================
+
+  /// Restablecer todas las preferencias a valores por defecto
+  Future<void> resetPreferences() async {
+    _checkInitialized();
+    await _prefs.setBool(_keyDarkMode, false);
+    await _prefs.setBool(_keySendSms, false);
+    await _prefs.setBool(_keySendPush, true);
+    debugPrint('✅ Preferencias restablecidas a valores por defecto');
+  }
+
   // ==================== LOGOUT METHODS ====================
 
   Future<void> logout() async {
@@ -241,6 +272,7 @@ class UserPreferences {
     debugPrint('Logged In: ${isLoggedIn()}');
     debugPrint('Remember Me: ${getRememberMe()}');
     debugPrint('Token Válido: ${isTokenValid()}');
+    debugPrint('Dark Mode: ${getDarkMode()}');
     debugPrint('===============================');
   }
 }

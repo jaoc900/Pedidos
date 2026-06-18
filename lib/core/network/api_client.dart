@@ -239,4 +239,36 @@ class ApiClient {
   Future<dynamic> getEmployeeRolesSimpleList() async {
     return await _httpClient.get(ApiEndpoints.employeeRolesSimpleList);
   }
+
+  /// Obtener preferencias del usuario actual
+  /// GET /api/user-preferences
+  Future<dynamic> getUserPreferences() async {
+    return await _httpClient.get(ApiEndpoints.userPreferences);
+  }
+
+  /// Obtener preferencias de un usuario específico
+  /// GET /api/user-preferences/{userId}
+  Future<dynamic> getUserPreferencesByUserId(String userId) async {
+    final endpoint = ApiEndpoints.userPreferencesByUser.replaceAll('{userId}', userId);
+    return await _httpClient.get(endpoint);
+  }
+
+  /// Actualizar preferencias de SMS
+  /// PATCH /api/user-preferences/sendsms
+  Future<dynamic> updateSendSmsPreference(bool enabled) async {
+    return await _httpClient.patch(ApiEndpoints.userPreferencesSendSms, data: enabled);
+  }
+
+  /// Actualizar preferencias de Push Notifications
+  /// PATCH /api/user-preferences/sendpush
+  Future<dynamic> updateSendPushPreference(bool enabled) async {
+    return await _httpClient.patch(ApiEndpoints.userPreferencesSendPush, data: enabled);
+  }
+
+  /// Resetear preferencias a valores por defecto
+  /// POST /api/user-preferences/reset
+  Future<dynamic> resetUserPreferences() async {
+    return await _httpClient.post(ApiEndpoints.userPreferencesReset);
+  }
+
 }
