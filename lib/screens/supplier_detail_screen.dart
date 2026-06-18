@@ -243,7 +243,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                           _isActive = value;
                         });
                       },
-                      activeColor: AppTheme.primary,
+                      activeThumbColor: AppTheme.primary,
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: AppTheme.spacingXl),

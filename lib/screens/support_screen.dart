@@ -117,6 +117,7 @@ class _SupportScreenState extends State<SupportScreen> {
     });
 
     await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -134,30 +135,47 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 
-  void _launchEmail() async {
+  Future<void> _launchEmail() async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: 'soporte@verdant.com',
       query: 'subject=Soporte%20VerdantGrowth',
     );
+
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se puede abrir el cliente de correo'), backgroundColor: AppTheme.error),
-      );
+      return;
     }
+
+    if (!mounted) return; // 👈 antes de usar context
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('No se puede abrir el cliente de correo'),
+        backgroundColor: AppTheme.error,
+      ),
+    );
   }
 
-  void _launchPhone() async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: '+525512345678');
+  Future<void> _launchPhone() async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: '+525512345678',
+    );
+
     if (await canLaunchUrl(phoneUri)) {
       await launchUrl(phoneUri);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se puede realizar la llamada'), backgroundColor: AppTheme.error),
-      );
+      return;
     }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('No se puede realizar la llamada'),
+        backgroundColor: AppTheme.error,
+      ),
+    );
   }
 
   void _launchWhatsApp() async {

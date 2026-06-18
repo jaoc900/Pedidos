@@ -27,7 +27,7 @@ class AppTheme {
 
   static const Color surface = Color(0xFFF7FAF8);
   static const Color onSurface = Color(0xFF181C1B);
-  static const Color surfaceVariant = Color(0xFFE0E3E1);
+  static const Color surfaceContainerHighest = Color(0xFFE0E3E1);
   static const Color onSurfaceVariant = Color(0xFF3F4A3E);
   static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
   static const Color surfaceBright = Color(0xFFF7FAF8);
@@ -35,7 +35,6 @@ class AppTheme {
   static const Color surfaceContainer = Color(0xFFEBEFED);
   static const Color surfaceContainerLow = Color(0xFFF1F4F2);
   static const Color surfaceContainerHigh = Color(0xFFE6E9E7);
-  static const Color surfaceContainerHighest = Color(0xFFE0E3E1);
 
   static const Color outline = Color(0xFF6F7A6D);
   static const Color outlineVariant = Color(0xFFBECABB);
@@ -108,11 +107,9 @@ class AppTheme {
         onError: onError,
         errorContainer: errorContainer,
         onErrorContainer: onErrorContainer,
-        background: background,
-        onBackground: onBackground,
-        surface: surface,
+        surface: background,
         onSurface: onSurface,
-        surfaceVariant: surfaceVariant,
+        surfaceContainerHighest: surfaceContainerHighest,
         onSurfaceVariant: onSurfaceVariant,
         outline: outline,
         outlineVariant: outlineVariant,
@@ -191,11 +188,9 @@ class AppTheme {
       onError: Color(0xFF690005),
       errorContainer: Color(0xFF93000A),
       onErrorContainer: Color(0xFFFFDAD6),
-      background: Color(0xFF181C1B),
-      onBackground: Color(0xFFE0E3E1),
       surface: Color(0xFF181C1B),
       onSurface: Color(0xFFE0E3E1),
-      surfaceVariant: Color(0xFF3F4A3E),
+      surfaceContainerHighest: Color(0xFF3F4A3E),
       onSurfaceVariant: Color(0xFFBECABB),
       outline: Color(0xFF899A85),
       outlineVariant: Color(0xFF3F4A3E),
@@ -582,7 +577,7 @@ class AppTheme {
   // ChipTheme
   static ChipThemeData _buildChipTheme() {
     return ChipThemeData(
-      backgroundColor: surfaceVariant,
+      backgroundColor: surfaceContainerHighest,
       disabledColor: outlineVariant,
       selectedColor: primaryContainer,
       secondarySelectedColor: primary,

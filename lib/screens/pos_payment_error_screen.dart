@@ -358,7 +358,7 @@ class _ConnectionErrorScreenState extends State<ConnectionErrorScreen>
   Widget _buildBottomNavigationBar() {
     final navItems = [
       (icon: FontAwesomeIcons.chartSimple, label: 'Dashboard', active: false),
-      (icon: FontAwesomeIcons.boxes, label: 'Inventory', active: false),
+      (icon: FontAwesomeIcons.boxesStacked, label: 'Inventory', active: false),
       (icon: FontAwesomeIcons.cartShopping, label: 'Orders', active: false),
       (icon: FontAwesomeIcons.gear, label: 'Settings', active: true),
     ];

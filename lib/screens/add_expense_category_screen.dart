@@ -112,6 +112,7 @@ class _AddExpenseCategoryScreenState extends State<AddExpenseCategoryScreen> {
           await _apiClient.updateExpenseCategory(widget.category!.id.toString(), request.toJson());
           _showSuccess('Categoría actualizada exitosamente');
         }
+        if (!mounted) return;
 
         Navigator.pop(context, true);
       } catch (e) {
@@ -153,7 +154,7 @@ class _AddExpenseCategoryScreenState extends State<AddExpenseCategoryScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-            icon: FontAwesomeIcons.save,
+            icon: FontAwesomeIcons.floppyDisk,
             onPressed: _saveCategory,
           )
         ],

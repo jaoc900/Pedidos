@@ -111,7 +111,7 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
           onBackPressed: () => Navigator.pop(context),
           actions:[
             AppBarButton(
-                icon: FontAwesomeIcons.save,
+                icon: FontAwesomeIcons.floppyDisk,
                 onPressed: () =>{})
           ]
       ),
@@ -278,7 +278,7 @@ class _RegisterExpenseScreenState extends State<RegisterExpenseScreen> {
             border: Border.all(color: AppTheme.outlineVariant),
           ),
           child: DropdownButtonFormField<String>(
-            value: value.isEmpty ? null : value,
+            initialValue: value.isEmpty ? null : value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(

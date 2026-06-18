@@ -32,7 +32,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     {'icon': FontAwesomeIcons.creditCard, 'name': 'creditCard', 'label': 'Tarjeta'},
     {'icon': FontAwesomeIcons.qrcode, 'name': 'qrcode', 'label': 'Código QR'},
     {'icon': FontAwesomeIcons.paypal, 'name': 'paypal', 'label': 'PayPal'},
-    {'icon': FontAwesomeIcons.mobileAlt, 'name': 'mobile', 'label': 'Móvil'},
+    {'icon': FontAwesomeIcons.mobileScreenButton, 'name': 'mobile', 'label': 'Móvil'},
     {'icon': FontAwesomeIcons.wallet, 'name': 'wallet', 'label': 'Cartera'},
     {'icon': FontAwesomeIcons.bitcoin, 'name': 'bitcoin', 'label': 'Bitcoin'},
     {'icon': FontAwesomeIcons.applePay, 'name': 'applePay', 'label': 'Apple Pay'},
@@ -100,49 +100,58 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   }
 
   Future<void> _savePaymentMethod() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!_formKey.currentState!.validate()) return;
 
-      try {
-        final selectedIcon = _icons[_selectedIconIndex];
-        final colorHex = '#${_selectedColor.value.toRadixString(16).substring(2)}';
+    setState(() {
+      _isLoading = true;
+    });
 
-        final data = {
-          'name': _nameController.text.trim(),
-          'icon': selectedIcon['name'],
-          'color': colorHex,
-          'isActive': _isActive,
-        };
+    try {
+      final selectedIcon = _icons[_selectedIconIndex];
+      final colorHex =
+          '#${_selectedColor.value.toRadixString(16).substring(2)}';
 
-        if (widget.paymentMethod == null) {
-          await _apiClient.createPaymentMethod(data);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Método de pago creado exitosamente'),
-              backgroundColor: AppTheme.primary,
-            ),
-          );
-        } else {
-          await _apiClient.updatePaymentMethod(widget.paymentMethod!.id.toString(), data);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Método de pago actualizado exitosamente'),
-              backgroundColor: AppTheme.primary,
-            ),
-          );
-        }
+      final data = {
+        'name': _nameController.text.trim(),
+        'icon': selectedIcon['name'],
+        'color': colorHex,
+        'isActive': _isActive,
+      };
 
-        Navigator.pop(context, true);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppTheme.error,
-          ),
+      if (widget.paymentMethod == null) {
+        await _apiClient.createPaymentMethod(data);
+      } else {
+        await _apiClient.updatePaymentMethod(
+          widget.paymentMethod!.id.toString(),
+          data,
         );
-      } finally {
+      }
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.paymentMethod == null
+                ? 'Método de pago creado exitosamente'
+                : 'Método de pago actualizado exitosamente',
+          ),
+          backgroundColor: AppTheme.primary,
+        ),
+      );
+
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+    } finally {
+      if (mounted) {
         setState(() {
           _isLoading = false;
         });
@@ -160,7 +169,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-            icon: FontAwesomeIcons.save,
+            icon: FontAwesomeIcons.floppyDisk,
             onPressed: _savePaymentMethod,
           )
         ],
@@ -529,7 +538,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                 ),
                 child: Center(
                   child: FaIcon(
-                    _isActive ? FontAwesomeIcons.check : FontAwesomeIcons.times,
+                    _isActive ? FontAwesomeIcons.check : FontAwesomeIcons.xmark,
                     size: 12,
                     color: Colors.white,
                   ),

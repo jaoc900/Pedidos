@@ -19,6 +19,7 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
 
     // Simular proceso de aceptación
     Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -512,7 +513,7 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
             ),
             SizedBox(width: AppTheme.spacingSm),
             FaIcon(
-              FontAwesomeIcons.checkCircle,
+              FontAwesomeIcons.circleCheck,
               size: 18,
               color: Colors.white,
             ),

@@ -419,7 +419,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           vertical: 1,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.surfaceVariant,
+                          color: AppTheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(
                             AppTheme.borderRadiusSm,
                           ),
@@ -611,7 +611,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.surfaceVariant,
+                          color: AppTheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(
                             AppTheme.borderRadiusSm,
                           ),

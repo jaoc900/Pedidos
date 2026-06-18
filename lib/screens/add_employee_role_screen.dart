@@ -102,6 +102,7 @@ class _AddEmployeeRoleScreenState extends State<AddEmployeeRoleScreen> {
           await _apiClient.updateEmployeeRole(widget.role!.id.toString(), request.toJson());
           _showSuccess('Rol actualizado exitosamente');
         }
+        if (!mounted) return;
 
         Navigator.pop(context, true);
       } catch (e) {
@@ -143,7 +144,7 @@ class _AddEmployeeRoleScreenState extends State<AddEmployeeRoleScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-            icon: FontAwesomeIcons.save,
+            icon: FontAwesomeIcons.floppyDisk,
             onPressed: _saveRole,
           ),
         ],

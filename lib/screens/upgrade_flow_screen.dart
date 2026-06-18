@@ -89,6 +89,7 @@ class _UpgradeFlowScreenState extends State<UpgradeFlowScreen> {
 
     // Simular proceso de pago
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });

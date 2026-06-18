@@ -54,25 +54,25 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  void _saveProduct() {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+  Future<void> _saveProduct() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      Future.delayed(const Duration(seconds: 1), () {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Producto actualizado exitosamente'),
-            backgroundColor: AppTheme.primary,
-          ),
-        );
-        Navigator.pop(context);
-      });
-    }
+    setState(() => _isLoading = true);
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Producto actualizado exitosamente'),
+        backgroundColor: AppTheme.primary,
+      ),
+    );
+
+    Navigator.pop(context);
   }
 
   void _deleteProduct() {
@@ -458,7 +458,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             border: Border.all(color: AppTheme.outlineVariant),
           ),
           child: DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
@@ -693,7 +693,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           Switch(
             value: size.isEnabled,
             onChanged: (_) => _toggleSizeEnabled(index),
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
           ),
           const SizedBox(width: AppTheme.spacingMd),
           // Talla

@@ -50,12 +50,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!hasMinLength || !hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
       // Opcional: Mostrar un indicador visual de la fortaleza de la contraseña
-      print('Contraseña débil - Requisitos faltantes:');
-      if (!hasMinLength) print('- Mínimo 8 caracteres');
-      if (!hasUppercase) print('- Una mayúscula');
-      if (!hasLowercase) print('- Una minúscula');
-      if (!hasNumber) print('- Un número');
-      if (!hasSpecialChar) print('- Un carácter especial');
+      debugPrint('Contraseña débil - Requisitos faltantes:');
+      if (!hasMinLength) debugPrint('- Mínimo 8 caracteres');
+      if (!hasUppercase) debugPrint('- Una mayúscula');
+      if (!hasLowercase) debugPrint('- Una minúscula');
+      if (!hasNumber) debugPrint('- Un número');
+      if (!hasSpecialChar) debugPrint('- Un carácter especial');
     }
   }
 
@@ -137,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 // Procesar errores del backend
   void _processBackendError(dynamic error) {
-    print('🔍 Procesando error: $error');
+    debugPrint('🔍 Procesando error: $error');
 
     try {
       final errorStr = error.toString();

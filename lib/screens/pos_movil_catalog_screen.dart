@@ -201,7 +201,7 @@ class _PointOfSaleScreenState extends State<PointOfSaleScreen> {
                   showLabel: false,
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                    icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
+                    icon: FaIcon(FontAwesomeIcons.xmark, size: 16, color: AppTheme.outline),
                     onPressed: () {
                       setState(() {
                         _searchQuery = '';
@@ -505,7 +505,7 @@ class _PointOfSaleScreenState extends State<PointOfSaleScreen> {
                         ),
                         child: const Center(
                           child: FaIcon(
-                            FontAwesomeIcons.shoppingCart,
+                            FontAwesomeIcons.cartShopping,
                             size: 16,
                             color: AppTheme.onPrimary,
                           ),

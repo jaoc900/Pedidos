@@ -87,7 +87,7 @@ class ProductsDashboardScreen extends StatelessWidget {
         value: '42,850',
         unit: 'u.',
         color: AppTheme.primary,
-        icon: FontAwesomeIcons.boxes,
+        icon: FontAwesomeIcons.boxesStacked,
       ),
       KPIData(
         title: 'Valor Inventario',

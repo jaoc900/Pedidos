@@ -42,7 +42,7 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
       _apiClient = ApiClient(httpClient);
       await _loadCategories();
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = 'Error al cargar las categorías';
@@ -58,7 +58,7 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
 
     try {
       final response = await _apiClient.getExpenseCategories();
-      print('Respuesta completa: $response');
+      debugPrint('Respuesta completa: $response');
 
       List<ExpenseCategory> categories = [];
 
@@ -73,14 +73,14 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
         }
       }
 
-      print('Categorías procesadas: ${categories.length}');
+      debugPrint('Categorías procesadas: ${categories.length}');
 
       setState(() {
         _categories = categories;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error cargando categorías: $e');
+      debugPrint('Error cargando categorías: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = _getErrorMessage(e);
@@ -148,7 +148,7 @@ class _ExpenseCategoriesScreenState extends State<ExpenseCategoriesScreen> {
       });
 
       await _apiClient.deleteExpenseCategory(category.id.toString());
-
+      if (!mounted) return;
       setState(() {
         _categories.removeWhere((c) => c.id == category.id);
         _isLoading = false;

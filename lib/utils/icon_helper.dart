@@ -11,7 +11,7 @@ class IconHelper {
     'star': FontAwesomeIcons.star,
     'heart': FontAwesomeIcons.heart,
     'check': FontAwesomeIcons.check,
-    'times': FontAwesomeIcons.times,
+    'xmark': FontAwesomeIcons.xmark,
     'plus': FontAwesomeIcons.plus,
     'minus': FontAwesomeIcons.minus,
 
@@ -26,7 +26,7 @@ class IconHelper {
 
     // Productos
     'box': FontAwesomeIcons.box,
-    'boxes': FontAwesomeIcons.boxes,
+    'boxes': FontAwesomeIcons.boxesStacked,
     'boxOpen': FontAwesomeIcons.boxOpen,
 
     // Clientes
@@ -77,7 +77,7 @@ class IconHelper {
     'envelope': FontAwesomeIcons.envelope,
 
     // Salud
-    'heartbeat': FontAwesomeIcons.heartbeat,
+    'heartPulse': FontAwesomeIcons.heartPulse,
     'hospital': FontAwesomeIcons.hospital,
     'stethoscope': FontAwesomeIcons.stethoscope,
     'syringe': FontAwesomeIcons.syringe,
@@ -103,11 +103,11 @@ class IconHelper {
     'wallet': FontAwesomeIcons.wallet,
     'piggyBank': FontAwesomeIcons.piggyBank,
     'calculator': FontAwesomeIcons.calculator,
-    'percentage': FontAwesomeIcons.percentage,
+    'percent': FontAwesomeIcons.percent,
 
     // Documentos
     'file': FontAwesomeIcons.file,
-    'fileAlt': FontAwesomeIcons.fileAlt,
+    'fileLines': FontAwesomeIcons.fileLines,
     'fileInvoice': FontAwesomeIcons.fileInvoice,
     'filePdf': FontAwesomeIcons.filePdf,
     'clipboard': FontAwesomeIcons.clipboard,
@@ -124,7 +124,6 @@ class IconHelper {
     // Configuración
     'gear': FontAwesomeIcons.gear,
     'sliders': FontAwesomeIcons.sliders,
-    'cog': FontAwesomeIcons.cog,
 
     // Seguridad
     'lock': FontAwesomeIcons.lock,
@@ -177,7 +176,7 @@ class IconHelper {
     // Acciones
     'edit': FontAwesomeIcons.pen,
     'delete': FontAwesomeIcons.trashCan,
-    'save': FontAwesomeIcons.save,
+    'floppyDisk': FontAwesomeIcons.floppyDisk,
     'print': FontAwesomeIcons.print,
     'download': FontAwesomeIcons.download,
     'upload': FontAwesomeIcons.upload,
@@ -187,7 +186,6 @@ class IconHelper {
     // Agricultura
     'tree': FontAwesomeIcons.tree,
     'tractor': FontAwesomeIcons.tractor,
-    'sprout': FontAwesomeIcons.sprout,
     'droplet': FontAwesomeIcons.droplet,
   };
 

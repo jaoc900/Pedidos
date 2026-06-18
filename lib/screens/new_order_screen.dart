@@ -209,7 +209,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         CustomOutlinedButton(
           text: 'Agregar Artículo',
           onPressed: _addNewItem,
-          icon: FontAwesomeIcons.plusCircle,
+          icon: FontAwesomeIcons.circlePlus,
           textColor: AppTheme.secondary,
           borderColor: AppTheme.outlineVariant,
           borderRadius: AppTheme.borderRadiusXXl,
@@ -459,6 +459,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
     // Regresar a la pantalla anterior
     Future.delayed(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
       Navigator.pop(context);
     });
   }

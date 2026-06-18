@@ -40,7 +40,7 @@ class _EmployeeRolesScreenState extends State<EmployeeRolesScreen> {
       _apiClient = ApiClient(httpClient);
       await _loadRoles();
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = 'Error al cargar los roles';
@@ -56,7 +56,7 @@ class _EmployeeRolesScreenState extends State<EmployeeRolesScreen> {
 
     try {
       final response = await _apiClient.getEmployeeRoles();
-      print('Respuesta completa: $response');
+      debugPrint('Respuesta completa: $response');
 
       List<EmployeeRole> roles = [];
 
@@ -71,14 +71,14 @@ class _EmployeeRolesScreenState extends State<EmployeeRolesScreen> {
         }
       }
 
-      print('Roles procesados: ${roles.length}');
+      debugPrint('Roles procesados: ${roles.length}');
 
       setState(() {
         _roles = roles;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error cargando roles: $e');
+      debugPrint('Error cargando roles: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = _getErrorMessage(e);
@@ -141,7 +141,7 @@ class _EmployeeRolesScreenState extends State<EmployeeRolesScreen> {
           });
 
           await _apiClient.deleteEmployeeRole(role.id.toString());
-
+          if (!mounted) return;
           setState(() {
             _roles.removeWhere((r) => r.id == role.id);
             _isLoading = false;

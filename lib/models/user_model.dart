@@ -1,4 +1,5 @@
-// models/user_model.dart
+import 'package:flutter/material.dart';
+
 class UserModel {
   final int id;
   final String email;
@@ -29,16 +30,16 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    print('Creando UserModel desde JSON: $json');
+    debugPrint('Creando UserModel desde JSON: $json');
 
     // Extraer los datos de la sección 'data' si existe
     Map<String, dynamic> userData;
     if (json.containsKey('data') && json['data'] != null) {
       userData = json['data'] as Map<String, dynamic>; // ✅ Corregido: dynamic con minúscula
-      print('Usando datos de la sección data: $userData');
+      debugPrint('Usando datos de la sección data: $userData');
     } else {
       userData = json;
-      print('Usando JSON directamente: $userData');
+      debugPrint('Usando JSON directamente: $userData');
     }
 
     // Limpiar base64 si existe (remover el prefijo "data:image/jpeg;base64,")
@@ -48,7 +49,7 @@ class UserModel {
       // Si el string contiene el prefijo data:image, lo removemos
       if (base64String.contains(',')) {
         cleanBase64 = base64String.substring(base64String.indexOf(',') + 1);
-        print('Base64 limpiado, primeros 50 chars: ${cleanBase64.substring(0, cleanBase64.length > 50 ? 50 : cleanBase64.length)}...');
+        debugPrint('Base64 limpiado, primeros 50 chars: ${cleanBase64.substring(0, cleanBase64.length > 50 ? 50 : cleanBase64.length)}...');
       } else {
         cleanBase64 = base64String;
       }

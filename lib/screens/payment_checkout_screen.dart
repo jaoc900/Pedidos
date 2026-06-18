@@ -47,6 +47,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
       });
 
       Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
@@ -545,7 +546,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
             text: 'Pagar Ahora',
             onPressed: _isLoading ? null : _handlePayment,
             state: _isLoading ? ButtonState.loading : ButtonState.active,
-            icon: FontAwesomeIcons.checkCircle,
+            icon: FontAwesomeIcons.circleCheck,
             activeColor: AppTheme.loginButtonColor,
             textColor: Colors.white,
             iconColor: Colors.white,

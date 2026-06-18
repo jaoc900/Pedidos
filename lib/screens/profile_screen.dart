@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Cargar datos del perfil
       await _loadProfile();
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       setState(() {
         _isLoading = false;
       });
@@ -83,8 +83,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final response = await _apiClient.getProfile();
       final user = UserModel.fromJson(response);
 
-      print('Usuario cargado: ${user.firstName} ${user.lastName}');
-      print('Tiene foto en base64: ${user.profilePictureBase64 != null}');
+      debugPrint('Usuario cargado: ${user.firstName} ${user.lastName}');
+      debugPrint('Tiene foto en base64: ${user.profilePictureBase64 != null}');
 
       setState(() {
         // Actualizar textos de los controladores
@@ -107,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error al cargar perfil: $e');
+      debugPrint('Error al cargar perfil: $e');
       setState(() {
         _isLoading = false;
       });
@@ -574,14 +574,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       type: ConfirmationType.warning,
       customIcon: FontAwesomeIcons.trashCan,
       onConfirm: () async {
-        // TODO: Implementar eliminación de cuenta
-        if (context.mounted) {
-          _showSuccess('Cuenta eliminada. Redirigiendo...');
-          await Future.delayed(const Duration(seconds: 2));
-          if (context.mounted) {
-            Navigator.pushReplacementNamed(context, '/login');
-          }
-        }
+        if (!mounted) return;
+
+        _showSuccess('Cuenta eliminada. Redirigiendo...');
+
+        await Future.delayed(const Duration(seconds: 2));
+
+        if (!mounted) return;
+
+        Navigator.pushReplacementNamed(context, '/login');
       },
     );
   }
@@ -591,15 +592,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (error is NetworkExceptions) {
       message = error.message;
-      print('NetworkException: ${error.message}');
+      debugPrint('NetworkException: ${error.message}');
     } else if (error is String) {
       message = error;
-      print('String error: $error');
+      debugPrint('String error: $error');
     } else if (error is Exception) {
       message = error.toString();
-      print('Exception: $error');
+      debugPrint('Exception: $error');
     } else {
-      print('Unknown error: $error');
+      debugPrint('Unknown error: $error');
     }
 
     _showError(message);
@@ -676,7 +677,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
 
         final bytes = base64Decode(cleanBase64);
-        print('Base64 decodificado correctamente, tamaño: ${bytes.length} bytes');
+        debugPrint('Base64 decodificado correctamente, tamaño: ${bytes.length} bytes');
 
         return ClipOval(
           child: Image.memory(
@@ -685,14 +686,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 120,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              print('Error al cargar imagen base64: $error');
+              debugPrint('Error al cargar imagen base64: $error');
               return _buildInitialsWidget(initials);
             },
           ),
         );
       } catch (e) {
-        print('Error decodificando base64: $e');
-        print('Base64 string (primeros 100 chars): ${_profileImageBase64!.substring(0, _profileImageBase64!.length > 100 ? 100 : _profileImageBase64!.length)}');
+        debugPrint('Error decodificando base64: $e');
+        debugPrint('Base64 string (primeros 100 chars): ${_profileImageBase64!.substring(0, _profileImageBase64!.length > 100 ? 100 : _profileImageBase64!.length)}');
         return _buildInitialsWidget(initials);
       }
     }
@@ -710,7 +711,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return _buildInitialsWidget(initials);
           },
           errorBuilder: (context, error, stackTrace) {
-            print('Error al cargar imagen URL: $error');
+            debugPrint('Error al cargar imagen URL: $error');
             return _buildInitialsWidget(initials);
           },
         ),
@@ -797,7 +798,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       actions.addAll([
         IconButton(
           icon: FaIcon(
-            FontAwesomeIcons.save,
+            FontAwesomeIcons.floppyDisk,
             size: 20,
             color: AppTheme.secondary,
           ),
@@ -806,7 +807,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(width: AppTheme.spacingSm),
         IconButton(
           icon: FaIcon(
-            FontAwesomeIcons.times,
+            FontAwesomeIcons.xmark,
             size: 20,
             color: AppTheme.error,
           ),

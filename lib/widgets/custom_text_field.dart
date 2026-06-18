@@ -140,9 +140,7 @@ class CustomTextField extends StatelessWidget {
                   color: AppTheme.outlineVariant,
                   fontSize: AppTheme.fontSizeBody,
                 ),
-                prefixIcon: customPrefix != null
-                    ? customPrefix
-                    : Padding(
+                prefixIcon: customPrefix ?? Padding(
                   padding: const EdgeInsets.all(AppTheme.spacingMd),
                   child: FaIcon(
                     icon,

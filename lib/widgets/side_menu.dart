@@ -60,7 +60,7 @@ class _SideMenuState extends State<SideMenu> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading user data: $e');
+      debugPrint('Error loading user data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -364,7 +364,7 @@ class _SideMenuState extends State<SideMenu> {
                  // const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Información (todos)
-                  _buildSectionHeader('Información', FontAwesomeIcons.infoCircle),
+                  _buildSectionHeader('Información', FontAwesomeIcons.circleInfo),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(
                     icon: FontAwesomeIcons.info,
@@ -379,7 +379,7 @@ class _SideMenuState extends State<SideMenu> {
                     },
                   ),
                   _buildMenuItem(
-                    icon: FontAwesomeIcons.fileAlt,
+                    icon: FontAwesomeIcons.fileLines,
                     title: 'Términos y Condiciones',
                     subtitle: 'Políticas de uso',
                     onTap: () {

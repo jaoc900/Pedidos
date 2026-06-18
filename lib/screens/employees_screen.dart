@@ -42,7 +42,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
       _apiClient = ApiClient(httpClient);
       await _loadEmployees();
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = 'Error al cargar los empleados';
@@ -58,7 +58,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
 
     try {
       final response = await _apiClient.getEmployees();
-      print('Respuesta completa: $response');
+      debugPrint('Respuesta completa: $response');
 
       List<Employee> employees = [];
 
@@ -73,14 +73,14 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
         }
       }
 
-      print('Empleados procesados: ${employees.length}');
+      debugPrint('Empleados procesados: ${employees.length}');
 
       setState(() {
         _employees = employees;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error cargando empleados: $e');
+      debugPrint('Error cargando empleados: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = _getErrorMessage(e);
@@ -170,7 +170,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           });
 
           await _apiClient.deleteEmployee(employee.id.toString());
-
+          if (!mounted) return;
           setState(() {
             _employees.removeWhere((e) => e.id == employee.id);
             _isLoading = false;

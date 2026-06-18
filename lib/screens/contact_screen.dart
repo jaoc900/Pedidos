@@ -51,7 +51,7 @@ class _ContactScreenState extends State<ContactScreen> {
 
       // Simular envío
       await Future.delayed(const Duration(seconds: 2));
-
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -483,7 +483,7 @@ class _ContactScreenState extends State<ContactScreen> {
             border: Border.all(color: AppTheme.outlineVariant),
           ),
           child: DropdownButtonFormField<String>(
-            value: value.isEmpty ? null : value,
+            initialValue: value.isEmpty ? null : value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),

@@ -268,7 +268,7 @@ class _HelpScreenState extends State<HelpScreen> {
     });
 
     await Future.delayed(const Duration(seconds: 1));
-
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
       _feedbackController.clear();
@@ -292,6 +292,7 @@ class _HelpScreenState extends State<HelpScreen> {
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No se puede abrir el cliente de correo'),
@@ -507,7 +508,7 @@ class _HelpScreenState extends State<HelpScreen> {
               ),
               child: Center(
                 child: FaIcon(
-                  FontAwesomeIcons.fileAlt,
+                  FontAwesomeIcons.fileLines,
                   size: 20,
                   color: color,
                 ),

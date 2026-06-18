@@ -147,7 +147,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
       const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
       const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
-      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.xmark),
     ];
 
     return CustomFilterChipWithIcon(
@@ -201,7 +201,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.surfaceVariant),
+        border: Border.all(color: AppTheme.surfaceContainerHighest),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),

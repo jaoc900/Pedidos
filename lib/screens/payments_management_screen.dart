@@ -59,7 +59,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.surfaceVariant.withValues(alpha: 0.3)),
+        border: Border.all(color: AppTheme.surfaceContainerHighest.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -165,7 +165,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.surfaceVariant.withValues(alpha: 0.3)),
+        border: Border.all(color: AppTheme.surfaceContainerHighest.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -252,7 +252,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
           decoration: BoxDecoration(
             color: AppTheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-            border: Border.all(color: AppTheme.surfaceVariant.withValues(alpha: 0.3)),
+            border: Border.all(color: AppTheme.surfaceContainerHighest.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -366,7 +366,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 100,
-            color: AppTheme.surfaceVariant.withValues(alpha: 0.5),
+            color: AppTheme.surfaceContainerHighest.withValues(alpha: 0.5),
           ),
         ),
       ],
@@ -487,7 +487,7 @@ class _PaymentsManagementScreenState extends State<PaymentsManagementScreen> {
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
-        border: Border.all(color: AppTheme.surfaceVariant.withValues(alpha: 0.2)),
+        border: Border.all(color: AppTheme.surfaceContainerHighest.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),

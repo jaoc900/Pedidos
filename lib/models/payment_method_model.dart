@@ -50,8 +50,6 @@ class PaymentMethod {
         return FontAwesomeIcons.creditCard;
       case 'paypal':
         return FontAwesomeIcons.paypal;
-      case 'bank':
-        return FontAwesomeIcons.bank;
       case 'mobile':
         return FontAwesomeIcons.mobile;
       case 'coins':

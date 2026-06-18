@@ -517,7 +517,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
           child: _buildSummaryCard(
             title: 'Pagadas',
             value: '\$${_totalPaid.toStringAsFixed(2)}',
-            icon: FontAwesomeIcons.checkCircle,
+            icon: FontAwesomeIcons.circleCheck,
             color: AppTheme.secondary,
           ),
         ),
@@ -583,7 +583,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
               ),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
+                icon: FaIcon(FontAwesomeIcons.xmark, size: 16, color: AppTheme.outline),
                 onPressed: () => setState(() => _searchQuery = ''),
               )
                   : null,

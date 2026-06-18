@@ -138,7 +138,7 @@ class _QuickScannerScreenState extends State<QuickScannerScreen>
       confirmText: 'Confirmar',
       cancelText: 'Cancelar',
       type: ConfirmationType.info,
-      customIcon: FontAwesomeIcons.shoppingCart,
+      customIcon: FontAwesomeIcons.cartShopping,
       onConfirm: () {
         // Cerrar el modal y mostrar mensaje de procesamiento
         ScaffoldMessenger.of(context).showSnackBar(

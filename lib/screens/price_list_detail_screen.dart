@@ -187,7 +187,7 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-              icon: FontAwesomeIcons.save,
+              icon: FontAwesomeIcons.floppyDisk,
               onPressed: () => {})
         ],
       ),
@@ -254,7 +254,7 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
       const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
       const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
       const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
-      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.xmark),
     ];
 
     return CustomFilterChipWithIcon(
@@ -301,7 +301,7 @@ class _PriceListDetailScreenState extends State<PriceListDetailScreen> {
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                   icon: FaIcon(
-                    FontAwesomeIcons.times,
+                    FontAwesomeIcons.xmark,
                     size: 16,
                     color: AppTheme.outline,
                   ),

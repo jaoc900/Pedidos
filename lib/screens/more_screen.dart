@@ -237,7 +237,7 @@ class MoreScreen extends StatelessWidget {
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Sección de Información
-                  _buildSectionHeader('Información', FontAwesomeIcons.infoCircle),
+                  _buildSectionHeader('Información', FontAwesomeIcons.circleInfo),
                   const SizedBox(height: AppTheme.spacingMd),
                   _buildMenuItem(
                     icon: FontAwesomeIcons.info,
@@ -251,7 +251,7 @@ class MoreScreen extends StatelessWidget {
                     },
                   ),
                   _buildMenuItem(
-                    icon: FontAwesomeIcons.fileAlt,
+                    icon: FontAwesomeIcons.fileLines,
                     title: 'Términos y Condiciones',
                     subtitle: 'Políticas de uso',
                     onTap: () {

@@ -87,7 +87,7 @@ class _PriceListScreenState extends State<PriceListScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-              icon: FontAwesomeIcons.save,
+              icon: FontAwesomeIcons.floppyDisk,
               onPressed: () => {})
         ],
       ),
@@ -285,7 +285,7 @@ class _PriceListScreenState extends State<PriceListScreen> {
                           decoration: BoxDecoration(
                             color: isActive
                                 ? AppTheme.tertiaryFixed
-                                : AppTheme.surfaceVariant,
+                                : AppTheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(AppTheme.borderRadiusFull),
                           ),
                           child: Text(

@@ -430,7 +430,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
       case CustomerType.newLead:
         return AppTheme.primaryFixed;
       case CustomerType.archived:
-        return AppTheme.surfaceVariant;
+        return AppTheme.surfaceContainerHighest;
     }
   }
 

@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onBackPressed: () => Navigator.pop(context),
           actions:[
             AppBarButton(
-                icon: FontAwesomeIcons.save,
+                icon: FontAwesomeIcons.floppyDisk,
                 onPressed: ()=>{})
           ]
       ),
@@ -231,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
           ),
         ],
       ),

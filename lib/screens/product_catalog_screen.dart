@@ -572,7 +572,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                           vertical: 1,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.surfaceVariant,
+                          color: AppTheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(
                             AppTheme.borderRadiusSm,
                           ),
@@ -757,7 +757,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.surfaceVariant,
+                          color: AppTheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(
                             AppTheme.borderRadiusSm,
                           ),

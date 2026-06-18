@@ -51,7 +51,7 @@ class _CashFlowScreenState extends State<CashFlowScreen> {
           onBackPressed: () => Navigator.pop(context),
           actions:[
             AppBarButton(
-                icon: FontAwesomeIcons.save,
+                icon: FontAwesomeIcons.floppyDisk,
                 onPressed: () =>{})
           ]
       ),

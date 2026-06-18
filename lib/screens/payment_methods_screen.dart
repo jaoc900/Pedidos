@@ -40,7 +40,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       _apiClient = ApiClient(httpClient);
       await _loadPaymentMethods();
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = 'Error al cargar los métodos de pago';
@@ -56,7 +56,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
 
     try {
       final response = await _apiClient.getPaymentMethods();
-      print('Respuesta completa: $response');
+      debugPrint('Respuesta completa: $response');
 
       List<PaymentMethod> methods = [];
 
@@ -73,14 +73,14 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         }
       }
 
-      print('Métodos procesados: ${methods.length}');
+      debugPrint('Métodos procesados: ${methods.length}');
 
       setState(() {
         _paymentMethods = methods;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error cargando métodos de pago: $e');
+      debugPrint('Error cargando métodos de pago: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = _getErrorMessage(e);
@@ -148,7 +148,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       });
 
       await _apiClient.deletePaymentMethod(method.id.toString());
-
+      if (!mounted) return;
       setState(() {
         _paymentMethods.removeWhere((m) => m.id == method.id);
         _isLoading = false;

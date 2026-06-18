@@ -289,7 +289,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         onBackPressed: () => Navigator.pop(context),
         actions: [
           AppBarButton(
-              icon: FontAwesomeIcons.save,
+              icon: FontAwesomeIcons.floppyDisk,
               onPressed: () => {})
         ],
       ),
@@ -404,7 +404,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _twoFactorEnabled = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -475,7 +475,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _biometricEnabled = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -509,7 +509,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 });
               }
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -536,7 +536,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _autoLockEnabled = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -902,7 +902,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _loginNotifications = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -928,7 +928,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _suspiciousActivityAlerts = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -955,7 +955,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _encryptData = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,
@@ -981,7 +981,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 _sessionTimeout = value;
               });
             },
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
             secondary: Container(
               width: 44,
               height: 44,

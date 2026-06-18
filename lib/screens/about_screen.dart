@@ -160,7 +160,7 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spacingLg),
           _buildInfoRow(
-            icon: FontAwesomeIcons.checkCircle,
+            icon: FontAwesomeIcons.circleCheck,
             label: 'Lanzamiento inicial',
             value: 'Mayo 2025',
           ),

@@ -13,7 +13,7 @@ import 'package:pedidos/screens/payments_management_screen.dart';
 import 'package:pedidos/screens/invoices_screen.dart';
 import 'package:pedidos/screens/pos_movil_catalog_screen.dart';
 import 'package:pedidos/screens/pos_quick_scanner_screen.dart';
-import 'package:pedidos/models/navItem_model.dart';
+import 'package:pedidos/models/nav_item_model.dart';
 import 'package:pedidos/services/user_preferences.dart';
 import 'package:pedidos/widgets/side_menu.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading user data: $e');
+      debugPrint('Error loading user data: $e');
       setState(() {
         _isLoading = false;
       });

@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pedidos/models/Response/login_response.dart';
+import 'package:flutter/material.dart';
 
 class UserPreferences {
   static final UserPreferences _instance = UserPreferences._internal();
@@ -30,7 +31,7 @@ class UserPreferences {
     if (!_isInitialized) {
       _prefs = await SharedPreferences.getInstance();
       _isInitialized = true;
-      print('✅ UserPreferences inicializado');
+      debugPrint('✅ UserPreferences inicializado');
     }
   }
 
@@ -46,7 +47,7 @@ class UserPreferences {
   Future<void> saveToken(String token) async {
     _checkInitialized();
     await _prefs.setString(_keyAccessToken, token);
-    print('✅ Token guardado');
+    debugPrint('✅ Token guardado');
   }
 
   String? getToken() {
@@ -115,7 +116,7 @@ class UserPreferences {
       await saveTokenExpiry(user.expiresAt.toIso8601String());
     }
 
-    print('✅ Información de usuario guardada: ${user.fullName}');
+    debugPrint('✅ Información de usuario guardada: ${user.fullName}');
   }
 
   Map<String, dynamic> getUserInfo() {
@@ -182,10 +183,10 @@ class UserPreferences {
     await _prefs.setBool(_keyRememberMe, rememberMe);
     if (rememberMe && email != null) {
       await _prefs.setString(_keySavedEmail, email);
-      print('✅ Recordar dispositivo activado para: $email');
+      debugPrint('✅ Recordar dispositivo activado para: $email');
     } else if (!rememberMe) {
       await _prefs.remove(_keySavedEmail);
-      print('🗑️ Recordar dispositivo desactivado');
+      debugPrint('🗑️ Recordar dispositivo desactivado');
     }
   }
 
@@ -217,29 +218,29 @@ class UserPreferences {
     // await _prefs.remove(_keyRememberMe);
     // await _prefs.remove(_keySavedEmail);
 
-    print('✅ Usuario desconectado, datos limpiados');
+    debugPrint('✅ Usuario desconectado, datos limpiados');
   }
 
   // Limpiar todos los datos (logout completo)
   Future<void> clearAll() async {
     _checkInitialized();
     await _prefs.clear();
-    print('🗑️ Todos los datos fueron limpiados');
+    debugPrint('🗑️ Todos los datos fueron limpiados');
   }
 
   // ==================== UTILITY METHODS ====================
 
-  void printUserInfo() {
+  void debugPrintUserInfo() {
     _checkInitialized();
-    print('========== USER INFO ==========');
-    print('ID: ${getUserId()}');
-    print('Nombre: ${getFullName()}');
-    print('Email: ${getUserEmail()}');
-    print('Rol: ${getUserRole()}');
-    print('Es Admin: ${isAdmin()}');
-    print('Logged In: ${isLoggedIn()}');
-    print('Remember Me: ${getRememberMe()}');
-    print('Token Válido: ${isTokenValid()}');
-    print('===============================');
+    debugPrint('========== USER INFO ==========');
+    debugPrint('ID: ${getUserId()}');
+    debugPrint('Nombre: ${getFullName()}');
+    debugPrint('Email: ${getUserEmail()}');
+    debugPrint('Rol: ${getUserRole()}');
+    debugPrint('Es Admin: ${isAdmin()}');
+    debugPrint('Logged In: ${isLoggedIn()}');
+    debugPrint('Remember Me: ${getRememberMe()}');
+    debugPrint('Token Válido: ${isTokenValid()}');
+    debugPrint('===============================');
   }
 }

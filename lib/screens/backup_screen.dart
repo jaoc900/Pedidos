@@ -69,7 +69,7 @@ class _BackupScreenState extends State<BackupScreen> {
         _backupProgress = i / 100;
       });
     }
-
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
       _backupProgress = 0.0;
@@ -409,7 +409,7 @@ class _BackupScreenState extends State<BackupScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
           ),
         ],
       ),
@@ -628,7 +628,7 @@ class _BackupScreenState extends State<BackupScreen> {
         child: Column(
           children: [
             FaIcon(
-              FontAwesomeIcons.history,
+              FontAwesomeIcons.clockRotateLeft,
               size: 48,
               color: AppTheme.outline.withValues(alpha: 0.5),
             ),
@@ -735,7 +735,7 @@ class _BackupScreenState extends State<BackupScreen> {
             ),
             child: Center(
               child: FaIcon(
-                isSuccess ? FontAwesomeIcons.checkCircle : FontAwesomeIcons.exclamationCircle,
+                isSuccess ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.circleExclamation,
                 size: 20,
                 color: isSuccess ? AppTheme.secondary : AppTheme.error,
               ),

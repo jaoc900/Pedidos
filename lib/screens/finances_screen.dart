@@ -329,7 +329,7 @@ class FinancesScreen extends StatelessWidget {
         _buildPrimaryTransactionItem(
           title: 'Registrar Gasto Operativo',
           subtitle: 'Nueva entrada manual',
-          icon: FontAwesomeIcons.plusCircle,
+          icon: FontAwesomeIcons.circlePlus,
           onTap: () {
             Navigator.push(
               context,

@@ -118,7 +118,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         }
       });
     } catch (e) {
-      print('Error cargando roles: $e');
+      debugPrint('Error cargando roles: $e');
       setState(() {
         _isLoadingRoles = false;
       });
@@ -236,7 +236,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
                     CustomOutlinedButton(
                       text: 'Cancelar',
                       onPressed: () => Navigator.pop(context, false),
-                      icon: FontAwesomeIcons.times,
+                      icon: FontAwesomeIcons.xmark,
                       height: 45,
                       fontSize: 14,
                       borderRadius: AppTheme.borderRadiusXXl,
@@ -284,7 +284,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
         employee.id.toString(),
         newPasswordController.text.trim(),
       );
-
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -331,10 +331,12 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
       jsonEncode(employee.toJson());
       if (widget.employee == null) {
         await _apiClient.createEmployee(employee.toJson());
+        if (!mounted) return;
         _showSuccess('Empleado creado exitosamente');
         Navigator.pop(context, true);
       } else {
         await _apiClient.updateEmployee(widget.employee!.id.toString(), employee.toJson());
+        if (!mounted) return;
         _showSuccess('Empleado actualizado exitosamente');
         Navigator.pop(context, true);
       }
@@ -385,7 +387,7 @@ class _EmployeeDetailScreenState extends State<EmployeeDetailScreen> {
             },
           ),
           AppBarButton(
-            icon: FontAwesomeIcons.save,
+            icon: FontAwesomeIcons.floppyDisk,
             onPressed: _saveEmployee,
           ),
         ],

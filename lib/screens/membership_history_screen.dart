@@ -413,7 +413,7 @@ class _MembershipHistoryScreenState extends State<MembershipHistoryScreen> {
             showLabel: false,
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-              icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
+              icon: FaIcon(FontAwesomeIcons.xmark, size: 16, color: AppTheme.outline),
               onPressed: () {
                 setState(() {
                   _searchQuery = '';

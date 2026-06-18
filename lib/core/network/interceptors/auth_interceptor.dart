@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 class AuthInterceptor extends Interceptor {
   static const String _tokenKey = 'access_token';
@@ -24,7 +25,7 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       // Token expirado o inválido
       // Aquí podrías implementar lógica de refresh token
-      print('Token inválido o expirado');
+      debugPrint('Token inválido o expirado');
     }
     return handler.next(err);
   }

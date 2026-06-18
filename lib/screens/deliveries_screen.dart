@@ -141,7 +141,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
       confirmText: 'Completar',
       cancelText: 'Cancelar',
       type: ConfirmationType.success,
-      customIcon: FontAwesomeIcons.checkCircle,
+      customIcon: FontAwesomeIcons.circleCheck,
       onConfirm: () {
         setState(() {
           delivery.status = DeliveryStatus.delivered;
@@ -271,7 +271,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
                         Navigator.pop(context);
                         _completeDelivery(delivery);
                       },
-                      icon: const FaIcon(FontAwesomeIcons.checkCircle, size: 18),
+                      icon: const FaIcon(FontAwesomeIcons.circleCheck, size: 18),
                       label: const Text('Completar Entrega'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.secondary,
@@ -527,7 +527,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
               ),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                icon: FaIcon(FontAwesomeIcons.times, size: 16, color: AppTheme.outline),
+                icon: FaIcon(FontAwesomeIcons.xmark, size: 16, color: AppTheme.outline),
                 onPressed: () => setState(() => _searchQuery = ''),
               )
                   : null,

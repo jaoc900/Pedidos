@@ -92,7 +92,7 @@ class _TaxesScreenState extends State<TaxesScreen> {
           onBackPressed: () => Navigator.pop(context),
           actions:[
             AppBarButton(
-                icon: FontAwesomeIcons.save,
+                icon: FontAwesomeIcons.floppyDisk,
                 onPressed: () =>{})
           ]
       ),
@@ -619,7 +619,7 @@ class _TaxesScreenState extends State<TaxesScreen> {
               ),
               child: const Center(
                 child: FaIcon(
-                  FontAwesomeIcons.checkCircle,
+                  FontAwesomeIcons.circleCheck,
                   size: 24,
                   color: AppTheme.secondary,
                 ),
@@ -785,7 +785,7 @@ class _TaxesScreenState extends State<TaxesScreen> {
                 ],
               ),
             ),
-          )).toList(),
+          )),
         ],
       ),
     );

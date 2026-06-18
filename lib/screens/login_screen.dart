@@ -58,9 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _apiClient = ApiClient(httpClient);
       _userPrefs = userPrefs;
 
-      print('✅ Inicialización completada');
+      debugPrint('✅ Inicialización completada');
     } catch (e) {
-      print('Error en inicialización: $e');
+      debugPrint('Error en inicialización: $e');
       rethrow;
     }
   }
@@ -101,10 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text = savedEmail;
           _rememberMe = true;
         });
-        print('✅ Credenciales cargadas para: $savedEmail');
+        debugPrint('✅ Credenciales cargadas para: $savedEmail');
       }
     } catch (e) {
-      print('Error al cargar credenciales: $e');
+      debugPrint('Error al cargar credenciales: $e');
     }
   }
 
@@ -149,39 +149,28 @@ class _LoginScreenState extends State<LoginScreen> {
         throw Exception('Error en el login');
       }
 
-      final userData = loginResponse.data!;
+      final userData = loginResponse.data;
 
       // Guardar toda la información usando UserPreferences
       await _userPrefs.saveUserInfo(userData);
       await _userPrefs.saveRememberMe(_rememberMe, email: email);
 
-      // Mostrar mensaje de bienvenida
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('¡Bienvenido ${userData.fullName}!'),
-            backgroundColor: AppTheme.primary,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+      if (!mounted) return;
 
-        // Navegar al home
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Home()),
-          );
-        }
-      }
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return;
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const Home()),
+      );
     } on NetworkExceptions catch (e) {
       _processBackendError(e);
     } catch (e) {
       setState(() {
         _generalError = 'Error al iniciar sesión. Intenta nuevamente.';
       });
-      print('Error en login: $e');
+      debugPrint('Error en login: $e');
     } finally {
       if (mounted) {
         setState(() {

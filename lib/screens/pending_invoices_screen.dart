@@ -259,7 +259,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
           onBackPressed: () => Navigator.pop(context),
           actions:[
             AppBarButton(
-                icon: FontAwesomeIcons.save,
+                icon: FontAwesomeIcons.floppyDisk,
                 onPressed: () =>{})
           ]
       ),
@@ -296,7 +296,7 @@ class _PendingInvoicesScreenState extends State<PendingInvoicesScreen> {
       const FilterChipData(label: 'Todos', value: 'todos', icon: FontAwesomeIcons.list),
       const FilterChipData(label: 'Pendientes', value: 'pendientes', icon: FontAwesomeIcons.clock),
       const FilterChipData(label: 'Completados', value: 'completados', icon: FontAwesomeIcons.check),
-      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.times),
+      const FilterChipData(label: 'Cancelados', value: 'cancelados', icon: FontAwesomeIcons.xmark),
     ];
 
     return CustomFilterChipWithIcon(
