@@ -7,6 +7,7 @@ import 'package:pedidos/models/product_item_model.dart';
 import 'package:pedidos/enums/stock_status_enum.dart';
 import 'package:pedidos/widgets/custom_top_app_bar.dart';
 import 'package:pedidos/widgets/custom_chips.dart';
+import 'package:pedidos/services/user_preferences.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -17,6 +18,7 @@ class InventoryScreen extends StatefulWidget {
 
 class _InventoryScreenState extends State<InventoryScreen> {
   String _selectedCategory = 'Todos';
+  final UserPreferences _preferences = UserPreferences();
 
   ViewMode _currentViewMode = ViewMode.mediumIcons;
   final List<String> _categories = [
@@ -98,6 +100,31 @@ class _InventoryScreenState extends State<InventoryScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadViewMode();
+  }
+
+  Future<void> _loadViewMode() async {
+    final mode = await _preferences.getInventoryViewMode();
+
+    setState(() {
+      _currentViewMode = ViewMode.values.firstWhere(
+            (e) => e.name == mode,
+        orElse: () => ViewMode.list,
+      );
+    });
+  }
+
+  Future<void> _changeViewMode(ViewMode mode) async {
+    setState(() {
+      _currentViewMode = mode;
+    });
+
+    await _preferences.saveInventoryViewMode(mode.name);
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -148,49 +175,63 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   Widget _buildViewModeButtons() {
+    final isMobile =
+        MediaQuery.of(context).size.width < 768;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 4,
+        vertical: 2,
+      ),
       decoration: BoxDecoration(
         color: AppTheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusXl),
+        borderRadius: BorderRadius.circular(
+          AppTheme.borderRadiusXl,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Modo Lista
           _buildViewModeButton(
             icon: FontAwesomeIcons.bars,
             mode: ViewMode.list,
             isSelected: _currentViewMode == ViewMode.list,
           ),
-          // Modo Iconos Grandes
+
           _buildViewModeButton(
             icon: FontAwesomeIcons.tableCellsLarge,
             mode: ViewMode.largeIcons,
-            isSelected: _currentViewMode == ViewMode.largeIcons,
-          ),
-          // Modo Iconos Medianos
-          _buildViewModeButton(
-            icon: FontAwesomeIcons.tableCells,
-            mode: ViewMode.mediumIcons,
-            isSelected: _currentViewMode == ViewMode.mediumIcons,
-          ),
-          // Modo Iconos Pequeños
-          _buildViewModeButton(
-            icon: FontAwesomeIcons.grip,
-            mode: ViewMode.smallIcons,
-            isSelected: _currentViewMode == ViewMode.smallIcons,
+            isSelected:
+            _currentViewMode == ViewMode.largeIcons,
           ),
 
-          // Separador vertical
+          if (!isMobile) ...[
+            _buildViewModeButton(
+              icon: FontAwesomeIcons.tableCells,
+              mode: ViewMode.mediumIcons,
+              isSelected:
+              _currentViewMode ==
+                  ViewMode.mediumIcons,
+            ),
+
+            _buildViewModeButton(
+              icon: FontAwesomeIcons.grip,
+              mode: ViewMode.smallIcons,
+              isSelected:
+              _currentViewMode ==
+                  ViewMode.smallIcons,
+            ),
+          ],
+
           Container(
             width: 1,
             height: 24,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: const EdgeInsets.symmetric(
+              horizontal: 4,
+            ),
             color: AppTheme.outlineVariant,
           ),
 
-          // Botón de filtrar
           _buildFilterButton(),
         ],
       ),
@@ -203,11 +244,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     required bool isSelected,
   }) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentViewMode = mode;
-        });
-      },
+        onTap: () => _changeViewMode(mode),
       child: Container(
         width: 36,
         height: 36,
@@ -298,16 +335,64 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   Widget _buildContent(double maxWidth) {
+    final isMobile = maxWidth < 768;
+
+    if (isMobile) {
+      switch (_currentViewMode) {
+        case ViewMode.list:
+          return _buildListMode();
+
+        case ViewMode.largeIcons:
+          return _buildMobileCardMode();
+
+        default:
+          return _buildMobileCardMode();
+      }
+    }
+
     switch (_currentViewMode) {
       case ViewMode.list:
         return _buildListMode();
+
       case ViewMode.largeIcons:
-        return _buildGridMode(maxWidth, crossAxisCount: 2, imageHeight: 180);
+        return _buildGridMode(
+          maxWidth,
+          crossAxisCount: 2,
+          imageHeight: 180,
+        );
+
       case ViewMode.mediumIcons:
-        return _buildGridMode(maxWidth, crossAxisCount: 3, imageHeight: 140);
+        return _buildGridMode(
+          maxWidth,
+          crossAxisCount: 3,
+          imageHeight: 140,
+        );
+
       case ViewMode.smallIcons:
-        return _buildGridMode(maxWidth, crossAxisCount: 4, imageHeight: 120);
+        return _buildGridMode(
+          maxWidth,
+          crossAxisCount: 4,
+          imageHeight: 120,
+        );
     }
+  }
+
+  Widget _buildMobileCardMode() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _filteredProducts.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(
+            bottom: AppTheme.spacingMd,
+          ),
+          child: _buildProductCard(
+            _filteredProducts[index],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildListMode() {

@@ -24,6 +24,7 @@ class UserPreferences {
   static const String _keyDarkMode = 'dark_mode';
   static const String _keySendSms = 'send_sms';
   static const String _keySendPush = 'send_push';
+  static const String _keyInventoryViewMode = 'inventory_view_mode';
 
   factory UserPreferences() {
     return _instance;
@@ -257,6 +258,28 @@ class UserPreferences {
     _checkInitialized();
     await _prefs.clear();
     debugPrint('🗑️ Todos los datos fueron limpiados');
+  }
+
+  Future saveInventoryViewMode(String mode) async {
+    _checkInitialized();
+
+    await _prefs.setString(
+      _keyInventoryViewMode,
+      mode,
+    );
+
+    debugPrint(
+      '✅ Inventory View Mode guardado: $mode',
+    );
+  }
+
+  String getInventoryViewMode() {
+    _checkInitialized();
+
+    return _prefs.getString(
+      _keyInventoryViewMode,
+    ) ??
+        'list';
   }
 
   // ==================== UTILITY METHODS ====================
