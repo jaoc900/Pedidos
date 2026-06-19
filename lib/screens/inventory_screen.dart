@@ -123,7 +123,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     await _preferences.saveInventoryViewMode(mode.name);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
